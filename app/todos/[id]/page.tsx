@@ -1,4 +1,3 @@
-// app/todos/[id]/page.tsx
 'use client';
 
 import { useGetTodosQuery, useUpdateTodoMutation } from '@/lib/api';

@@ -2,9 +2,11 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
+import { useTodo } from '@/lib/hooks/useTodo';
+import { useGetCurrentUserQuery } from '@/lib/api';
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -18,6 +20,18 @@ export default function Navigation() {
   const selectedUserId = useSelector(
     (state: RootState) => state.todo.selectedUserId
   );
+
+  const { data: currentUser } = useGetCurrentUserQuery(selectedUserId ?? '', {
+    skip: !selectedUserId,
+  });
+
+  const { clearSelectedUser, } = useTodo()
+  const router = useRouter()
+
+  const handleLogout = () => {
+    clearSelectedUser()
+    router.push('/')
+  }
 
   return (
     <nav className="bg-white shadow-sm border-b">
@@ -36,20 +50,32 @@ export default function Navigation() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                  pathname === item.href
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-                }`}
+                className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${pathname === item.href
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                  }`}
               >
                 {item.name}
               </Link>
             ))}
           </div>
 
-          {/* User Status */}
-          <div className="text-sm text-gray-500">
-            {selectedUserId ? 'User Selected' : 'No User'}
+          <div className="flex items-center gap-4">
+            {selectedUserId ? (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-700">
+                  Welcome, <span className="font-medium text-blue-600">{currentUser?.name}</span>
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="text-sm text-red-500 hover:text-red-700"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="text-sm text-gray-500">No User Selected</div>
+            )}
           </div>
         </div>
       </div>

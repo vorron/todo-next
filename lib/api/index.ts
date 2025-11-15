@@ -1,4 +1,3 @@
-// lib/api/index.ts
 import { authEndpoints } from './authApi';
 import { api } from './baseApi';
 import { todoEndpoints } from './todosApi';

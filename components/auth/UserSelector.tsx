@@ -1,21 +1,18 @@
-// components/auth/UserSelector.tsx
 'use client';
 
 import { useGetUsersQuery } from '@/lib/api';
-import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedUser } from '@/lib/slices/todoSlice';
-import { RootState } from '@/lib/store';
+import { useTodo } from '@/lib/hooks/useTodo';
+import { useRouter } from 'next/navigation';
 
 export default function UserSelector() {
   const { data: users = [], isLoading, error } = useGetUsersQuery();
-  const dispatch = useDispatch();
-  const selectedUserId = useSelector(
-    (state: RootState) => state.todo.selectedUserId
-  );
+  const { setSelectedUser, selectedUserId } = useTodo()
+  const router = useRouter()
 
-  const handleUserSelect = (userId: string) => {
-    dispatch(setSelectedUser(userId));
-  };
+  function handleSetSelectedUser(userId: string) {
+    setSelectedUser(userId);
+    router.push('todos')
+  }
 
   if (isLoading) {
     return (
@@ -44,7 +41,7 @@ export default function UserSelector() {
             <span className="text-sm text-gray-600">Current:</span>
             <span className="font-medium text-blue-600">{selectedUser.name}</span>
             <button
-              onClick={() => dispatch(setSelectedUser(''))}
+              onClick={() => setSelectedUser('')}
               className="text-sm text-red-500 hover:text-red-700"
             >
               Logout
@@ -58,7 +55,7 @@ export default function UserSelector() {
           {users.map((user) => (
             <button
               key={user.id}
-              onClick={() => handleUserSelect(user.id)}
+              onClick={() => handleSetSelectedUser(user.id)}
               className="p-4 text-left border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
             >
               <div className="font-medium text-gray-900">{user.name}</div>

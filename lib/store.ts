@@ -1,6 +1,5 @@
-// lib/store.ts
 import { configureStore } from '@reduxjs/toolkit';
-import { api } from './api'; // Импортируем из index.ts
+import { api } from './api';
 import todoReducer from './slices/todoSlice';
 
 export const makeStore = () => {
