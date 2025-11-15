@@ -7,6 +7,7 @@ import TodoFilters from '@/components/todo/TodoFilters';
 import TodoList from '@/components/todo/TodoList';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
+import Link from 'next/link';
 
 export default function Home() {
   const selectedUserId = useSelector(
@@ -24,7 +25,7 @@ export default function Home() {
             A modern todo application demonstrating Next.js 16, RTK Query, and TypeScript
           </p>
         </div>
-        
+
         <UserSelector />
 
         {selectedUserId && (
@@ -39,6 +40,26 @@ export default function Home() {
             <TodoList />
           </div>
         )}
+      </div>
+
+      <div className="mt-8 text-center">
+        <p className="text-gray-600 mb-4">
+          Explore other sections of the application:
+        </p>
+        <div className="flex justify-center space-x-4">
+          <Link
+            href="/about"
+            className="px-4 py-2 text-blue-600 hover:text-blue-800 font-medium"
+          >
+            About
+          </Link>
+          <Link
+            href="/profile"
+            className="px-4 py-2 text-blue-600 hover:text-blue-800 font-medium"
+          >
+            Profile
+          </Link>
+        </div>
       </div>
     </div>
   );
