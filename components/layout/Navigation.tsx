@@ -17,9 +17,8 @@ const navigation = [
 
 export default function Navigation() {
   const pathname = usePathname();
-  const selectedUserId = useSelector(
-    (state: RootState) => state.todo.selectedUserId
-  );
+
+  const { selectedUserId } = useTodo()
 
   const { data: currentUser } = useGetCurrentUserQuery(selectedUserId ?? '', {
     skip: !selectedUserId,
@@ -63,8 +62,7 @@ export default function Navigation() {
           <div className="flex items-center gap-4">
             {selectedUserId ? (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-700">
-                  Welcome, <span className="font-medium text-blue-600">{currentUser?.name}</span>
+                <span className="text-sm font-medium text-blue-600">{currentUser?.name}
                 </span>
                 <button
                   onClick={handleLogout}

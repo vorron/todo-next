@@ -2,15 +2,11 @@
 'use client';
 
 import { useGetTodosQuery } from '@/lib/api';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/lib/store';
 import TodoItem from './TodoItem';
+import { useTodo } from '@/lib/hooks/useTodo';
 
 export default function TodoList() {
-  const selectedUserId = useSelector(
-    (state: RootState) => state.todo.selectedUserId
-  );
-  const filter = useSelector((state: RootState) => state.todo.filter);
+  const { selectedUserId, filter } = useTodo()
 
   const {
     data: todos = [],
@@ -31,15 +27,6 @@ export default function TodoList() {
     }
   });
 
-  if (!selectedUserId) {
-    return (
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
-        <p className="text-gray-600 mb-2">Please select a user to view todos</p>
-        <p className="text-sm text-gray-500">Choose a user from the selector above</p>
-      </div>
-    );
-  }
-
   if (isLoading) {
     return (
       <div className="text-center py-8">
@@ -58,22 +45,33 @@ export default function TodoList() {
     );
   }
 
+  if (!selectedUserId) {
+    return (
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
+        <p className="text-gray-600 mb-2">Please select a user to view todos</p>
+        <p className="text-sm text-gray-500">Choose a user from the selector above</p>
+      </div>
+    );
+  }
+
+  if (filteredTodos.length === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500">
+        {todos.length === 0 ? 'No todos yet. Add your first todo above!' : 'No todos match the current filter'}
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-3">
-      {filteredTodos.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
-          {todos.length === 0 ? 'No todos yet. Add your first todo above!' : 'No todos match the current filter'}
-        </div>
-      ) : (
-        <>
-          <div className="text-sm text-gray-600 mb-2">
-            Showing {filteredTodos.length} of {todos.length} todos
-          </div>
-          {filteredTodos.map((todo) => (
-            <TodoItem key={todo.id} todo={todo} />
-          ))}
-        </>
-      )}
-    </div>
+      <div className="text-sm text-gray-600 mb-2">
+        Showing {filteredTodos.length} of {todos.length} todos
+      </div>
+      {
+        filteredTodos.map((todo) => (
+          <TodoItem key={todo.id} todo={todo} />
+        ))
+      }
+    </div >
   );
 }

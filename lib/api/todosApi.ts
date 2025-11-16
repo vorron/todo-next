@@ -3,6 +3,16 @@ import { Todo } from '@/types';
 import type { AppBuilder } from '@/types';
 
 export const todoEndpoints = (builder: AppBuilder) => ({
+
+    // Получение одного todo по ID
+    getTodo: builder.query<Todo, { id: string }>({
+        query: ({ id }) => ({
+            url: `todos/${id}`,
+            method: 'GET'
+        }),
+        providesTags: (result, error, { id }) => [{ type: 'Todo', id }],
+    }),
+
     // Получение todos с фильтрацией по пользователю
     getTodos: builder.query<Todo[], string | void>({
         query: (userId) => ({
@@ -56,25 +66,25 @@ export const todoEndpoints = (builder: AppBuilder) => ({
     }),
 
     // Опционально: массовое обновление
-    toggleAllTodos: builder.mutation<Todo[], { completed: boolean; userId: string }>({
-        query: ({ completed, userId }) => ({
-            url: 'todos',
-            method: 'PATCH',
-            body: { completed },
-            params: { userId },
-        }),
-        invalidatesTags: [{ type: 'Todo', id: 'LIST' }],
-    }),
+    // toggleAllTodos: builder.mutation<Todo[], { completed: boolean; userId: string }>({
+    //     query: ({ completed, userId }) => ({
+    //         url: 'todos',
+    //         method: 'PATCH',
+    //         body: { completed },
+    //         params: { userId },
+    //     }),
+    //     invalidatesTags: [{ type: 'Todo', id: 'LIST' }],
+    // }),
 
-    // Опционально: очистка завершенных
-    clearCompleted: builder.mutation<void, string>({
-        query: (userId) => ({
-            url: 'todos',
-            method: 'DELETE',
-            params: { userId, completed: true },
-        }),
-        invalidatesTags: [{ type: 'Todo', id: 'LIST' }],
-    }),
+    // // Опционально: очистка завершенных
+    // clearCompleted: builder.mutation<void, string>({
+    //     query: (userId) => ({
+    //         url: 'todos',
+    //         method: 'DELETE',
+    //         params: { userId, completed: true },
+    //     }),
+    //     invalidatesTags: [{ type: 'Todo', id: 'LIST' }],
+    // }),
 });
 
 export type TodoEndpoints = ReturnType<typeof todoEndpoints>;

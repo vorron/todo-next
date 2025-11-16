@@ -15,12 +15,13 @@ export const enhancedApi = api.injectEndpoints({
 export const {
   // Todo hooks
   useGetTodosQuery,
+  useGetTodoQuery,
   useAddTodoMutation,
   useUpdateTodoMutation,
   useDeleteTodoMutation,
-  useToggleAllTodosMutation,
-  useClearCompletedMutation,
-  
+  // useToggleAllTodosMutation,
+  // useClearCompletedMutation,
+
   // Auth hooks
   useGetUsersQuery,
   useGetCurrentUserQuery,
