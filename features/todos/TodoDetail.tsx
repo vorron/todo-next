@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { Todo, useGetTodoQuery, useUpdateTodoMutation } from '@/lib/api';
-import Link from 'next/link';
-import { useTodo } from '@/lib/hooks/useTodo';
+import { useGetTodoQuery, useUpdateTodoMutation } from "@/lib/api";
+import Link from "next/link";
+import { useTodo } from "@/lib/hooks/useTodo";
 
 interface TodoDetailProps {
   todoId: string;
@@ -16,24 +16,27 @@ export default function TodoDetail({ todoId }: TodoDetailProps) {
   const [updateTodo] = useUpdateTodoMutation();
 
   const handleToggleComplete = async () => {
-    if (!todo) return
+    if (!todo) return;
     try {
       await updateTodo({
         id: todo.id,
         completed: !todo.completed,
       }).unwrap();
     } catch (error) {
-      console.error('Failed to update todo:', error);
+      console.error("Failed to update todo:", error);
     }
   };
-
 
   if (!selectedUserId) {
     return (
       <div className="max-w-4xl mx-auto py-8 px-4">
         <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Todo Details</h1>
-          <p className="text-gray-600 mb-4">Please select a user to view todo details</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Todo Details
+          </h1>
+          <p className="text-gray-600 mb-4">
+            Please select a user to view todo details
+          </p>
           <Link
             href="/"
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
@@ -81,7 +84,7 @@ export default function TodoDetail({ todoId }: TodoDetailProps) {
         <div className="flex items-center justify-between mb-6">
           <div>
             <Link
-              href="/"
+              href="/todos"
               className="text-blue-500 hover:text-blue-600 mb-2 inline-block"
             >
               ← Back to all todos
@@ -89,12 +92,13 @@ export default function TodoDetail({ todoId }: TodoDetailProps) {
             <h1 className="text-3xl font-bold text-gray-900">Todo Details</h1>
           </div>
           <div
-            className={`px-3 py-1 rounded-full text-sm font-medium ${todo.completed
-              ? 'bg-green-100 text-green-800'
-              : 'bg-yellow-100 text-yellow-800'
-              }`}
+            className={`px-3 py-1 rounded-full text-sm font-medium ${
+              todo.completed
+                ? "bg-green-100 text-green-800"
+                : "bg-yellow-100 text-yellow-800"
+            }`}
           >
-            {todo.completed ? 'Completed' : 'Pending'}
+            {todo.completed ? "Completed" : "Pending"}
           </div>
         </div>
 
@@ -110,12 +114,13 @@ export default function TodoDetail({ todoId }: TodoDetailProps) {
             <div className="mt-6 flex space-x-4">
               <button
                 onClick={handleToggleComplete}
-                className={`px-4 py-2 rounded-lg font-medium ${todo.completed
-                  ? 'bg-yellow-500 text-white hover:bg-yellow-600'
-                  : 'bg-green-500 text-white hover:bg-green-600'
-                  }`}
+                className={`px-4 py-2 rounded-lg font-medium ${
+                  todo.completed
+                    ? "bg-yellow-500 text-white hover:bg-yellow-600"
+                    : "bg-green-500 text-white hover:bg-green-600"
+                }`}
               >
-                {todo.completed ? 'Mark as Pending' : 'Mark as Completed'}
+                {todo.completed ? "Mark as Pending" : "Mark as Completed"}
               </button>
               <Link
                 href="/"
@@ -131,14 +136,14 @@ export default function TodoDetail({ todoId }: TodoDetailProps) {
             <div className="bg-blue-50 rounded-lg p-4">
               <h3 className="font-semibold text-gray-900 mb-2">Created</h3>
               <p className="text-sm text-gray-600">
-                {new Date(todo.createdAt).toLocaleDateString()} at{' '}
+                {new Date(todo.createdAt).toLocaleDateString()} at{" "}
                 {new Date(todo.createdAt).toLocaleTimeString()}
               </p>
             </div>
             <div className="bg-green-50 rounded-lg p-4">
               <h3 className="font-semibold text-gray-900 mb-2">Last Updated</h3>
               <p className="text-sm text-gray-600">
-                {new Date(todo.updatedAt).toLocaleDateString()} at{' '}
+                {new Date(todo.updatedAt).toLocaleDateString()} at{" "}
                 {new Date(todo.updatedAt).toLocaleTimeString()}
               </p>
             </div>
