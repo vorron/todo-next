@@ -1,0 +1,107 @@
+import { fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
+import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { z } from 'zod';
+import { env } from '@/shared/config/env';
+
+/**
+ * Базовый query с автоматической валидацией через Zod
+ */
+export const baseQuery = fetchBaseQuery({
+    baseUrl: env.API_URL,
+    prepareHeaders: (headers) => {
+        // Добавляем базовые заголовки
+        headers.set('Content-Type', 'application/json');
+
+        // TODO: Добавить токен авторизации
+        // const token = getAuthToken();
+        // if (token) {
+        //   headers.set('Authorization', `Bearer ${token}`);
+        // }
+
+        return headers;
+    },
+});
+
+/**
+ * Query wrapper с retry логикой
+ */
+const baseQueryWithRetry = retry(baseQuery, { maxRetries: 2 });
+
+/**
+ * Query wrapper с логированием и обработкой ошибок
+ */
+export const baseQueryWithLogging: BaseQueryFn<
+    string | FetchArgs,
+    unknown,
+    FetchBaseQueryError
+> = async (args, api, extraOptions) => {
+    const start = Date.now();
+
+    // Логируем запрос в development
+    if (env.IS_DEVELOPMENT) {
+        console.log('🔵 API Request:', {
+            endpoint: typeof args === 'string' ? args : args.url,
+            method: typeof args === 'string' ? 'GET' : args.method || 'GET',
+            timestamp: new Date().toISOString(),
+        });
+    }
+
+    const result = await baseQueryWithRetry(args, api, extraOptions);
+
+    const duration = Date.now() - start;
+
+    // Логируем результат
+    if (env.IS_DEVELOPMENT) {
+        if (result.error) {
+            console.error('🔴 API Error:', {
+                endpoint: typeof args === 'string' ? args : args.url,
+                error: result.error,
+                duration: `${duration}ms`,
+            });
+        } else {
+            console.log('🟢 API Success:', {
+                endpoint: typeof args === 'string' ? args : args.url,
+                duration: `${duration}ms`,
+            });
+        }
+    }
+
+    return result;
+};
+
+/**
+ * Хелпер для создания валидированного query
+ */
+export function createValidatedQuery<TSchema extends z.ZodTypeAny>(
+    schema: TSchema
+) {
+    return async (
+        args: string | FetchArgs,
+        api: any,
+        extraOptions: any
+    ): Promise<{ data: z.infer<TSchema> } | { error: FetchBaseQueryError }> => {
+        const result = await baseQueryWithLogging(args, api, extraOptions);
+
+        if (result.error) {
+            return { error: result.error };
+        }
+
+        try {
+            // Валидируем данные через Zod
+            const validatedData = schema.parse(result.data);
+            return { data: validatedData };
+        } catch (error) {
+            if (error instanceof z.ZodError) {
+                console.error('❌ Validation Error:', error.errors);
+                return {
+                    error: {
+                        status: 'PARSING_ERROR',
+                        error: 'Response validation failed',
+                        data: error.errors,
+                    } as FetchBaseQueryError,
+                };
+            }
+            throw error;
+        }
+    };
+}
