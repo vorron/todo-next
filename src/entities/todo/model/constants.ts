@@ -1,0 +1,34 @@
+import { TodoPriority } from "./todo-schema";
+
+/**
+ * Константы для работы с Todo
+ */
+export const TODO_PRIORITY_LABELS = {
+  [TodoPriority.LOW]: "Low Priority",
+  [TodoPriority.MEDIUM]: "Medium Priority",
+  [TodoPriority.HIGH]: "High Priority",
+} as const;
+
+export const TODO_PRIORITY_COLORS = {
+  [TodoPriority.LOW]: {
+    bg: "bg-gray-100",
+    text: "text-gray-800",
+    border: "border-gray-300",
+  },
+  [TodoPriority.MEDIUM]: {
+    bg: "bg-blue-100",
+    text: "text-blue-800",
+    border: "border-blue-300",
+  },
+  [TodoPriority.HIGH]: {
+    bg: "bg-red-100",
+    text: "text-red-800",
+    border: "border-red-300",
+  },
+} as const;
+
+export const FILTER_OPTIONS = [
+  { value: "all", label: "All Todos" },
+  { value: "active", label: "Active" },
+  { value: "completed", label: "Completed" },
+] as const;
