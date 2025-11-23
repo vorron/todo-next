@@ -58,7 +58,7 @@ export const authApi = baseApi.injectEndpoints({
         try {
           await new Promise((resolve) => setTimeout(resolve, 300));
           return { data: { success: true } };
-        } catch (error) {
+        } catch {
           return {
             error: {
               status: 'CUSTOM_ERROR',

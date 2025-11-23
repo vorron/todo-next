@@ -7,6 +7,7 @@ import type {
 } from '@reduxjs/toolkit/query';
 import { z } from 'zod';
 import { env } from '@/shared/config/env';
+import { handleRTKQueryValidation } from '../lib/utils';
 
 // Определяем тип для extraOptions
 type ExtraOptions = Record<string, unknown> & {
@@ -64,7 +65,7 @@ export function createValidatedQuery<TSchema extends z.ZodTypeAny>(
     return async (
         args: string | FetchArgs,
         api: BaseQueryApi,
-        extraOptions: ExtraOptions // используем тот же тип
+        extraOptions: ExtraOptions
     ): Promise<{ data: z.infer<TSchema> } | { error: FetchBaseQueryError }> => {
         const result = await baseQueryWithLogging(args, api, extraOptions);
 
@@ -72,21 +73,7 @@ export function createValidatedQuery<TSchema extends z.ZodTypeAny>(
             return { error: result.error };
         }
 
-        try {
-            const validatedData = schema.parse(result.data);
-            return { data: validatedData };
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                console.error('❌ Validation Error:', error.issues);
-                return {
-                    error: {
-                        status: 'CUSTOM_ERROR',
-                        error: 'Response validation failed',
-                        data: error.issues,
-                    } as FetchBaseQueryError,
-                };
-            }
-            throw error;
-        }
+        // Заменяем блок try-catch на вызов хелпера
+        return handleRTKQueryValidation(schema, result.data);
     };
-}
+} 

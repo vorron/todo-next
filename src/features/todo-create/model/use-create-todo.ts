@@ -3,8 +3,8 @@ import { useCreateTodoMutation } from '@/entities/todo';
 import { useAuth } from '@/features/auth';
 import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
 import { createTodoSchema } from '@/entities/todo';
-import { z } from 'zod';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { handleZodError } from '@/shared/lib/utils';
 
 interface CreateResult {
     success: boolean;
@@ -41,21 +41,16 @@ export function useCreateTodo() {
                 handleApiSuccess('Todo created successfully');
                 return { success: true };
             } catch (error: unknown) {
-                if (error instanceof z.ZodError) {
-                    const fieldErrors = error.issues.reduce((acc: Record<string, string>, issue) => {
-                        const fieldName = issue.path[0]?.toString();
-                        if (fieldName) {
-                            acc[fieldName] = issue.message;
-                        }
-                        return acc;
-                    }, {});
-
-                    setErrors(fieldErrors);
-                    return { success: false, errors: fieldErrors };
-                }
-
-                handleApiError(error as FetchBaseQueryError, 'Failed to create todo');
-                return { success: false };
+                return handleZodError(error, {
+                    onZodError: (fieldErrors) => {
+                        setErrors(fieldErrors);
+                        return { success: false, errors: fieldErrors };
+                    },
+                    onOtherError: (error) => {
+                        handleApiError(error as FetchBaseQueryError, 'Failed to create todo');
+                        return { success: false };
+                    }
+                });
             }
         },
         [createTodo, userId]
