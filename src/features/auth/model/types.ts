@@ -1,3 +1,5 @@
+import { type Session } from './auth-schema';
+
 export type { LoginDto, Session } from './auth-schema';
 
 export interface AuthState {

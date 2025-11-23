@@ -1,3 +1,11 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../model/use-auth';
+import { Spinner } from '@/shared/ui';
+import { ROUTES } from '@/shared/config/routes';
+
 interface AuthGuardProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;

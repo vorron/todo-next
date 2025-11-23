@@ -1,11 +1,6 @@
-import { baseApi } from "@/shared/api";
-import {
-  userSchema,
-  usersSchema,
-  createUserSchema,
-  updateUserSchema,
-} from "../model/user-schema";
-import type { User, CreateUserDto, UpdateUserDto } from "../model/types";
+import { baseApi } from '@/shared/api';
+import { userSchema, usersSchema, createUserSchema, updateUserSchema } from '../model/user-schema';
+import type { User, CreateUserDto, UpdateUserDto } from '../model/types';
 
 /**
  * API endpoints для работы с пользователями
@@ -14,14 +9,14 @@ export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Получение всех пользователей
     getUsers: builder.query<User[], void>({
-      query: () => "users",
+      query: () => 'users',
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "User" as const, id })),
-              { type: "User", id: "LIST" },
-            ]
-          : [{ type: "User", id: "LIST" }],
+            ...result.map(({ id }) => ({ type: 'User' as const, id })),
+            { type: 'User', id: 'LIST' },
+          ]
+          : [{ type: 'User', id: 'LIST' }],
       transformResponse: (response: unknown) => {
         return usersSchema.parse(response);
       },
@@ -30,7 +25,7 @@ export const userApi = baseApi.injectEndpoints({
     // Получение пользователя по ID
     getUserById: builder.query<User, string>({
       query: (id) => `users/${id}`,
-      providesTags: (result, error, id) => [{ type: "User", id }],
+      providesTags: (result, error, id) => [{ type: 'User', id }],
       transformResponse: (response: unknown) => {
         return userSchema.parse(response);
       },
@@ -43,12 +38,12 @@ export const userApi = baseApi.injectEndpoints({
         const validatedData = createUserSchema.parse(data);
 
         return {
-          url: "users",
-          method: "POST",
+          url: 'users',
+          method: 'POST',
           body: validatedData,
         };
       },
-      invalidatesTags: [{ type: "User", id: "LIST" }],
+      invalidatesTags: [{ type: 'User', id: 'LIST' }],
       transformResponse: (response: unknown) => {
         return userSchema.parse(response);
       },
@@ -62,13 +57,13 @@ export const userApi = baseApi.injectEndpoints({
 
         return {
           url: `users/${id}`,
-          method: "PATCH",
+          method: 'PATCH',
           body: validatedData,
         };
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "User", id },
-        { type: "User", id: "LIST" },
+        { type: 'User', id },
+        { type: 'User', id: 'LIST' },
       ],
       transformResponse: (response: unknown) => {
         return userSchema.parse(response);
@@ -79,11 +74,11 @@ export const userApi = baseApi.injectEndpoints({
     deleteUser: builder.mutation<void, string>({
       query: (id) => ({
         url: `users/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
       }),
       invalidatesTags: (result, error, id) => [
-        { type: "User", id },
-        { type: "User", id: "LIST" },
+        { type: 'User', id },
+        { type: 'User', id: 'LIST' },
       ],
     }),
   }),

@@ -36,18 +36,21 @@ export function useCreateTodo() {
 
                 handleApiSuccess('Todo created successfully');
                 return { success: true };
-            } catch (error: any) {
+            } catch (error) {
                 if (error instanceof z.ZodError) {
-                    const fieldErrors: Record<string, string> = {};
-                    error.errors.forEach((err) => {
-                        fieldErrors[err.path[0]] = err.message;
-                    });
+                    const fieldErrors = error.issues.reduce((acc: Record<string, string>, issue) => {
+                        const fieldName = issue.path[0]?.toString();
+                        if (fieldName) {
+                            acc[fieldName] = issue.message;
+                        }
+                        return acc;
+                    }, {});
+
                     setErrors(fieldErrors);
                     return { success: false, errors: fieldErrors };
                 }
-
-                handleApiError(error, 'Failed to create todo');
-                return { success: false };
+                // Обработка других типов ошибок
+                throw error;
             }
         },
         [createTodo, userId]

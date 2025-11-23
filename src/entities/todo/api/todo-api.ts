@@ -1,17 +1,12 @@
-import { baseApi } from "@/shared/api";
+import { baseApi } from '@/shared/api';
 import {
   todoSchema,
   todosSchema,
   createTodoSchema,
   updateTodoSchema,
   todoFilterSchema,
-} from "../model/todo-schema";
-import type {
-  Todo,
-  CreateTodoDto,
-  UpdateTodoDto,
-  TodoFilter,
-} from "../model/types";
+} from '../model/todo-schema';
+import type { Todo, CreateTodoDto, UpdateTodoDto, TodoFilter } from '../model/types';
 
 /**
  * API endpoints для работы с Todo
@@ -25,17 +20,17 @@ export const todoApi = baseApi.injectEndpoints({
         const validatedFilters = filters ? todoFilterSchema.parse(filters) : {};
 
         return {
-          url: "todos",
+          url: 'todos',
           params: validatedFilters,
         };
       },
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Todo" as const, id })),
-              { type: "Todo", id: "LIST" },
-            ]
-          : [{ type: "Todo", id: "LIST" }],
+            ...result.map(({ id }) => ({ type: 'Todo' as const, id })),
+            { type: 'Todo', id: 'LIST' },
+          ]
+          : [{ type: 'Todo', id: 'LIST' }],
       transformResponse: (response: unknown) => {
         return todosSchema.parse(response);
       },
@@ -44,7 +39,7 @@ export const todoApi = baseApi.injectEndpoints({
     // Получение одного todo по ID
     getTodoById: builder.query<Todo, string>({
       query: (id) => `todos/${id}`,
-      providesTags: (result, error, id) => [{ type: "Todo", id }],
+      providesTags: (result, error, id) => [{ type: 'Todo', id }],
       transformResponse: (response: unknown) => {
         return todoSchema.parse(response);
       },
@@ -56,8 +51,8 @@ export const todoApi = baseApi.injectEndpoints({
         const validatedData = createTodoSchema.parse(data);
 
         return {
-          url: "todos",
-          method: "POST",
+          url: 'todos',
+          method: 'POST',
           body: {
             ...validatedData,
             createdAt: new Date().toISOString(),
@@ -65,7 +60,7 @@ export const todoApi = baseApi.injectEndpoints({
           },
         };
       },
-      invalidatesTags: [{ type: "Todo", id: "LIST" }],
+      invalidatesTags: [{ type: 'Todo', id: 'LIST' }],
       transformResponse: (response: unknown) => {
         return todoSchema.parse(response);
       },
@@ -78,7 +73,7 @@ export const todoApi = baseApi.injectEndpoints({
 
         return {
           url: `todos/${id}`,
-          method: "PATCH",
+          method: 'PATCH',
           body: {
             ...validatedData,
             updatedAt: new Date().toISOString(),
@@ -86,8 +81,8 @@ export const todoApi = baseApi.injectEndpoints({
         };
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "Todo", id },
-        { type: "Todo", id: "LIST" },
+        { type: 'Todo', id },
+        { type: 'Todo', id: 'LIST' },
       ],
       transformResponse: (response: unknown) => {
         return todoSchema.parse(response);
@@ -98,11 +93,11 @@ export const todoApi = baseApi.injectEndpoints({
     deleteTodo: builder.mutation<void, string>({
       query: (id) => ({
         url: `todos/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
       }),
       invalidatesTags: (result, error, id) => [
-        { type: "Todo", id },
-        { type: "Todo", id: "LIST" },
+        { type: 'Todo', id },
+        { type: 'Todo', id: 'LIST' },
       ],
     }),
 
@@ -119,7 +114,7 @@ export const todoApi = baseApi.injectEndpoints({
         // Обновляем статус
         const updateResult = await baseQuery({
           url: `todos/${id}`,
-          method: "PATCH",
+          method: 'PATCH',
           body: {
             completed: !currentTodo.completed,
             updatedAt: new Date().toISOString(),
@@ -131,20 +126,17 @@ export const todoApi = baseApi.injectEndpoints({
         return { data: todoSchema.parse(updateResult.data) };
       },
       invalidatesTags: (result, error, id) => [
-        { type: "Todo", id },
-        { type: "Todo", id: "LIST" },
+        { type: 'Todo', id },
+        { type: 'Todo', id: 'LIST' },
       ],
     }),
 
     // Массовое обновление (пометить все как выполненные)
-    toggleAllTodos: builder.mutation<
-      void,
-      { userId: string; completed: boolean }
-    >({
+    toggleAllTodos: builder.mutation<void, { userId: string; completed: boolean }>({
       async queryFn({ userId, completed }, api, extraOptions, baseQuery) {
         // Получаем все todos пользователя
         const todosResult = await baseQuery({
-          url: "todos",
+          url: 'todos',
           params: { userId },
         });
 
@@ -157,7 +149,7 @@ export const todoApi = baseApi.injectEndpoints({
           todos.map((todo) =>
             baseQuery({
               url: `todos/${todo.id}`,
-              method: "PATCH",
+              method: 'PATCH',
               body: {
                 completed,
                 updatedAt: new Date().toISOString(),
@@ -168,7 +160,7 @@ export const todoApi = baseApi.injectEndpoints({
 
         return { data: undefined };
       },
-      invalidatesTags: [{ type: "Todo", id: "LIST" }],
+      invalidatesTags: [{ type: 'Todo', id: 'LIST' }],
     }),
 
     // Удаление всех выполненных todos
@@ -176,7 +168,7 @@ export const todoApi = baseApi.injectEndpoints({
       async queryFn(userId, api, extraOptions, baseQuery) {
         // Получаем выполненные todos
         const todosResult = await baseQuery({
-          url: "todos",
+          url: 'todos',
           params: { userId, completed: true },
         });
 
@@ -189,14 +181,14 @@ export const todoApi = baseApi.injectEndpoints({
           todos.map((todo) =>
             baseQuery({
               url: `todos/${todo.id}`,
-              method: "DELETE",
+              method: 'DELETE',
             })
           )
         );
 
         return { data: undefined };
       },
-      invalidatesTags: [{ type: "Todo", id: "LIST" }],
+      invalidatesTags: [{ type: 'Todo', id: 'LIST' }],
     }),
   }),
 });

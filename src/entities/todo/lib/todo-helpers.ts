@@ -1,5 +1,5 @@
-import type { Todo, TodoStats } from "../model/types";
-import { TodoPriority } from "../model/todo-schema";
+import type { Todo, TodoStats } from '../model/types';
+import { TodoPriority } from '../model/todo-schema';
 
 /**
  * Проверка просрочен ли todo
@@ -15,13 +15,13 @@ export function isTodoOverdue(todo: Todo): boolean {
 export function getPriorityClassName(priority?: string): string {
   switch (priority) {
     case TodoPriority.HIGH:
-      return "border-l-4 border-red-500";
+      return 'border-l-4 border-red-500';
     case TodoPriority.MEDIUM:
-      return "border-l-4 border-blue-500";
+      return 'border-l-4 border-blue-500';
     case TodoPriority.LOW:
-      return "border-l-4 border-gray-500";
+      return 'border-l-4 border-gray-500';
     default:
-      return "";
+      return '';
   }
 }
 
@@ -34,9 +34,9 @@ export function formatDueDate(dueDate: string): string {
   const diffTime = date.getTime() - now.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  if (diffDays < 0) return "Overdue";
-  if (diffDays === 0) return "Today";
-  if (diffDays === 1) return "Tomorrow";
+  if (diffDays < 0) return 'Overdue';
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Tomorrow';
   if (diffDays <= 7) return `In ${diffDays} days`;
 
   return date.toLocaleDateString();
@@ -94,7 +94,9 @@ export function groupTodosByDate(todos: Todo[]): Record<string, Todo[]> {
 export function filterByTags(todos: Todo[], tags: string[]): Todo[] {
   if (tags.length === 0) return todos;
 
-  return todos.filter((todo) => tags.every((tag) => todo.tags?.includes(tag)));
+  return todos.filter((todo) =>
+    tags.every((tag) => todo.tags?.includes(tag))
+  );
 }
 
 /**

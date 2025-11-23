@@ -1,5 +1,5 @@
 import { use } from 'react';
-import { TodoDetailPage } from '@/pages/todo-detail';
+import { TodoDetailPage } from '@/screens/todo-detail';
 
 interface PageProps {
     params: Promise<{ id: string }>;

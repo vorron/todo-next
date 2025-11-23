@@ -7,6 +7,7 @@ import { validateLoginForm } from '../lib/validation';
 
 export function LoginForm() {
     const { login, isLoading } = useAuth();
+
     const [username, setUsername] = useState('');
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [generalError, setGeneralError] = useState('');

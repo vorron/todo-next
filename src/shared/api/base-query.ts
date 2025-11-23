@@ -1,4 +1,4 @@
-import { fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
+import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { z } from 'zod';
 import { env } from '@/shared/config/env';
@@ -23,11 +23,6 @@ export const baseQuery = fetchBaseQuery({
 });
 
 /**
- * Query wrapper с retry логикой
- */
-const baseQueryWithRetry = retry(baseQuery, { maxRetries: 2 });
-
-/**
  * Query wrapper с логированием и обработкой ошибок
  */
 export const baseQueryWithLogging: BaseQueryFn<
@@ -46,7 +41,7 @@ export const baseQueryWithLogging: BaseQueryFn<
         });
     }
 
-    const result = await baseQueryWithRetry(args, api, extraOptions);
+    const result = await baseQuery(args, api, extraOptions);
 
     const duration = Date.now() - start;
 

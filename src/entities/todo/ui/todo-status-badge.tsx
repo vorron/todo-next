@@ -1,21 +1,18 @@
-import { cn } from "@/shared/lib/utils";
+import { cn } from '@/shared/lib/utils';
 
 interface TodoStatusBadgeProps {
   completed: boolean;
   className?: string;
 }
 
-export function TodoStatusBadge({
-  completed,
-  className,
-}: TodoStatusBadgeProps) {
+export function TodoStatusBadge({ completed, className }: TodoStatusBadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium",
+        'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium',
         completed
-          ? "bg-green-100 text-green-800"
-          : "bg-yellow-100 text-yellow-800",
+          ? 'bg-green-100 text-green-800'
+          : 'bg-yellow-100 text-yellow-800',
         className
       )}
     >

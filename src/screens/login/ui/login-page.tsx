@@ -10,7 +10,7 @@ export function LoginPage() {
     const { isAuthenticated, isLoading } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
-    const callbackUrl = searchParams.get('callbackUrl') || ROUTES.TODOS;
+    const callbackUrl = searchParams?.get('callbackUrl') || ROUTES.TODOS;
 
     useEffect(() => {
         if (!isLoading && isAuthenticated) {

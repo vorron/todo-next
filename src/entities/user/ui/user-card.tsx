@@ -1,8 +1,7 @@
-import { Card, CardContent } from "@/shared/ui";
-import { getUserInitials, getAvatarColor } from "../lib/user-helpers";
-import type { User } from "../model/types";
-import { cn } from "@/shared/lib/utils";
-import Image from "next/image";
+import { Card, CardContent } from '@/shared/ui';
+import { getUserInitials, getAvatarColor } from '../lib/user-helpers';
+import type { User } from '../model/types';
+import { cn } from '@/shared/lib/utils';
 
 interface UserCardProps {
   user: User;
@@ -11,17 +10,12 @@ interface UserCardProps {
   showEmail?: boolean;
 }
 
-export function UserCard({
-  user,
-  isSelected,
-  onClick,
-  showEmail,
-}: UserCardProps) {
+export function UserCard({ user, isSelected, onClick, showEmail }: UserCardProps) {
   return (
     <Card
       className={cn(
-        "cursor-pointer transition-all hover:shadow-md",
-        isSelected && "ring-2 ring-blue-500 bg-blue-50"
+        'cursor-pointer transition-all hover:shadow-md',
+        isSelected && 'ring-2 ring-blue-500 bg-blue-50'
       )}
       onClick={onClick}
     >
@@ -30,16 +24,14 @@ export function UserCard({
           {/* Avatar */}
           <div
             className={cn(
-              "flex h-12 w-12 items-center justify-center rounded-full text-white font-semibold text-lg",
-              user.avatar ? "" : getAvatarColor(user.name)
+              'flex h-12 w-12 items-center justify-center rounded-full text-white font-semibold text-lg',
+              user.avatar ? '' : getAvatarColor(user.name)
             )}
           >
             {user.avatar ? (
-              <Image
+              <img
                 src={user.avatar}
                 alt={user.name}
-                width={48} // явно указываем ширину
-                height={48} // явно указываем высоту
                 className="h-full w-full rounded-full object-cover"
               />
             ) : (
@@ -58,7 +50,7 @@ export function UserCard({
 
           {/* Selected indicator */}
           {isSelected && (
-            <div className="shrink-0">
+            <div className="flex-shrink-0">
               <svg
                 className="h-6 w-6 text-blue-500"
                 fill="currentColor"
