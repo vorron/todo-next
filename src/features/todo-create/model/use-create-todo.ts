@@ -4,24 +4,30 @@ import { useAuth } from '@/features/auth';
 import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
 import { createTodoSchema } from '@/entities/todo';
 import { z } from 'zod';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-/**
- * Hook для создания todo с валидацией
- */
+interface CreateResult {
+    success: boolean;
+    errors?: Record<string, string>;
+}
+
 export function useCreateTodo() {
     const [createTodo, { isLoading }] = useCreateTodoMutation();
     const { userId } = useAuth();
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const create = useCallback(
-        async (text: string, priority?: 'low' | 'medium' | 'high') => {
+        async (text: string, priority?: 'low' | 'medium' | 'high'): Promise<CreateResult> => {
             if (!userId) {
-                handleApiError({ message: 'User not authenticated' } as any);
+                const error: FetchBaseQueryError = {
+                    status: 'CUSTOM_ERROR',
+                    error: 'User not authenticated'
+                };
+                handleApiError(error);
                 return { success: false };
             }
 
             try {
-                // Валидация
                 const validatedData = createTodoSchema.parse({
                     text,
                     userId,
@@ -30,13 +36,11 @@ export function useCreateTodo() {
                 });
 
                 setErrors({});
-
-                // Создание
                 await createTodo(validatedData).unwrap();
 
                 handleApiSuccess('Todo created successfully');
                 return { success: true };
-            } catch (error) {
+            } catch (error: unknown) {
                 if (error instanceof z.ZodError) {
                     const fieldErrors = error.issues.reduce((acc: Record<string, string>, issue) => {
                         const fieldName = issue.path[0]?.toString();
@@ -49,8 +53,9 @@ export function useCreateTodo() {
                     setErrors(fieldErrors);
                     return { success: false, errors: fieldErrors };
                 }
-                // Обработка других типов ошибок
-                throw error;
+
+                handleApiError(error as FetchBaseQueryError, 'Failed to create todo');
+                return { success: false };
             }
         },
         [createTodo, userId]

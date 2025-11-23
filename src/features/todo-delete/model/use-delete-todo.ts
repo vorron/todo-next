@@ -1,16 +1,16 @@
 import { useCallback, useState } from 'react';
 import { useDeleteTodoMutation } from '@/entities/todo';
 import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-/**
- * Hook для удаления todo с подтверждением через dialog
- */
+interface PendingDelete {
+    id: string;
+    text: string;
+}
+
 export function useDeleteTodo() {
     const [deleteTodo, { isLoading }] = useDeleteTodoMutation();
-    const [pendingDelete, setPendingDelete] = useState<{
-        id: string;
-        text: string;
-    } | null>(null);
+    const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
 
     const requestDelete = useCallback((todoId: string, todoText: string) => {
         setPendingDelete({ id: todoId, text: todoText });
@@ -23,8 +23,8 @@ export function useDeleteTodo() {
             await deleteTodo(pendingDelete.id).unwrap();
             handleApiSuccess('Todo deleted successfully');
             setPendingDelete(null);
-        } catch (error: any) {
-            handleApiError(error, 'Failed to delete todo');
+        } catch (error: unknown) {
+            handleApiError(error as FetchBaseQueryError, 'Failed to delete todo');
         }
     }, [deleteTodo, pendingDelete]);
 

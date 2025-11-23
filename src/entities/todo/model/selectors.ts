@@ -1,7 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { todoApi } from '../api/todo-api';
-import type { Todo, FilterType, TodoStats } from './types';
-import { TodoPriority } from './todo-schema';
+import type { FilterType, TodoStats } from './types';
 
 /**
  * Базовые селекторы

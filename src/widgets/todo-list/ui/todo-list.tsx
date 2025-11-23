@@ -12,28 +12,46 @@ import {
     CardHeader,
     CardTitle,
     CardContent,
+    Button,
 } from '@/shared/ui';
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/shared/config/routes';
+import { useCallback, useState } from 'react';
 
 interface TodoListProps {
     filter?: 'all' | 'active' | 'completed';
 }
 
 export function TodoList({ filter = 'all' }: TodoListProps) {
-    const { userId } = useAuth();
+    const { userId, isAuthenticated } = useAuth();
     const router = useRouter();
+    const [retryCount, setRetryCount] = useState(0);
 
     const {
         data: todos,
         isLoading,
         isError,
-    } = useGetTodosQuery(userId ? { userId } : undefined, {
-        skip: !userId,
-    });
+        error,
+        refetch,
+    } = useGetTodosQuery(
+        userId && isAuthenticated ? { userId } : undefined,
+        {
+            skip: !userId || !isAuthenticated,
+            refetchOnMountOrArgChange: true,
+        }
+    );
 
     const { toggle } = useOptimisticToggle();
     const { requestDelete, confirmDelete, cancelDelete, pendingDelete, isLoading: isDeleting } = useDeleteTodo();
+
+    const handleTodoClick = useCallback((id: string) => {
+        router.push(ROUTES.TODO_DETAIL(id));
+    }, [router]);
+
+    const handleRetry = useCallback(() => {
+        setRetryCount(prev => prev + 1);
+        refetch();
+    }, [refetch]);
 
     // Фильтрация
     const filteredTodos = todos?.filter((todo) => {
@@ -75,10 +93,17 @@ export function TodoList({ filter = 'all' }: TodoListProps) {
                                 />
                             </svg>
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-900">Failed to load todos</h3>
-                        <p className="mt-2 text-sm text-gray-600">
-                            Please try again or contact support if the problem persists.
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Failed to load todos</h3>
+                        <p className="text-sm text-gray-600 mb-4">
+                            {error && 'status' in error ? `Error: ${error.status}` : 'Please try again'}
                         </p>
+                        <Button
+                            onClick={handleRetry}
+                            variant="primary"
+                            disabled={retryCount > 2}
+                        >
+                            {retryCount > 2 ? 'Please refresh page' : 'Try Again'}
+                        </Button>
                     </div>
                 </CardContent>
             </Card>
@@ -106,10 +131,19 @@ export function TodoList({ filter = 'all' }: TodoListProps) {
     return (
         <>
             <Card>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>
                         My Todos ({filteredTodos.length})
                     </CardTitle>
+                    <div className="flex gap-2">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => refetch()}
+                        >
+                            Refresh
+                        </Button>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-3">
@@ -119,7 +153,7 @@ export function TodoList({ filter = 'all' }: TodoListProps) {
                                 todo={todo}
                                 onToggle={() => toggle(todo)}
                                 onDelete={() => requestDelete(todo.id, todo.text)}
-                                onClick={() => router.push(ROUTES.TODO_DETAIL(todo.id))}
+                                onClick={() => handleTodoClick(todo.id)}
                             />
                         ))}
                     </div>

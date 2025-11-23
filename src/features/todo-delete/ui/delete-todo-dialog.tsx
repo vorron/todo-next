@@ -1,7 +1,6 @@
 'use client';
 
 import { ConfirmationDialog } from '@/shared/ui';
-import { useDeleteTodo } from '../model/use-delete-todo';
 
 interface DeleteTodoDialogProps {
     isOpen: boolean;

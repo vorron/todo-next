@@ -2,10 +2,8 @@ import { useCallback } from 'react';
 import { useUpdateTodoMutation } from '@/entities/todo';
 import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
 import type { Todo } from '@/entities/todo';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-/**
- * Hook для оптимистичного переключения статуса todo
- */
 export function useOptimisticToggle() {
     const [updateTodo, { isLoading }] = useUpdateTodoMutation();
 
@@ -20,13 +18,11 @@ export function useOptimisticToggle() {
                     completed: newCompleted,
                 }).unwrap();
 
-                // Успешно - показываем уведомление
                 handleApiSuccess(
                     newCompleted ? 'Todo completed!' : 'Todo marked as active'
                 );
-            } catch (error: any) {
-                // Ошибка - RTK Query автоматически откатит изменения
-                handleApiError(error, 'Failed to update todo');
+            } catch (error: unknown) {
+                handleApiError(error as FetchBaseQueryError, 'Failed to update todo');
             }
         },
         [updateTodo]

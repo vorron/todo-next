@@ -4,19 +4,19 @@ import { z } from "zod";
  * Zod схема для Todo
  */
 export const todoSchema = z.object({
-  id: z.string().uuid("Invalid todo ID format"),
+  id: z.string().min(1, "Todo ID is required"),
   text: z
     .string()
     .min(1, "Todo text is required")
     .max(500, "Todo text must be at most 500 characters")
     .trim(),
   completed: z.boolean().default(false),
-  userId: z.string().uuid("Invalid user ID format"),
+  userId: z.string().min(1, "User ID is required"),
   priority: z.enum(["low", "medium", "high"]).optional().default("medium"),
-  dueDate: z.string().datetime().optional(),
+  dueDate: z.string().optional(),
   tags: z.array(z.string()).optional().default([]),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
+  createdAt: z.string().optional().default(() => new Date().toISOString()),
+  updatedAt: z.string().optional().default(() => new Date().toISOString()),
 });
 
 // Схема для массива todos
@@ -35,7 +35,6 @@ export const updateTodoSchema = todoSchema
   .required({ id: true })
   .refine(
     (data) => {
-      // Если есть text, он не должен быть пустым
       if (data.text !== undefined && data.text.trim().length === 0) {
         return false;
       }
@@ -47,13 +46,22 @@ export const updateTodoSchema = todoSchema
     }
   );
 
-// Схема для фильтров
+// Схема для фильтров - более мягкая версия
 export const todoFilterSchema = z.object({
-  userId: z.string().uuid().optional(),
+  userId: z.string().optional(),
   completed: z.boolean().optional(),
   priority: z.enum(["low", "medium", "high"]).optional(),
   search: z.string().optional(),
   tags: z.array(z.string()).optional(),
+});
+
+// Схема для query параметров
+export const todoFilterQuerySchema = z.object({
+  userId: z.string().optional(),
+  completed: z.boolean().optional(),
+  priority: z.enum(["low", "medium", "high"]).optional(),
+  search: z.string().optional(),
+  tags: z.string().optional().transform(val => val ? val.split(',') : undefined),
 });
 
 /**
@@ -63,6 +71,7 @@ export type Todo = z.infer<typeof todoSchema>;
 export type CreateTodoDto = z.infer<typeof createTodoSchema>;
 export type UpdateTodoDto = z.infer<typeof updateTodoSchema>;
 export type TodoFilter = z.infer<typeof todoFilterSchema>;
+export type TodoFilterQuery = z.infer<typeof todoFilterQuerySchema>;
 
 // Enum для приоритетов (для удобства использования)
 export const TodoPriority = {

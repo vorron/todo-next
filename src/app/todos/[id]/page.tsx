@@ -1,11 +1,16 @@
-import { use } from 'react';
 import { TodoDetailPage } from '@/screens/todo-detail';
 
 interface PageProps {
-    params: Promise<{ id: string }>;
+    params: { id: string };
 }
 
 export default function Page({ params }: PageProps) {
-    const { id } = use(params);
-    return <TodoDetailPage todoId={id} />;
+    return <TodoDetailPage todoId={params.id} />;
 }
+
+// import { use } from 'react';
+
+// export default function Page({ params }: PageProps) {
+//     const { id } = use(params);
+//     return <TodoDetailPage todoId={id} />;
+// }

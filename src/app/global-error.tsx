@@ -27,6 +27,19 @@ export default function GlobalError({
                         <p style={{ color: '#666', marginBottom: '24px' }}>
                             A critical error occurred. Please refresh the page.
                         </p>
+                        {process.env.NODE_ENV === 'development' && (
+                            <div style={{
+                                marginBottom: '24px',
+                                padding: '12px',
+                                backgroundColor: '#f5f5f5',
+                                borderRadius: '4px',
+                                textAlign: 'left',
+                                fontSize: '14px',
+                                color: '#ff0000',
+                            }}>
+                                {error.message}
+                            </div>
+                        )}
                         <button
                             onClick={reset}
                             style={{

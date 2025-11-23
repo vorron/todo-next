@@ -2,6 +2,7 @@ import { Card, CardContent } from '@/shared/ui';
 import { getUserInitials, getAvatarColor } from '../lib/user-helpers';
 import type { User } from '../model/types';
 import { cn } from '@/shared/lib/utils';
+import Image from 'next/image';
 
 interface UserCardProps {
   user: User;
@@ -29,9 +30,11 @@ export function UserCard({ user, isSelected, onClick, showEmail }: UserCardProps
             )}
           >
             {user.avatar ? (
-              <img
+              <Image
                 src={user.avatar}
                 alt={user.name}
+                width={40} // или нужный размер
+                height={40}
                 className="h-full w-full rounded-full object-cover"
               />
             ) : (

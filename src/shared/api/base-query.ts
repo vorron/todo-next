@@ -1,38 +1,34 @@
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import type {
+    BaseQueryFn,
+    FetchArgs,
+    FetchBaseQueryError,
+    BaseQueryApi
+} from '@reduxjs/toolkit/query';
 import { z } from 'zod';
 import { env } from '@/shared/config/env';
 
-/**
- * Базовый query с автоматической валидацией через Zod
- */
+// Определяем тип для extraOptions
+type ExtraOptions = Record<string, unknown> & {
+    shout?: boolean; // пример дополнительных опций
+};
+
 export const baseQuery = fetchBaseQuery({
     baseUrl: env.API_URL,
     prepareHeaders: (headers) => {
-        // Добавляем базовые заголовки
         headers.set('Content-Type', 'application/json');
-
-        // TODO: Добавить токен авторизации
-        // const token = getAuthToken();
-        // if (token) {
-        //   headers.set('Authorization', `Bearer ${token}`);
-        // }
-
         return headers;
     },
 });
 
-/**
- * Query wrapper с логированием и обработкой ошибок
- */
 export const baseQueryWithLogging: BaseQueryFn<
     string | FetchArgs,
     unknown,
-    FetchBaseQueryError
+    FetchBaseQueryError,
+    ExtraOptions // добавляем тип для extraOptions
 > = async (args, api, extraOptions) => {
     const start = Date.now();
 
-    // Логируем запрос в development
     if (env.IS_DEVELOPMENT) {
         console.log('🔵 API Request:', {
             endpoint: typeof args === 'string' ? args : args.url,
@@ -42,10 +38,8 @@ export const baseQueryWithLogging: BaseQueryFn<
     }
 
     const result = await baseQuery(args, api, extraOptions);
-
     const duration = Date.now() - start;
 
-    // Логируем результат
     if (env.IS_DEVELOPMENT) {
         if (result.error) {
             console.error('🔴 API Error:', {
@@ -64,16 +58,13 @@ export const baseQueryWithLogging: BaseQueryFn<
     return result;
 };
 
-/**
- * Хелпер для создания валидированного query
- */
 export function createValidatedQuery<TSchema extends z.ZodTypeAny>(
     schema: TSchema
 ) {
     return async (
         args: string | FetchArgs,
-        api: any,
-        extraOptions: any
+        api: BaseQueryApi,
+        extraOptions: ExtraOptions // используем тот же тип
     ): Promise<{ data: z.infer<TSchema> } | { error: FetchBaseQueryError }> => {
         const result = await baseQueryWithLogging(args, api, extraOptions);
 
@@ -82,17 +73,16 @@ export function createValidatedQuery<TSchema extends z.ZodTypeAny>(
         }
 
         try {
-            // Валидируем данные через Zod
             const validatedData = schema.parse(result.data);
             return { data: validatedData };
         } catch (error) {
             if (error instanceof z.ZodError) {
-                console.error('❌ Validation Error:', error.errors);
+                console.error('❌ Validation Error:', error.issues);
                 return {
                     error: {
-                        status: 'PARSING_ERROR',
+                        status: 'CUSTOM_ERROR',
                         error: 'Response validation failed',
-                        data: error.errors,
+                        data: error.issues,
                     } as FetchBaseQueryError,
                 };
             }

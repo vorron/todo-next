@@ -1,4 +1,7 @@
+'use client';
+
 import { Button } from '@/shared/ui/button';
+import { useRouter } from 'next/navigation';
 
 interface ErrorFallbackProps {
     error: Error;
@@ -6,6 +9,12 @@ interface ErrorFallbackProps {
 }
 
 export function ErrorFallback({ error, resetErrorBoundary }: ErrorFallbackProps) {
+    const router = useRouter();
+
+    const handleGoHome = () => {
+        router.push('/');
+    };
+
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
             <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6">
@@ -30,7 +39,7 @@ export function ErrorFallback({ error, resetErrorBoundary }: ErrorFallbackProps)
                 </h2>
 
                 <p className="mt-2 text-sm text-center text-gray-600">
-                    We're sorry for the inconvenience. An error occurred while processing your request.
+                    We&apos;re sorry for the inconvenience. An error occurred while processing your request.
                 </p>
 
                 {process.env.NODE_ENV === 'development' && (
@@ -57,7 +66,7 @@ export function ErrorFallback({ error, resetErrorBoundary }: ErrorFallbackProps)
                     </Button>
                     <Button
                         variant="secondary"
-                        onClick={() => window.location.href = '/'}
+                        onClick={handleGoHome}
                         className="flex-1"
                     >
                         Go Home

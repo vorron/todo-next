@@ -5,6 +5,12 @@ import { Button, Input, Card, CardHeader, CardTitle, CardContent } from '@/share
 import { useAuth } from '../model/use-auth';
 import { validateLoginForm } from '../lib/validation';
 
+// Константы для сообщений об ошибках
+const ERROR_MESSAGES = {
+    DEFAULT: 'An unexpected error occurred. Please try again.',
+    VALIDATION: 'Please check your input and try again.',
+} as const;
+
 export function LoginForm() {
     const { login, isLoading } = useAuth();
 
@@ -20,6 +26,7 @@ export function LoginForm() {
         const validation = validateLoginForm({ username });
         if (!validation.valid) {
             setErrors(validation.errors);
+            setGeneralError(ERROR_MESSAGES.VALIDATION);
             return;
         }
 
@@ -29,7 +36,20 @@ export function LoginForm() {
         const result = await login({ username });
 
         if (!result.success) {
-            setGeneralError(result.message);
+            // Используем сообщение из результата или fallback
+            const errorMessage = result.message || ERROR_MESSAGES.DEFAULT;
+            setGeneralError(errorMessage);
+        }
+    };
+
+    const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setUsername(value);
+
+        // Очищаем ошибки при изменении значения
+        if (errors.username || generalError) {
+            setErrors({});
+            setGeneralError('');
         }
     };
 
@@ -44,15 +64,19 @@ export function LoginForm() {
                         label="Username"
                         type="text"
                         value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        onChange={handleUsernameChange}
                         error={errors.username}
                         placeholder="Enter your username"
                         disabled={isLoading}
                         autoComplete="username"
+                        required
                     />
 
                     {generalError && (
-                        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+                        <div
+                            className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600"
+                            role="alert"
+                        >
                             {generalError}
                         </div>
                     )}
@@ -61,7 +85,7 @@ export function LoginForm() {
                         type="submit"
                         className="w-full"
                         isLoading={isLoading}
-                        disabled={isLoading}
+                        disabled={isLoading || !username.trim()}
                     >
                         {isLoading ? 'Logging in...' : 'Login'}
                     </Button>

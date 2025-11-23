@@ -55,7 +55,7 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
                                 </div>
                                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Todo Not Found</h2>
                                 <p className="text-gray-600 mb-6">
-                                    The todo you're looking for doesn't exist or has been deleted.
+                                    The todo you&apos;re looking for doesn&apos;t exist or has been deleted.
                                 </p>
                                 <Button onClick={() => router.push(ROUTES.TODOS)}>
                                     Back to Todos

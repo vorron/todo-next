@@ -7,17 +7,29 @@ import {
   todoFilterSchema,
 } from '../model/todo-schema';
 import type { Todo, CreateTodoDto, UpdateTodoDto, TodoFilter } from '../model/types';
+import z from 'zod';
 
-/**
- * API endpoints для работы с Todo
- */
+// Упрощенная схема фильтров без строгой UUID валидации
+const todoFilterQuerySchema = todoFilterSchema.pick({
+  completed: true,
+  priority: true,
+  search: true,
+}).extend({
+  userId: z.string().optional(), // Разрешаем любую строку
+  tags: z.string().optional().transform(val => val ? val.split(',') : undefined),
+});
+
 export const todoApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Получение списка todos с фильтрами
     getTodos: builder.query<Todo[], TodoFilter | void>({
       query: (filters) => {
-        // Валидируем фильтры если они есть
-        const validatedFilters = filters ? todoFilterSchema.parse(filters) : {};
+        if (!filters) {
+          return { url: 'todos' };
+        }
+
+        // Более мягкая валидация для query параметров
+        const validatedFilters = todoFilterQuerySchema.parse(filters);
 
         return {
           url: 'todos',

@@ -1,26 +1,24 @@
 import { baseApi } from '@/shared/api';
 import { userSchema } from '@/entities/user';
 import type { User } from '@/entities/user';
-import type { LoginDto, LoginResponse, Session } from '../model/types';
+import type { LoginDto, LoginResponse } from '../model/types';
 import { createMockSession } from '../lib/session';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-/**
- * Mock API для аутентификации
- * В будущем заменится на реальные endpoints
- */
+interface ApiError {
+  status: number;
+  data: { message: string };
+}
+
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    /**
-     * Mock login - находит пользователя по username
-     */
     login: builder.mutation<LoginResponse, LoginDto>({
-      async queryFn({ username }, api, extraOptions, baseQuery) {
+      async queryFn({ username }, _api, _extraOptions, baseQuery) {
         try {
-          // Получаем список пользователей
           const result = await baseQuery('users');
 
           if (result.error) {
-            return { error: result.error };
+            return { error: result.error as FetchBaseQueryError };
           }
 
           const users = result.data as User[];
@@ -29,15 +27,13 @@ export const authApi = baseApi.injectEndpoints({
           );
 
           if (!user) {
-            return {
-              error: {
-                status: 401,
-                data: { message: 'User not found' },
-              } as any,
+            const error: ApiError = {
+              status: 401,
+              data: { message: 'User not found' },
             };
+            return { error: error as FetchBaseQueryError };
           }
 
-          // Создаем mock сессию
           const session = createMockSession(user.id, user.username, user.name);
 
           return {
@@ -46,33 +42,34 @@ export const authApi = baseApi.injectEndpoints({
               message: 'Login successful',
             },
           };
-        } catch (error) {
-          return {
-            error: {
-              status: 500,
-              data: { message: 'Login failed' },
-            } as any,
+        } catch {
+          const error: ApiError = {
+            status: 500,
+            data: { message: 'Login failed' },
           };
+          return { error: error as FetchBaseQueryError };
         }
       },
       invalidatesTags: ['Auth'],
     }),
 
-    /**
-     * Mock logout
-     */
-    logout: builder.mutation<void, void>({
+    logout: builder.mutation<{ success: boolean }, void>({
       queryFn: async () => {
-        // Здесь будет API запрос для инвалидации токена
-        await new Promise((resolve) => setTimeout(resolve, 300));
-        return { data: undefined };
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          return { data: { success: true } };
+        } catch (error) {
+          return {
+            error: {
+              status: 'CUSTOM_ERROR',
+              error: 'Logout failed'
+            } as FetchBaseQueryError
+          };
+        }
       },
       invalidatesTags: ['Auth', 'Todo', 'User'],
     }),
 
-    /**
-     * Проверка сессии (refresh)
-     */
     validateSession: builder.query<User, string>({
       query: (userId) => `users/${userId}`,
       transformResponse: (response: unknown) => {
