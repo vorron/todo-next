@@ -3,8 +3,8 @@
 import { useGetTodosQuery } from '@/entities/todo';
 import { TodoCard } from '@/entities/todo';
 import { useAuth } from '@/features/auth';
-import { useOptimisticToggle } from '@/features/todo-update';
-import { useDeleteTodo, DeleteTodoDialog } from '@/features/todo-delete';
+import { useOptimisticToggle } from '@/features/todo/todo-update';
+import { useDeleteTodo, DeleteTodoDialog } from '@/features/todo/todo-delete';
 import {
     SkeletonList,
     EmptyTodos,
@@ -17,6 +17,8 @@ import {
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/shared/config/routes';
 import { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { selectCompactView } from '@/features/settings/model/selectors';
 
 interface TodoListProps {
     filter?: 'all' | 'active' | 'completed';
@@ -26,6 +28,8 @@ export function TodoList({ filter = 'all' }: TodoListProps) {
     const { userId, isAuthenticated } = useAuth();
     const router = useRouter();
     const [retryCount, setRetryCount] = useState(0);
+
+    const compactView = useSelector(selectCompactView);
 
     const {
         data: todos,
@@ -151,6 +155,7 @@ export function TodoList({ filter = 'all' }: TodoListProps) {
                             <TodoCard
                                 key={todo.id}
                                 todo={todo}
+                                variant={compactView ? 'compact' : 'default'}
                                 onToggle={() => toggle(todo)}
                                 onDelete={() => requestDelete(todo.id, todo.text)}
                                 onClick={() => handleTodoClick(todo.id)}

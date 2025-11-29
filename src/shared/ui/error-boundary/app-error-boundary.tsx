@@ -6,11 +6,11 @@ import { ErrorFallback } from './error-fallback';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-interface AppErrorBoundaryProps {
+export function AppErrorBoundary({
+    children
+}: {
     children: React.ReactNode;
-}
-
-export function AppErrorBoundary({ children }: AppErrorBoundaryProps) {
+}) {
     const router = useRouter();
     const pathname = usePathname();
     const [resetKey, setResetKey] = useState<string | null>(null);

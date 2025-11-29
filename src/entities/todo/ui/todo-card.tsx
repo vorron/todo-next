@@ -9,6 +9,7 @@ interface TodoCardProps {
   onToggle?: () => void;
   onDelete?: () => void;
   onClick?: () => void;
+  variant?: 'default' | 'compact';
   showPriority?: boolean;
   showDueDate?: boolean;
 }
@@ -18,6 +19,7 @@ export function TodoCard({
   onToggle,
   onDelete,
   onClick,
+  variant = 'default',
   showPriority = true,
   showDueDate = true,
 }: TodoCardProps) {
@@ -29,10 +31,11 @@ export function TodoCard({
       className={cn(
         'transition-all hover:shadow-md',
         todo.completed && 'opacity-60',
-        getPriorityClassName(priority)
+        getPriorityClassName(priority),
+        variant === 'compact' ? 'p-3' : 'p-4'
       )}
     >
-      <CardContent className="p-4">
+      <CardContent className={cn('p-0', variant === 'compact' ? 'space-y-2' : 'space-y-3')}>
         <div className="flex items-start gap-3">
           {/* Checkbox */}
           <button

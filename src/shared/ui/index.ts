@@ -7,3 +7,4 @@ export { Toaster, toast } from './toast';
 export { PageLoader, Skeleton, SkeletonCard, SkeletonList } from './loading';
 export { EmptyState, EmptyTodos, EmptySearchResults } from './empty-state';
 export { ConfirmationDialog } from './dialog';
+export { Switch, type SwitchProps } from './switch';

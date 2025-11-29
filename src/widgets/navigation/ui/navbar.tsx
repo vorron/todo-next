@@ -2,14 +2,20 @@
 
 import { useAuth } from '@/features/auth';
 import { UserMenu, LogoutButton } from '@/features/auth';
-import { useRouter } from 'next/navigation';
-import { ROUTES } from '@/shared/config/routes';
+import { useRouter, usePathname } from 'next/navigation';
+import { ROUTES, navigation } from '@/shared/config/routes';
+import { cn } from '@/shared/lib/utils';
 
 export function Navbar() {
     const { isAuthenticated, session } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
 
     if (!isAuthenticated) return null;
+
+    const isActiveRoute = (href: string) => {
+        return pathname === href || (href !== ROUTES.HOME && pathname.startsWith(href));
+    };
 
     return (
         <nav className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white/80 backdrop-blur-lg supports-backdrop-blur:bg-white/60">
@@ -30,24 +36,28 @@ export function Navbar() {
 
                     {/* Navigation Links */}
                     <div className="hidden md:flex items-center space-x-6">
-                        <button
-                            onClick={() => router.push(ROUTES.TODOS)}
-                            className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
-                        >
-                            My Todos
-                        </button>
-                        <button
-                            onClick={() => router.push(ROUTES.PROFILE)}
-                            className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
-                        >
-                            Profile
-                        </button>
+                        {navigation.main
+                            .map((item) => (
+                                <button
+                                    key={item.href}
+                                    onClick={() => router.push(item.href)}
+                                    className={cn(
+                                        'text-sm font-medium transition-colors relative',
+                                        isActiveRoute(item.href)
+                                            ? 'text-blue-600'
+                                            : 'text-gray-700 hover:text-blue-600'
+                                    )}
+                                >
+                                    {item.name}
+                                    {isActiveRoute(item.href) && (
+                                        <span className="absolute -bottom-6 left-0 w-full h-0.5 bg-blue-600 rounded-full" />
+                                    )}
+                                </button>
+                            ))}
                     </div>
 
                     {/* User Section */}
                     <div className="flex items-center space-x-4">
-                        {/* Mobile menu button would go here */}
-
                         {/* User info */}
                         <div className="hidden sm:flex items-center space-x-3">
                             <span className="text-sm text-gray-600">

@@ -46,7 +46,7 @@ export const updateTodoSchema = todoSchema
     }
   );
 
-// Схема для фильтров - более мягкая версия
+// Схема для фильтров
 export const todoFilterSchema = z.object({
   userId: z.string().optional(),
   completed: z.boolean().optional(),

@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/app/providers';
 import { Toaster, AppErrorBoundary } from '@/shared/ui';
-import { Navbar } from '@/widgets/navigation/ui/navbar';
+import { Navbar } from '@/widgets';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -35,6 +35,17 @@ export default function RootLayout({
 }: {
     children: React.ReactNode;
 }) {
+    // const theme = useSelector(selectTheme);
+
+    // useEffect(() => {
+    //     // Применяем тему к документу
+    //     if (theme === 'dark') {
+    //         document.documentElement.classList.add('dark');
+    //     } else {
+    //         document.documentElement.classList.remove('dark');
+    //     }
+    // }, [theme]);
+
     return (
         <html lang="en" className="h-full">
             <body className={`${inter.className} h-full antialiased`}>
