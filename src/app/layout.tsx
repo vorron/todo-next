@@ -35,16 +35,6 @@ export default function RootLayout({
 }: {
     children: React.ReactNode;
 }) {
-    // const theme = useSelector(selectTheme);
-
-    // useEffect(() => {
-    //     // Применяем тему к документу
-    //     if (theme === 'dark') {
-    //         document.documentElement.classList.add('dark');
-    //     } else {
-    //         document.documentElement.classList.remove('dark');
-    //     }
-    // }, [theme]);
 
     return (
         <html lang="en" className="h-full">
@@ -52,7 +42,6 @@ export default function RootLayout({
                 <AppErrorBoundary>
                     <Providers>
                         <div className="min-h-full flex flex-col">
-                            <Navbar />
                             <main className="flex-1">
                                 {children}
                             </main>

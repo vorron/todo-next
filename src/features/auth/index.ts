@@ -4,7 +4,6 @@ export { useAuth } from './model/use-auth';
 // UI Components
 export { LoginForm } from './ui/login-form';
 export { LogoutButton } from './ui/logout-button';
-export { AuthGuard } from './ui/auth-guard';
 export { UserMenu } from './ui/user-menu';
 
 // API

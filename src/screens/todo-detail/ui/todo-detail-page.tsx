@@ -4,7 +4,6 @@ import { useGetTodoByIdQuery } from '@/entities/todo';
 import { TodoStatusBadge } from '@/entities/todo';
 import { useOptimisticToggle } from '@/features/todo/todo-update';
 import { useDeleteTodo, DeleteTodoDialog } from '@/features/todo/todo-delete';
-import { AuthGuard } from '@/features/auth';
 import {
     PageLoader,
     Card,
@@ -29,46 +28,42 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
 
     if (isLoading) {
         return (
-            <AuthGuard>
-                <PageLoader message="Loading todo details..." />
-            </AuthGuard>
+            <PageLoader message="Loading todo details..." />
         );
     }
 
     if (isError || !todo) {
         return (
-            <AuthGuard>
-                <div className="container mx-auto py-8 px-4 max-w-4xl">
-                    <Card>
-                        <CardContent className="py-12">
-                            <div className="text-center">
-                                <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
-                                    <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M6 18L18 6M6 6l12 12"
-                                        />
-                                    </svg>
-                                </div>
-                                <h2 className="text-2xl font-bold text-gray-900 mb-2">Todo Not Found</h2>
-                                <p className="text-gray-600 mb-6">
-                                    The todo you&apos;re looking for doesn&apos;t exist or has been deleted.
-                                </p>
-                                <Button onClick={() => router.push(ROUTES.TODOS)}>
-                                    Back to Todos
-                                </Button>
+            <div className="container mx-auto py-8 px-4 max-w-4xl">
+                <Card>
+                    <CardContent className="py-12">
+                        <div className="text-center">
+                            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
+                                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M6 18L18 6M6 6l12 12"
+                                    />
+                                </svg>
                             </div>
-                        </CardContent>
-                    </Card>
-                </div>
-            </AuthGuard>
+                            <h2 className="text-2xl font-bold text-gray-900 mb-2">Todo Not Found</h2>
+                            <p className="text-gray-600 mb-6">
+                                The todo you&apos;re looking for doesn&apos;t exist or has been deleted.
+                            </p>
+                            <Button onClick={() => router.push(ROUTES.TODOS)}>
+                                Back to Todos
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
         );
     }
 
     return (
-        <AuthGuard>
+        <>
             <div className="container mx-auto py-8 px-4 max-w-4xl">
                 <div className="mb-6">
                     <Button
@@ -207,6 +202,6 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
                     isLoading={isDeleting}
                 />
             )}
-        </AuthGuard>
+        </>
     );
 }

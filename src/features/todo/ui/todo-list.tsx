@@ -1,6 +1,5 @@
 'use client';
 
-import { useGetTodosQuery } from '@/entities/todo';
 import { TodoCard } from '@/entities/todo';
 import { useAuth } from '@/features/auth';
 import { useOptimisticToggle } from '@/features/todo/todo-update';
@@ -19,6 +18,7 @@ import { ROUTES } from '@/shared/config/routes';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectCompactView } from '@/features/settings/model/selectors';
+import { useTodos } from '../model/use-todos';
 
 interface TodoListProps {
     filter?: 'all' | 'active' | 'completed';
@@ -32,18 +32,11 @@ export function TodoList({ filter = 'all' }: TodoListProps) {
     const compactView = useSelector(selectCompactView);
 
     const {
-        data: todos,
+        todos,
         isLoading,
-        isError,
         error,
         refetch,
-    } = useGetTodosQuery(
-        userId && isAuthenticated ? { userId } : undefined,
-        {
-            skip: !userId || !isAuthenticated,
-            refetchOnMountOrArgChange: true,
-        }
-    );
+    } = useTodos()
 
     const { toggle } = useOptimisticToggle();
     const { requestDelete, confirmDelete, cancelDelete, pendingDelete, isLoading: isDeleting } = useDeleteTodo();
@@ -79,7 +72,7 @@ export function TodoList({ filter = 'all' }: TodoListProps) {
     }
 
     // Error state
-    if (isError) {
+    if (!!error) {
         return (
             <Card>
                 <CardHeader>

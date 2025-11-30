@@ -58,5 +58,5 @@ export {
   getUniqueTags,
 } from "./lib/todo-helpers";
 
-export { TodoCard, TodoStatusBadge } from './ui'
+export { TodoCard, TodoStatusBadge } from '../../features/todo/ui'
 

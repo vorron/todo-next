@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-
 import { ConfirmationDialog } from '@/shared/ui';
-import { useTodos } from '../../model/use-todos';
+import { useTodos } from '../model/use-todos';
 
 interface PendingDelete {
     id: string;
