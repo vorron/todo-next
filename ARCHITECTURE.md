@@ -1,0 +1,203 @@
+Архитектура проекта todo-next
+
+1. Цель архитектуры
+Проект todo-next — эталонный шаблон для создания новых приложений:
+
+масштабируемая, понятная FSD‑архитектура;
+минимальная «проектная магия»: новый разработчик быстро понимает устройство;
+готовность заменить mock‑авторизацию на реальную;
+возможность вынесения ядра в условный 
+company/foundation
+ (дизайн‑система, API‑база, layouts, провайдеры).
+2. Слои и структура папок
+Корневые слои:
+
+src/app — маршрутизация (App Router), layout’ы, мета‑данные.
+src/screens — страничный слой (page‑level UI и логика оркестрации).
+src/widgets — переиспользуемые композиционные блоки UI.
+src/features — фича‑ориентированная логика + UI.
+src/entities — доменные сущности (типы, схемы, API, чистые функции).
+src/shared
+ — инфраструктура и атомарные вещи (UI, lib, config, api‑база).
+2.1. app/ — инфраструктура маршрутизации
+Ответственность:
+
+структура роутов App Router;
+layout’ы (root, (public), (protected) и др.);
+metadata, viewport, error‑страницы;
+склейка: 
+Page
+ → Screen (почти без логики).
+Правила:
+
+Page
+ и Layout не содержат бизнес‑логики.
+
+Типичный page.tsx:
+```
+import { TodosPage } from '@/screens';
+import { getRouteMetadata } from '@/shared/lib/utils/router-utils';
+import { ROUTES } from '@/shared/config/routes';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = getRouteMetadata(ROUTES.TODOS);
+
+export default function Page() {
+  return <TodosPage />;
+}
+```
+
+Весь HTML/BODY — только в src/app/layout.tsx.
+2.2. screens/ — слой страниц (page‑level)
+Ответственность:
+
+всё, что касается конкретной страницы:
+layout секций;
+композиция widgets, features, entities, shared/ui;
+координация фич между собой (страничная логика).
+Если какой‑то компонент/логика используется только на этой странице, он может жить внутри дерева этой screen.
+Примеры:
+
+tsx
+// src/screens/todos/ui/todos-page.tsx
+```
+'use client';
+
+import { CreateTodoForm } from '@/features/todo/todo-create';
+import { TodoList } from '@/features/todo/ui/todo-list';
+
+export function TodosPage() {
+  return (
+    <div className="container mx-auto py-8 px-4 max-w-4xl space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">My Todos</h1>
+        <p className="text-gray-600">Manage your tasks efficiently</p>
+      </div>
+
+      <CreateTodoForm />
+      <TodoList />
+    </div>
+  );
+}
+```
+Допускается хранить в screens:
+
+общие фильтры/состояние для нескольких фич на странице;
+обработчики, которые «склеивают» несколько виджетов/фич.
+Ограничения:
+
+screens не идут напрямую в shared/api или entities/*/api
+(они используют для этого features/hooks).*
+2.3. widgets/ — композиционные блоки UI
+Ответственность:
+
+многократно переиспользуемые фрагменты интерфейса:
+Navbar, Sidebar, UserSummary;
+доменно‑специфичные блоки типа TodoSummaryPanel, TodoBoard и т.п.
+собирают features + entities + shared/ui, но не являются страницами.
+Правила:
+
+widget может быть доменно‑специфичным (Todo*), если он используется в нескольких screens.
+Тяжёлая доменная логика по типам/валидации/DTO — в entities/features, а не в widgets.*
+2.4. features/ — фичи и бизнес‑логика
+Ответственность:
+
+законченные пользовательские сценарии:
+todo-create, todo-update, todo-delete, todo-filter;
+auth/login, auth/logout;
+settings/update-profile и т.п.
+сложные хуки + UI, специфичные для фичи:
+useTodos, useAuth, useOptimisticToggle;
+CreateTodoForm, LoginForm.
+Правила:
+
+features могут использовать entities и 
+shared
+, но не screens и не app.
+В идеале, экраны (screens) получают от фич готовые хуки и компоненты, не залезая в детали API.
+2.5. entities/ — доменные сущности
+Ответственность:
+
+доменные типы, zod‑схемы, RTK Query endpoints, чистые функции:
+Todo, User, Session и т.п.;
+todo-schema.ts, todo-api.ts, user-schema.ts.
+Правила:
+
+нет React‑компонентов;
+никакого знания о screens/features/widgets/app;
+RTK Query endpoints живут здесь (через общий baseApi из shared/api).
+2.6. 
+shared/
+ — инфраструктура и атомы
+Ответственность:
+
+переиспользуемая инфраструктура:
+shared/ui — дизайн‑система (Button, Card, Input, Spinner, Toaster и т.п.);
+shared/api — base-api, baseQueryWithLogging;
+shared/lib — утилиты (cn, форматтеры, обработка ошибок);
+shared/config — конфиги (routes, env, etc.).
+Правила:
+
+не зависят от доменных сущностей (features/screens);
+могут быть вынесены в будущий 
+company/foundation
+.
+3. Auth‑flow: вариант A
+3.1. Общая идея
+Единственная точка auth‑защиты роутов — (protected)/layout.tsx (SSR).
+middleware.ts
+ не решает авторизацию:
+используется для логирования, аналитики, технических задач;
+не редиректит пользователя в зависимости от сессии.
+Это убирает дублирование auth‑логики и упрощает понимание.
+
+3.2. Сессия
+Сессия хранится в mock‑виде (localStorage + cookie app_session_exists), но:
+будет вынесен единый «session service» (в entities/session или features/auth/lib/session-service);
+он:
+валидирует структуру Session через zod;
+управляет сроком жизни;
+синхронизирует localStorage и cookie.
+Все потребители (useAuth, useSessionCookie, SSR‑layout) используют один сервис, а не работают с localStorage/cookie напрямую.
+3.3. (protected)/layout.tsx
+Ответственность:
+
+проверить, есть ли валидная сессия (через cookie/запрос);
+если нет — сделать redirect(ROUTES.LOGIN) на сервере;
+если есть — отрендерить приватный shell:
+Navbar,
+<main>, обёртки и т.д.
+Важно:
+
+layout не использует useEffect и client‑редиректы для базовой защиты.
+client‑guard (useAuth.requireAuth) остаётся только как fallback для отдельных client‑компонентов (если нужно).
+3.4. 
+middleware.ts
+Ответственность:
+
+логирование запросов (например, console.log(path) или отправка в трекинг);
+технические функции (кеш‑заголовки, edge‑фичи и т.п.), но не auth‑gateway.
+4. Применение в домене Todo
+Для ориентира:
+
+Страница списка туду:
+app/(protected)/todos/page.tsx → тонкий 
+Page
+, рендерит 
+TodosPage
+ и мета.
+screens/todos/ui/todos-page.tsx
+ → компоновка заголовка, CreateTodoForm, 
+TodoList
+.
+features/todo/* → создание/редактирование/удаление, useTodos, оптимистичные апдейты.
+entities/todo/* → схемы, типы, RTK Query эндпоинты.
+shared/ui → Card, Button, Skeleton, Layout‑компоненты.
+
+4. Практическое правило для нашего проекта
+
+По умолчанию:
+всё, что касается только одной страницы, живёт в её screen (внутри дерева screens/todos/...).
+Выносим в features, когда:
+логика/компонент начинает использоваться в нескольких местах,
+или становится «ядром домена» (логика, которую имеет смысл иметь в foundation).

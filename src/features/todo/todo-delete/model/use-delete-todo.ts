@@ -1,42 +1,26 @@
-import { useCallback, useState } from 'react';
-import { useDeleteTodoMutation } from '@/entities/todo';
-import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
-import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-
-interface PendingDelete {
-    id: string;
-    text: string;
-}
+import { useCallback } from "react";
+import { useDeleteTodoMutation } from "@/entities/todo";
+import { handleApiError, handleApiSuccess } from "@/shared/lib/errors";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 export function useDeleteTodo() {
-    const [deleteTodo, { isLoading }] = useDeleteTodoMutation();
-    const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
+  const [deleteTodoMutation, { isLoading }] = useDeleteTodoMutation();
 
-    const requestDelete = useCallback((todoId: string, todoText: string) => {
-        setPendingDelete({ id: todoId, text: todoText });
-    }, []);
+  const deleteTodo = useCallback(
+    async (id: string) => {
+      try {
+        await deleteTodoMutation(id).unwrap();
+        handleApiSuccess("Todo deleted successfully");
+      } catch (error: unknown) {
+        handleApiError(error as FetchBaseQueryError, "Failed to delete todo");
+        throw error;
+      }
+    },
+    [deleteTodoMutation],
+  );
 
-    const confirmDelete = useCallback(async () => {
-        if (!pendingDelete) return;
-
-        try {
-            await deleteTodo(pendingDelete.id).unwrap();
-            handleApiSuccess('Todo deleted successfully');
-            setPendingDelete(null);
-        } catch (error: unknown) {
-            handleApiError(error as FetchBaseQueryError, 'Failed to delete todo');
-        }
-    }, [deleteTodo, pendingDelete]);
-
-    const cancelDelete = useCallback(() => {
-        setPendingDelete(null);
-    }, []);
-
-    return {
-        requestDelete,
-        confirmDelete,
-        cancelDelete,
-        pendingDelete,
-        isLoading,
-    };
+  return {
+    deleteTodo,
+    isLoading,
+  };
 }

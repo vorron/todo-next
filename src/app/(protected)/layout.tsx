@@ -1,57 +1,25 @@
-// src/app/(protected)/layout.tsx
-'use client';
 
-import { useEffect } from 'react';
-import { useAuth } from '@/features/auth';
+import { ReactNode } from 'react';
 import { redirect } from 'next/navigation';
 import { ROUTES } from '@/shared/config/routes';
 import { Navbar } from '@/widgets';
-import { Spinner } from '@/shared/ui';
+import { hasValidSession } from '@/features/auth/lib/server-session';
 
-export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
-    const { isAuthenticated, isLoading } = useAuth();
-
-    useEffect(() => {
-        if (!isLoading && !isAuthenticated) {
-            redirect(ROUTES.LOGIN);
-        }
-    }, [isAuthenticated, isLoading]);
-
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <Spinner size="lg" />
-            </div>
-        );
-    }
-
-    if (!isAuthenticated) return null;
-
-    return (
-        <div className="min-h-full flex flex-col">
-            <Navbar />
-            <main className="flex-1">{children}</main>
-        </div>
-    );
+interface ProtectedLayoutProps {
+  children: ReactNode;
 }
 
-// function isValidSession(): boolean {
-//   const cookieStore = cookies();
-//   const sessionExists = cookieStore.get('app_session_exists')?.value === 'true';
-//   return sessionExists;
-// }
+export default async function ProtectedLayout({ children }: ProtectedLayoutProps) {
+  const hasSession = await hasValidSession();
 
-// export default function ProtectedLayout({
-//   children,
-// }: { children: React.ReactNode }) {
-//   if (!isValidSession()) {
-//     redirect('/login'); // SSR-safe redirect
-//   }
+  if (!hasSession) {
+    redirect(ROUTES.LOGIN);
+  }
 
-//   return (
-//     <>
-//       <Navbar />
-//       {children}
-//     </>
-//   );
-// }
+  return (
+    <div className="min-h-full flex flex-col">
+      <Navbar />
+      <main className="flex-1">{children}</main>
+    </div>
+  );
+}

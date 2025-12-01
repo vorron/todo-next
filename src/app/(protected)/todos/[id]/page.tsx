@@ -1,9 +1,13 @@
 import { TodoDetailPage } from '@/screens/todo-detail';
 
-interface PageProps {
-    params: { id: string };
-}
+type TodoDetailParams = { id: string };
 
-export default function Page({ params }: PageProps) {
-    return <TodoDetailPage todoId={params.id} />;
+export default async function Page({
+  params,
+}: {
+  params: Promise<TodoDetailParams>;
+}) {
+  const { id } = await params;
+
+  return <TodoDetailPage todoId={id} />;
 }
