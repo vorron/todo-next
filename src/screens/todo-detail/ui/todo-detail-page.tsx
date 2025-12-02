@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useOptimisticToggle } from "@/features/todo/todo-update";
-import { useDeleteTodo } from "@/features/todo/todo-delete";
-import { useTodoDetail } from "@/features/todo/model/use-todo-detail";
+import { useRouter } from 'next/navigation';
+import { useOptimisticToggle } from '@/features/todo/todo-update';
+import { useDeleteTodo } from '@/features/todo/todo-delete';
+import { useTodoDetail } from '@/features/todo/model/use-todo-detail';
 import {
   PageLoader,
   Card,
@@ -12,12 +12,12 @@ import {
   CardContent,
   Button,
   ErrorStateCard,
-} from "@/shared/ui";
-import { ROUTES } from "@/shared/config/routes";
-import { formatDueDate, TODO_PRIORITY_LABELS } from "@/entities/todo";
-import { XCircle } from "lucide-react";
-import { useConfirm } from "@/shared/ui/dialog/confirm-dialog-provider";
-import { TodoStatusBadge } from "@/features/todo/ui";
+} from '@/shared/ui';
+import { ROUTES } from '@/shared/config/routes';
+import { formatDueDate, TODO_PRIORITY_LABELS } from '@/entities/todo';
+import { XCircle } from 'lucide-react';
+import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
+import { TodoStatusBadge } from '@/features/todo/ui';
 
 interface TodoDetailPageProps {
   todoId: string;
@@ -35,11 +35,11 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
     if (!todo) return;
 
     const ok = await confirm({
-      title: "Delete Todo?",
+      title: 'Delete Todo?',
       description: `Are you sure you want to delete "${todo.text}"? This action cannot be undone.`,
-      confirmLabel: "Delete",
-      cancelLabel: "Cancel",
-      variant: "danger",
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
+      variant: 'danger',
     });
 
     if (!ok) return;
@@ -72,11 +72,7 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
     <>
       <div className="container mx-auto py-8 px-4 max-w-4xl">
         <div className="mb-6">
-          <Button
-            variant="ghost"
-            onClick={() => router.push(ROUTES.TODOS)}
-            className="mb-4"
-          >
+          <Button variant="ghost" onClick={() => router.push(ROUTES.TODOS)} className="mb-4">
             ← Back to Todos
           </Button>
           <div className="flex items-center justify-between">
@@ -105,12 +101,12 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
               <CardContent>
                 <div className="flex flex-wrap gap-3">
                   <Button
-                    variant={todo.completed ? "secondary" : "primary"}
+                    variant={todo.completed ? 'secondary' : 'primary'}
                     onClick={() => toggle(todo)}
                     isLoading={isToggling}
                     disabled={isToggling}
                   >
-                    {todo.completed ? "Mark as Active" : "Mark as Completed"}
+                    {todo.completed ? 'Mark as Active' : 'Mark as Completed'}
                   </Button>
                   <Button
                     variant="danger"
@@ -133,7 +129,7 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600">
-                  {TODO_PRIORITY_LABELS[todo.priority || "medium"]}
+                  {TODO_PRIORITY_LABELS[todo.priority || 'medium']}
                 </p>
               </CardContent>
             </Card>
@@ -144,9 +140,7 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
                   <CardTitle>Due Date</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600">
-                    {formatDueDate(todo.dueDate)}
-                  </p>
+                  <p className="text-sm text-gray-600">{formatDueDate(todo.dueDate)}</p>
                 </CardContent>
               </Card>
             )}
@@ -176,9 +170,7 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
                 <CardTitle>Created</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-600">
-                  {new Date(todo.createdAt).toLocaleString()}
-                </p>
+                <p className="text-sm text-gray-600">{new Date(todo.createdAt).toLocaleString()}</p>
               </CardContent>
             </Card>
 
@@ -187,9 +179,7 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
                 <CardTitle>Last Updated</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-600">
-                  {new Date(todo.updatedAt).toLocaleString()}
-                </p>
+                <p className="text-sm text-gray-600">{new Date(todo.updatedAt).toLocaleString()}</p>
               </CardContent>
             </Card>
           </div>

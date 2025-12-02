@@ -13,9 +13,9 @@ export const userApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-            ...result.map(({ id }) => ({ type: 'User' as const, id })),
-            { type: 'User', id: 'LIST' },
-          ]
+              ...result.map(({ id }) => ({ type: 'User' as const, id })),
+              { type: 'User', id: 'LIST' },
+            ]
           : [{ type: 'User', id: 'LIST' }],
       transformResponse: (response: unknown) => {
         return usersSchema.parse(response);

@@ -1,15 +1,14 @@
 Архитектура проекта todo-next
 
 1. Цель архитектуры
-Проект todo-next — эталонный шаблон для создания новых приложений:
+   Проект todo-next — эталонный шаблон для создания новых приложений:
 
 масштабируемая, понятная FSD‑архитектура;
 минимальная «проектная магия»: новый разработчик быстро понимает устройство;
 готовность заменить mock‑авторизацию на реальную;
-возможность вынесения ядра в условный 
+возможность вынесения ядра в условный
 company/foundation
- (дизайн‑система, API‑база, layouts, провайдеры).
-2. Слои и структура папок
+(дизайн‑система, API‑база, layouts, провайдеры). 2. Слои и структура папок
 Корневые слои:
 
 src/app — маршрутизация (App Router), layout’ы, мета‑данные.
@@ -18,22 +17,23 @@ src/widgets — переиспользуемые композиционные б
 src/features — фича‑ориентированная логика + UI.
 src/entities — доменные сущности (типы, схемы, API, чистые функции).
 src/shared
- — инфраструктура и атомарные вещи (UI, lib, config, api‑база).
+— инфраструктура и атомарные вещи (UI, lib, config, api‑база).
 2.1. app/ — инфраструктура маршрутизации
 Ответственность:
 
 структура роутов App Router;
 layout’ы (root, (public), (protected) и др.);
 metadata, viewport, error‑страницы;
-склейка: 
+склейка:
 Page
- → Screen (почти без логики).
+→ Screen (почти без логики).
 Правила:
 
 Page
- и Layout не содержат бизнес‑логики.
+и Layout не содержат бизнес‑логики.
 
 Типичный page.tsx:
+
 ```
 import { TodosPage } from '@/screens';
 import { getRouteMetadata } from '@/shared/lib/utils/router-utils';
@@ -60,6 +60,7 @@ layout секций;
 
 tsx
 // src/screens/todos/ui/todos-page.tsx
+
 ```
 'use client';
 
@@ -80,14 +81,15 @@ export function TodosPage() {
   );
 }
 ```
+
 Допускается хранить в screens:
 
 общие фильтры/состояние для нескольких фич на странице;
 обработчики, которые «склеивают» несколько виджетов/фич.
 Ограничения:
 
-screens не идут напрямую в shared/api или entities/*/api
-(они используют для этого features/hooks).*
+screens не идут напрямую в shared/api или entities/_/api
+(они используют для этого features/hooks)._
 2.3. widgets/ — композиционные блоки UI
 Ответственность:
 
@@ -111,7 +113,7 @@ useTodos, useAuth, useOptimisticToggle;
 CreateTodoForm, LoginForm.
 Правила:
 
-features могут использовать entities и 
+features могут использовать entities и
 shared
 , но не screens и не app.
 В идеале, экраны (screens) получают от фич готовые хуки и компоненты, не залезая в детали API.
@@ -126,9 +128,9 @@ todo-schema.ts, todo-api.ts, user-schema.ts.
 нет React‑компонентов;
 никакого знания о screens/features/widgets/app;
 RTK Query endpoints живут здесь (через общий baseApi из shared/api).
-2.6. 
+2.6.
 shared/
- — инфраструктура и атомы
+— инфраструктура и атомы
 Ответственность:
 
 переиспользуемая инфраструктура:
@@ -139,14 +141,13 @@ shared/config — конфиги (routes, env, etc.).
 Правила:
 
 не зависят от доменных сущностей (features/screens);
-могут быть вынесены в будущий 
+могут быть вынесены в будущий
 company/foundation
-.
-3. Auth‑flow: вариант A
+. 3. Auth‑flow: вариант A
 3.1. Общая идея
 Единственная точка auth‑защиты роутов — (protected)/layout.tsx (SSR).
 middleware.ts
- не решает авторизацию:
+не решает авторизацию:
 используется для логирования, аналитики, технических задач;
 не редиректит пользователя в зависимости от сессии.
 Это убирает дублирование auth‑логики и упрощает понимание.
@@ -166,32 +167,32 @@ middleware.ts
 если нет — сделать redirect(ROUTES.LOGIN) на сервере;
 если есть — отрендерить приватный shell:
 Navbar,
+
 <main>, обёртки и т.д.
 Важно:
 
 layout не использует useEffect и client‑редиректы для базовой защиты.
 client‑guard (useAuth.requireAuth) остаётся только как fallback для отдельных client‑компонентов (если нужно).
-3.4. 
+3.4.
 middleware.ts
 Ответственность:
 
 логирование запросов (например, console.log(path) или отправка в трекинг);
-технические функции (кеш‑заголовки, edge‑фичи и т.п.), но не auth‑gateway.
-4. Применение в домене Todo
+технические функции (кеш‑заголовки, edge‑фичи и т.п.), но не auth‑gateway. 4. Применение в домене Todo
 Для ориентира:
 
 Страница списка туду:
-app/(protected)/todos/page.tsx → тонкий 
+app/(protected)/todos/page.tsx → тонкий
 Page
-, рендерит 
+, рендерит
 TodosPage
- и мета.
+и мета.
 screens/todos/ui/todos-page.tsx
- → компоновка заголовка, CreateTodoForm, 
+→ компоновка заголовка, CreateTodoForm,
 TodoList
 .
-features/todo/* → создание/редактирование/удаление, useTodos, оптимистичные апдейты.
-entities/todo/* → схемы, типы, RTK Query эндпоинты.
+features/todo/_ → создание/редактирование/удаление, useTodos, оптимистичные апдейты.
+entities/todo/_ → схемы, типы, RTK Query эндпоинты.
 shared/ui → Card, Button, Skeleton, Layout‑компоненты.
 
 4. Практическое правило для нашего проекта

@@ -1,25 +1,22 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 /**
  * Zod схема для пользователя
  * Автоматически генерирует TypeScript типы
  */
 export const userSchema = z.object({
-  id: z.string().uuid("Invalid user ID format"),
+  id: z.string().uuid('Invalid user ID format'),
   username: z
     .string()
-    .min(3, "Username must be at least 3 characters")
-    .max(20, "Username must be at most 20 characters")
-    .regex(
-      /^[a-zA-Z0-9_]+$/,
-      "Username can only contain letters, numbers and underscore"
-    ),
+    .min(3, 'Username must be at least 3 characters')
+    .max(20, 'Username must be at most 20 characters')
+    .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers and underscore'),
   name: z
     .string()
-    .min(2, "Name must be at least 2 characters")
-    .max(50, "Name must be at most 50 characters"),
-  email: z.string().email("Invalid email format").optional(),
-  avatar: z.string().url("Invalid avatar URL").optional(),
+    .min(2, 'Name must be at least 2 characters')
+    .max(50, 'Name must be at most 50 characters'),
+  email: z.string().email('Invalid email format').optional(),
+  avatar: z.string().url('Invalid avatar URL').optional(),
   createdAt: z.string().datetime().optional(),
 });
 

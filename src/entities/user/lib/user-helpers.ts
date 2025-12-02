@@ -1,10 +1,10 @@
-import type { User } from "../model/types";
+import type { User } from '../model/types';
 
 /**
  * Получить инициалы пользователя
  */
 export function getUserInitials(user: User): string {
-  const names = user.name.split(" ");
+  const names = user.name.split(' ');
   if (names.length >= 2) {
     return `${names[0][0]}${names[1][0]}`.toUpperCase();
   }
@@ -30,13 +30,13 @@ export function isValidUsername(username: string): boolean {
  */
 export function getAvatarColor(name: string): string {
   const colors = [
-    "bg-red-500",
-    "bg-blue-500",
-    "bg-green-500",
-    "bg-yellow-500",
-    "bg-purple-500",
-    "bg-pink-500",
-    "bg-indigo-500",
+    'bg-red-500',
+    'bg-blue-500',
+    'bg-green-500',
+    'bg-yellow-500',
+    'bg-purple-500',
+    'bg-pink-500',
+    'bg-indigo-500',
   ];
 
   const index = name.charCodeAt(0) % colors.length;

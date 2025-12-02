@@ -7,7 +7,12 @@ export { LogoutButton } from './ui/logout-button';
 export { UserMenu } from './ui/user-menu';
 
 // API
-export { authApi, useLoginMutation, useLogoutMutation, useValidateSessionQuery } from './api/auth-api';
+export {
+  authApi,
+  useLoginMutation,
+  useLogoutMutation,
+  useValidateSessionQuery,
+} from './api/auth-api';
 
 // Types
 export type { LoginDto, Session, AuthState } from './model/types';

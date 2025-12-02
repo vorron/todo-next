@@ -4,15 +4,14 @@ import { authReducer } from '@/features/auth';
 import settingsReducer from '@/features/settings/model/settings-slice';
 
 export const makeStore = () => {
-    return configureStore({
-        reducer: {
-            auth: authReducer,
-            settings: settingsReducer,
-            [baseApi.reducerPath]: baseApi.reducer,
-        },
-        middleware: (getDefaultMiddleware) =>
-            getDefaultMiddleware().concat(baseApi.middleware),
-    });
+  return configureStore({
+    reducer: {
+      auth: authReducer,
+      settings: settingsReducer,
+      [baseApi.reducerPath]: baseApi.reducer,
+    },
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(baseApi.middleware),
+  });
 };
 
 export type AppStore = ReturnType<typeof makeStore>;

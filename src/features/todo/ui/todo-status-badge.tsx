@@ -10,10 +10,8 @@ export function TodoStatusBadge({ completed, className }: TodoStatusBadgeProps) 
     <span
       className={cn(
         'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium',
-        completed
-          ? 'bg-green-100 text-green-800'
-          : 'bg-yellow-100 text-yellow-800',
-        className
+        completed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800',
+        className,
       )}
     >
       {completed ? (

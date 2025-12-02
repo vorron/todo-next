@@ -94,9 +94,7 @@ export function groupTodosByDate(todos: Todo[]): Record<string, Todo[]> {
 export function filterByTags(todos: Todo[], tags: string[]): Todo[] {
   if (tags.length === 0) return todos;
 
-  return todos.filter((todo) =>
-    tags.every((tag) => todo.tags?.includes(tag))
-  );
+  return todos.filter((todo) => tags.every((tag) => todo.tags?.includes(tag)));
 }
 
 /**

@@ -1,4 +1,4 @@
-import { Todo } from "./todo-schema";
+import { Todo } from './todo-schema';
 
 export type {
   Todo,
@@ -6,13 +6,13 @@ export type {
   UpdateTodoDto,
   TodoFilter,
   TodoPriorityType,
-} from "./todo-schema";
-export { TodoPriority } from "./todo-schema";
+} from './todo-schema';
+export { TodoPriority } from './todo-schema';
 
 /**
  * UI типы
  */
-export type FilterType = "all" | "active" | "completed";
+export type FilterType = 'all' | 'active' | 'completed';
 
 export interface TodoListItem extends Todo {
   isEditing?: boolean;

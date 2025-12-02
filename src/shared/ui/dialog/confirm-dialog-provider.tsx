@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { ConfirmationDialog } from "@/shared/ui/dialog/confirmation-dialog";
+import { ConfirmationDialog } from '@/shared/ui/dialog/confirmation-dialog';
 import {
   createContext,
   useCallback,
@@ -9,9 +9,9 @@ import {
   useRef,
   useState,
   type ReactNode,
-} from "react";
+} from 'react';
 
-type ConfirmVariant = "danger" | "warning" | "info";
+type ConfirmVariant = 'danger' | 'warning' | 'info';
 
 interface ConfirmDialogOptions {
   title: string;
@@ -33,7 +33,7 @@ export function ConfirmDialogProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<ConfirmDialogState | null>(null);
 
   const resolveRef = useRef<((value: boolean) => void) | null>(null);
-  const actionRef = useRef<"idle" | "confirm">("idle");
+  const actionRef = useRef<'idle' | 'confirm'>('idle');
 
   const confirm = useCallback<ConfirmFn>((options) => {
     return new Promise<boolean>((resolve) => {
@@ -43,11 +43,11 @@ export function ConfirmDialogProvider({ children }: { children: ReactNode }) {
         description: options.description,
         confirmLabel: options.confirmLabel,
         cancelLabel: options.cancelLabel,
-        variant: options.variant ?? "danger",
+        variant: options.variant ?? 'danger',
       });
 
       resolveRef.current = resolve;
-      actionRef.current = "idle";
+      actionRef.current = 'idle';
     });
   }, []);
 
@@ -56,8 +56,8 @@ export function ConfirmDialogProvider({ children }: { children: ReactNode }) {
     setState((prev) => (prev ? { ...prev, isOpen: false } : prev));
 
     // Если только что был confirm — onClose вызовется вторым, ничего не делаем
-    if (actionRef.current === "confirm") {
-      actionRef.current = "idle";
+    if (actionRef.current === 'confirm') {
+      actionRef.current = 'idle';
       return;
     }
 
@@ -69,7 +69,7 @@ export function ConfirmDialogProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const handleConfirm = useCallback(() => {
-    actionRef.current = "confirm";
+    actionRef.current = 'confirm';
 
     if (resolveRef.current) {
       resolveRef.current(true);
@@ -105,7 +105,7 @@ export function useConfirm(): ConfirmFn {
   const ctx = useContext(ConfirmDialogContext);
 
   if (!ctx) {
-    throw new Error("useConfirm must be used within ConfirmDialogProvider");
+    throw new Error('useConfirm must be used within ConfirmDialogProvider');
   }
 
   return ctx;

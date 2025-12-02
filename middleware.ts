@@ -36,13 +36,13 @@ import type { NextRequest } from 'next/server';
 //import { ROUTES } from '@/lib/routes';
 
 export function middleware(request: NextRequest) {
-    const path = request.nextUrl.pathname;
+  const path = request.nextUrl.pathname;
 
-    // Логирование, аналитика, но НЕ защита маршрутов
-    console.log(`Request to: ${path}`);
+  // Логирование, аналитика, но НЕ защита маршрутов
+  console.log(`Request to: ${path}`);
 
-    // Защита маршрутов происходит в layout'ах, а не здесь
-    return NextResponse.next();
+  // Защита маршрутов происходит в layout'ах, а не здесь
+  return NextResponse.next();
 }
 
 // Матчим ВСЕ маршруты, кроме статических файлов
@@ -51,14 +51,14 @@ export function middleware(request: NextRequest) {
 // };
 
 export const config = {
-    matcher: [
-        /*
-         * Match all request paths except:
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * - public folder
-         */
-        '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-    ],
+  matcher: [
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 };

@@ -1,6 +1,6 @@
-import { User } from "./user-schema";
+import { User } from './user-schema';
 
-export type { User, CreateUserDto, UpdateUserDto } from "./user-schema";
+export type { User, CreateUserDto, UpdateUserDto } from './user-schema';
 
 /**
  * Дополнительные типы для UI состояний

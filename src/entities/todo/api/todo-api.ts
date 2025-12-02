@@ -10,14 +10,19 @@ import type { Todo, CreateTodoDto, UpdateTodoDto, TodoFilter } from '../model/ty
 import z from 'zod';
 
 // Упрощенная схема фильтров без строгой UUID валидации
-const todoFilterQuerySchema = todoFilterSchema.pick({
-  completed: true,
-  priority: true,
-  search: true,
-}).extend({
-  userId: z.string().optional(), // Разрешаем любую строку
-  tags: z.string().optional().transform(val => val ? val.split(',') : undefined),
-});
+const todoFilterQuerySchema = todoFilterSchema
+  .pick({
+    completed: true,
+    priority: true,
+    search: true,
+  })
+  .extend({
+    userId: z.string().optional(), // Разрешаем любую строку
+    tags: z
+      .string()
+      .optional()
+      .transform((val) => (val ? val.split(',') : undefined)),
+  });
 
 export const todoApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -39,9 +44,9 @@ export const todoApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-            ...result.map(({ id }) => ({ type: 'Todo' as const, id })),
-            { type: 'Todo', id: 'LIST' },
-          ]
+              ...result.map(({ id }) => ({ type: 'Todo' as const, id })),
+              { type: 'Todo', id: 'LIST' },
+            ]
           : [{ type: 'Todo', id: 'LIST' }],
       transformResponse: (response: unknown) => {
         return todosSchema.parse(response);
@@ -166,8 +171,8 @@ export const todoApi = baseApi.injectEndpoints({
                 completed,
                 updatedAt: new Date().toISOString(),
               },
-            })
-          )
+            }),
+          ),
         );
 
         return { data: undefined };
@@ -194,8 +199,8 @@ export const todoApi = baseApi.injectEndpoints({
             baseQuery({
               url: `todos/${todo.id}`,
               method: 'DELETE',
-            })
-          )
+            }),
+          ),
         );
 
         return { data: undefined };

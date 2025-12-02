@@ -1,9 +1,9 @@
-import { baseApi } from "@/shared/api";
-import { userSchema } from "@/entities/user";
-import type { User } from "@/entities/user";
-import type { LoginDto, LoginResponse } from "../model/types";
-import { createMockSession } from "../lib/session";
-import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { baseApi } from '@/shared/api';
+import { userSchema } from '@/entities/user';
+import type { User } from '@/entities/user';
+import type { LoginDto, LoginResponse } from '../model/types';
+import { createMockSession } from '../lib/session';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 interface ApiError {
   status: number;
@@ -11,26 +11,24 @@ interface ApiError {
 }
 
 export const authApi = baseApi.injectEndpoints({
-  overrideExisting: process.env.NODE_ENV === "development",
+  overrideExisting: process.env.NODE_ENV === 'development',
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginDto>({
       async queryFn({ username }, _api, _extraOptions, baseQuery) {
         try {
-          const result = await baseQuery("users");
+          const result = await baseQuery('users');
 
           if (result.error) {
             return { error: result.error as FetchBaseQueryError };
           }
 
           const users = result.data as User[];
-          const user = users.find(
-            (u) => u.username.toLowerCase() === username.toLowerCase(),
-          );
+          const user = users.find((u) => u.username.toLowerCase() === username.toLowerCase());
 
           if (!user) {
             const error: ApiError = {
               status: 401,
-              data: { message: "User not found" },
+              data: { message: 'User not found' },
             };
             return { error: error as FetchBaseQueryError };
           }
@@ -40,18 +38,18 @@ export const authApi = baseApi.injectEndpoints({
           return {
             data: {
               session,
-              message: "Login successful",
+              message: 'Login successful',
             },
           };
         } catch {
           const error: ApiError = {
             status: 500,
-            data: { message: "Login failed" },
+            data: { message: 'Login failed' },
           };
           return { error: error as FetchBaseQueryError };
         }
       },
-      invalidatesTags: ["Auth"],
+      invalidatesTags: ['Auth'],
     }),
 
     logout: builder.mutation<{ success: boolean }, void>({
@@ -62,13 +60,13 @@ export const authApi = baseApi.injectEndpoints({
         } catch {
           return {
             error: {
-              status: "CUSTOM_ERROR",
-              error: "Logout failed",
+              status: 'CUSTOM_ERROR',
+              error: 'Logout failed',
             } as FetchBaseQueryError,
           };
         }
       },
-      invalidatesTags: ["Auth", "Todo", "User"],
+      invalidatesTags: ['Auth', 'Todo', 'User'],
     }),
 
     //TODO: заготовка под будущее реальное SSR‑валидирование.
@@ -77,10 +75,9 @@ export const authApi = baseApi.injectEndpoints({
       transformResponse: (response: unknown) => {
         return userSchema.parse(response);
       },
-      providesTags: ["Auth"],
+      providesTags: ['Auth'],
     }),
   }),
 });
 
-export const { useLoginMutation, useLogoutMutation, useValidateSessionQuery } =
-  authApi;
+export const { useLoginMutation, useLogoutMutation, useValidateSessionQuery } = authApi;

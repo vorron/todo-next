@@ -6,7 +6,7 @@ export {
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
-} from "./api/user-api";
+} from './api/user-api';
 
 // Types
 export type {
@@ -15,15 +15,10 @@ export type {
   UpdateUserDto,
   UserWithStats,
   UserListItem,
-} from "./model/types";
+} from './model/types';
 
 // Schemas
-export {
-  userSchema,
-  usersSchema,
-  createUserSchema,
-  updateUserSchema,
-} from "./model/user-schema";
+export { userSchema, usersSchema, createUserSchema, updateUserSchema } from './model/user-schema';
 
 // Selectors
 export {
@@ -31,7 +26,7 @@ export {
   selectUserById,
   selectSortedUsers,
   selectUsersBySearch,
-} from "./model/selectors";
+} from './model/selectors';
 
 // Helpers
 export {
@@ -39,6 +34,6 @@ export {
   getUserDisplayName,
   isValidUsername,
   getAvatarColor,
-} from "./lib/user-helpers";
+} from './lib/user-helpers';
 
 // UI будет экспортироваться отсюда же (создадим позже)

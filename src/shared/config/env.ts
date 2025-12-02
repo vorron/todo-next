@@ -15,6 +15,6 @@ Object.entries(requiredEnvVars).forEach(([key, value]) => {
 
 export const env = {
   API_URL: requiredEnvVars.NEXT_PUBLIC_API_URL,
-  IS_PRODUCTION: process.env.NODE_ENV === "production",
-  IS_DEVELOPMENT: process.env.NODE_ENV === "development",
+  IS_PRODUCTION: process.env.NODE_ENV === 'production',
+  IS_DEVELOPMENT: process.env.NODE_ENV === 'development',
 } as const;

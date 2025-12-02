@@ -8,7 +8,7 @@ export const ROUTES = {
   HOME: '/',
   LOGIN: '/login',
   ABOUT: '/about',
-  SETTINGS: "/settings",
+  SETTINGS: '/settings',
 
   // Protected routes
   TODOS: '/todos',

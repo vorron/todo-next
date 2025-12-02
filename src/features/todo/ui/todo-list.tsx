@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useOptimisticToggle } from "@/features/todo/todo-update";
-import { useDeleteTodo } from "@/features/todo/todo-delete";
+import { useOptimisticToggle } from '@/features/todo/todo-update';
+import { useDeleteTodo } from '@/features/todo/todo-delete';
 import {
   SkeletonList,
   EmptyTodos,
@@ -10,21 +10,21 @@ import {
   CardTitle,
   CardContent,
   Button,
-} from "@/shared/ui";
-import { useRouter } from "next/navigation";
-import { ROUTES } from "@/shared/config/routes";
-import { useCallback, useState } from "react";
-import { useSelector } from "react-redux";
-import { selectCompactView } from "@/features/settings/model/selectors";
-import { useTodos } from "../model/use-todos";
-import { useConfirm } from "@/shared/ui/dialog/confirm-dialog-provider";
-import { TodoCard } from "./todo-card";
+} from '@/shared/ui';
+import { useRouter } from 'next/navigation';
+import { ROUTES } from '@/shared/config/routes';
+import { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { selectCompactView } from '@/features/settings/model/selectors';
+import { useTodos } from '../model/use-todos';
+import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
+import { TodoCard } from './todo-card';
 
 interface TodoListProps {
-  filter?: "all" | "active" | "completed";
+  filter?: 'all' | 'active' | 'completed';
 }
 
-export function TodoList({ filter = "all" }: TodoListProps) {
+export function TodoList({ filter = 'all' }: TodoListProps) {
   const router = useRouter();
   const [retryCount, setRetryCount] = useState(0);
 
@@ -40,11 +40,11 @@ export function TodoList({ filter = "all" }: TodoListProps) {
   const handleDelete = useCallback(
     async (id: string, text: string) => {
       const ok = await confirm({
-        title: "Delete Todo?",
+        title: 'Delete Todo?',
         description: `Are you sure you want to delete "${text}"? This action cannot be undone.`,
-        confirmLabel: "Delete",
-        cancelLabel: "Cancel",
-        variant: "danger",
+        confirmLabel: 'Delete',
+        cancelLabel: 'Cancel',
+        variant: 'danger',
       });
 
       if (!ok) return;
@@ -68,8 +68,8 @@ export function TodoList({ filter = "all" }: TodoListProps) {
 
   // Фильтрация
   const filteredTodos = todos?.filter((todo) => {
-    if (filter === "active") return !todo.completed;
-    if (filter === "completed") return todo.completed;
+    if (filter === 'active') return !todo.completed;
+    if (filter === 'completed') return todo.completed;
     return true;
   });
 
@@ -111,20 +111,12 @@ export function TodoList({ filter = "all" }: TodoListProps) {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Failed to load todos
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Failed to load todos</h3>
             <p className="text-sm text-gray-600 mb-4">
-              {error && "status" in error
-                ? `Error: ${error.status}`
-                : "Please try again"}
+              {error && 'status' in error ? `Error: ${error.status}` : 'Please try again'}
             </p>
-            <Button
-              onClick={handleRetry}
-              variant="primary"
-              disabled={retryCount > 2}
-            >
-              {retryCount > 2 ? "Please refresh page" : "Try Again"}
+            <Button onClick={handleRetry} variant="primary" disabled={retryCount > 2}>
+              {retryCount > 2 ? 'Please refresh page' : 'Try Again'}
             </Button>
           </div>
         </CardContent>
@@ -142,9 +134,7 @@ export function TodoList({ filter = "all" }: TodoListProps) {
         <CardContent>
           <EmptyTodos
             onCreateClick={() => {
-              const input = document.querySelector(
-                'input[type="text"]',
-              ) as HTMLInputElement;
+              const input = document.querySelector('input[type="text"]') as HTMLInputElement;
               input?.focus();
             }}
           />
@@ -171,7 +161,7 @@ export function TodoList({ filter = "all" }: TodoListProps) {
               <TodoCard
                 key={todo.id}
                 todo={todo}
-                variant={compactView ? "compact" : "default"}
+                variant={compactView ? 'compact' : 'default'}
                 onToggle={() => toggle(todo)}
                 onDelete={() => handleDelete(todo.id, todo.text)}
                 onClick={() => handleTodoClick(todo.id)}

@@ -8,8 +8,7 @@ import type { FilterType, TodoStats } from './types';
 export const selectAllTodos = (userId?: string) =>
   todoApi.endpoints.getTodos.select(userId ? { userId } : undefined);
 
-export const selectTodoById = (id: string) =>
-  todoApi.endpoints.getTodoById.select(id);
+export const selectTodoById = (id: string) => todoApi.endpoints.getTodoById.select(id);
 
 /**
  * Фильтрация todos
@@ -33,7 +32,7 @@ export const selectFilteredTodos = (userId: string | undefined, filter: FilterTy
  */
 export const selectSortedTodos = (
   userId: string | undefined,
-  sortBy: 'date' | 'priority' | 'alphabetical' = 'date'
+  sortBy: 'date' | 'priority' | 'alphabetical' = 'date',
 ) =>
   createSelector([selectAllTodos(userId)], (todosResult) => {
     if (!todosResult.data) return [];
@@ -55,8 +54,7 @@ export const selectSortedTodos = (
       case 'date':
       default:
         return todos.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         );
     }
   });
@@ -97,7 +95,5 @@ export const selectSearchedTodos = (userId: string | undefined, searchTerm: stri
     if (!todosResult.data || !searchTerm) return todosResult.data || [];
 
     const term = searchTerm.toLowerCase();
-    return todosResult.data.filter((todo) =>
-      todo.text.toLowerCase().includes(term)
-    );
+    return todosResult.data.filter((todo) => todo.text.toLowerCase().includes(term));
   });
