@@ -1,4 +1,4 @@
-import { TodosPage } from '@/screens/todos/ui/todos-page';
+import { TodosPage } from '@/screens/todos/page';
 import { ROUTES } from '@/shared/config/routes';
 import { getRouteMetadata } from '@/shared/lib/utils/router-utils';
 import { Metadata } from 'next';

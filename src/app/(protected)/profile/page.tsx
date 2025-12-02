@@ -1,4 +1,4 @@
-import { ProfilePage } from '@/screens';
+import { ProfilePage } from '@/screens/profile';
 import { ROUTES } from '@/shared/config/routes';
 import { getRouteMetadata } from '@/shared/lib/utils/router-utils';
 import { Metadata } from 'next';

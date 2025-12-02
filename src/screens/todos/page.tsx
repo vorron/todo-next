@@ -2,8 +2,20 @@
 
 import { CreateTodoForm } from '@/features/todo/todo-create';
 import { TodoList } from '@/features/todo/ui/todo-list';
+import { TodosFiltersProvider, useTodosFilters } from './model/todos-filters-context';
+import { TodosFiltersBar } from './ui/todos-filters-bar';
 
 export function TodosPage() {
+  return (
+    <TodosFiltersProvider>
+      <TodosPageContent />
+    </TodosFiltersProvider>
+  );
+}
+
+function TodosPageContent() {
+  const { filter } = useTodosFilters();
+
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl space-y-6">
       <div>
@@ -11,9 +23,11 @@ export function TodosPage() {
         <p className="text-gray-600">Manage your tasks efficiently</p>
       </div>
 
+      <TodosFiltersBar />
+
       <CreateTodoForm />
 
-      <TodoList />
+      <TodoList filter={filter} />
     </div>
   );
 }
