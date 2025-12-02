@@ -1,9 +1,7 @@
 "use client";
 
-import { TodoCard } from "@/entities/todo";
-import { useAuth } from "@/features/auth";
 import { useOptimisticToggle } from "@/features/todo/todo-update";
-import { useDeleteTodo, DeleteTodoDialog } from "@/features/todo/todo-delete";
+import { useDeleteTodo } from "@/features/todo/todo-delete";
 import {
   SkeletonList,
   EmptyTodos,
@@ -20,6 +18,7 @@ import { useSelector } from "react-redux";
 import { selectCompactView } from "@/features/settings/model/selectors";
 import { useTodos } from "../model/use-todos";
 import { useConfirm } from "@/shared/ui/dialog/confirm-dialog-provider";
+import { TodoCard } from "./todo-card";
 
 interface TodoListProps {
   filter?: "all" | "active" | "completed";

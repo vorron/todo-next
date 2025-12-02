@@ -1,9 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { TodoStatusBadge } from "@/entities/todo";
 import { useOptimisticToggle } from "@/features/todo/todo-update";
-import { useDeleteTodo, DeleteTodoDialog } from "@/features/todo/todo-delete";
+import { useDeleteTodo } from "@/features/todo/todo-delete";
 import { useTodoDetail } from "@/features/todo/model/use-todo-detail";
 import {
   PageLoader,
@@ -12,12 +11,13 @@ import {
   CardTitle,
   CardContent,
   Button,
+  ErrorStateCard,
 } from "@/shared/ui";
 import { ROUTES } from "@/shared/config/routes";
 import { formatDueDate, TODO_PRIORITY_LABELS } from "@/entities/todo";
-import { ErrorStateCard } from "@/shared/ui/error-state-card/error-state-card";
 import { XCircle } from "lucide-react";
 import { useConfirm } from "@/shared/ui/dialog/confirm-dialog-provider";
+import { TodoStatusBadge } from "@/features/todo/ui";
 
 interface TodoDetailPageProps {
   todoId: string;

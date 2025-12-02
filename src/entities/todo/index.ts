@@ -57,6 +57,3 @@ export {
   filterByTags,
   getUniqueTags,
 } from "./lib/todo-helpers";
-
-export { TodoCard, TodoStatusBadge } from '../../features/todo/ui'
-

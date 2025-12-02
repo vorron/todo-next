@@ -1,15 +1,19 @@
-import { Card, CardContent } from '@/shared/ui';
-import { cn } from '@/shared/lib/utils';
-import type { Todo } from '../../../entities/todo/model/types';
-import { getPriorityClassName, isTodoOverdue, formatDueDate } from '../../../entities/todo/lib/todo-helpers';
-import { TODO_PRIORITY_COLORS } from '../../../entities/todo/model/constants';
+import { Card, CardContent } from "@/shared/ui";
+import { cn } from "@/shared/lib/utils";
+import type { Todo } from "../../../entities/todo/model/types";
+import {
+  getPriorityClassName,
+  isTodoOverdue,
+  formatDueDate,
+} from "../../../entities/todo/lib/todo-helpers";
+import { TODO_PRIORITY_COLORS } from "../../../entities/todo/model/constants";
 
 interface TodoCardProps {
   todo: Todo;
   onToggle?: () => void;
   onDelete?: () => void;
   onClick?: () => void;
-  variant?: 'default' | 'compact';
+  variant?: "default" | "compact";
   showPriority?: boolean;
   showDueDate?: boolean;
 }
@@ -19,23 +23,25 @@ export function TodoCard({
   onToggle,
   onDelete,
   onClick,
-  variant = 'default',
+  variant = "default",
   showPriority = true,
   showDueDate = true,
 }: TodoCardProps) {
   const isOverdue = isTodoOverdue(todo);
-  const priority = todo.priority || 'medium';
+  const priority = todo.priority || "medium";
 
   return (
     <Card
       className={cn(
-        'transition-all hover:shadow-md',
-        todo.completed && 'opacity-60',
+        "transition-all hover:shadow-md",
+        todo.completed && "opacity-60",
         getPriorityClassName(priority),
-        variant === 'compact' ? 'p-3' : 'p-4'
+        variant === "compact" ? "p-3" : "p-4",
       )}
     >
-      <CardContent className={cn('p-0', variant === 'compact' ? 'space-y-2' : 'space-y-3')}>
+      <CardContent
+        className={cn("p-0", variant === "compact" ? "space-y-2" : "space-y-3")}
+      >
         <div className="flex items-start gap-3">
           {/* Checkbox */}
           <button
@@ -47,10 +53,10 @@ export function TodoCard({
           >
             <div
               className={cn(
-                'h-5 w-5 rounded border-2 flex items-center justify-center transition-colors',
+                "h-5 w-5 rounded border-2 flex items-center justify-center transition-colors",
                 todo.completed
-                  ? 'bg-blue-500 border-blue-500'
-                  : 'border-gray-300 hover:border-blue-500'
+                  ? "bg-blue-500 border-blue-500"
+                  : "border-gray-300 hover:border-blue-500",
               )}
             >
               {todo.completed && (
@@ -59,7 +65,12 @@ export function TodoCard({
                   fill="currentColor"
                   viewBox="0 0 12 12"
                 >
-                  <path d="M10 3L4.5 8.5 2 6" stroke="currentColor" strokeWidth="2" fill="none" />
+                  <path
+                    d="M10 3L4.5 8.5 2 6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    fill="none"
+                  />
                 </svg>
               )}
             </div>
@@ -69,8 +80,8 @@ export function TodoCard({
           <div className="flex-1 min-w-0" onClick={onClick}>
             <p
               className={cn(
-                'text-gray-900 break-words cursor-pointer hover:text-blue-600',
-                todo.completed && 'line-through text-gray-500'
+                "text-gray-900 break-words cursor-pointer hover:text-blue-600",
+                todo.completed && "line-through text-gray-500",
               )}
             >
               {todo.text}
@@ -82,9 +93,9 @@ export function TodoCard({
               {showPriority && (
                 <span
                   className={cn(
-                    'text-xs px-2 py-0.5 rounded-full',
+                    "text-xs px-2 py-0.5 rounded-full",
                     TODO_PRIORITY_COLORS[priority].bg,
-                    TODO_PRIORITY_COLORS[priority].text
+                    TODO_PRIORITY_COLORS[priority].text,
                   )}
                 >
                   {priority}
@@ -95,10 +106,10 @@ export function TodoCard({
               {showDueDate && todo.dueDate && (
                 <span
                   className={cn(
-                    'text-xs px-2 py-0.5 rounded-full',
+                    "text-xs px-2 py-0.5 rounded-full",
                     isOverdue
-                      ? 'bg-red-100 text-red-800'
-                      : 'bg-gray-100 text-gray-600'
+                      ? "bg-red-100 text-red-800"
+                      : "bg-gray-100 text-gray-600",
                   )}
                 >
                   {formatDueDate(todo.dueDate)}
@@ -124,7 +135,7 @@ export function TodoCard({
                 e.stopPropagation();
                 onDelete();
               }}
-              className="flex-shrink-0 text-gray-400 hover:text-red-500 transition-colors"
+              className="shrink-0 text-gray-400 hover:text-red-500 transition-colors"
             >
               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                 <path
