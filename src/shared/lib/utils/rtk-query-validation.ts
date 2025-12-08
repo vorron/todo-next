@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
+import { type FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
 
 export function handleRTKQueryValidation<TSchema extends z.ZodTypeAny>(
   schema: TSchema,

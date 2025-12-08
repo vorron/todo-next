@@ -1,7 +1,7 @@
-import AboutPage from '@/screens/about/page';
+import { AboutPage } from '@/screens/about';
 import { ROUTES } from '@/shared/config/routes';
 import { getRouteMetadata } from '@/shared/lib/utils/router-utils';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = getRouteMetadata(ROUTES.ABOUT);
 

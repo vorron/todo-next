@@ -1,6 +1,6 @@
 import { SettingsForm } from '@/features/settings/ui/settings-form';
 
-export default function SettingsPage() {
+export function SettingsPage() {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="max-w-4xl mx-auto">

@@ -1,4 +1,4 @@
-import { User } from './user-schema';
+import { type User } from './user-schema';
 
 export type { User, CreateUserDto, UpdateUserDto } from './user-schema';
 

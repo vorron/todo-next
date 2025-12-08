@@ -5,7 +5,7 @@ import type {
   FetchBaseQueryError,
   BaseQueryApi,
 } from '@reduxjs/toolkit/query';
-import { z } from 'zod';
+import { type z } from 'zod';
 import { env } from '@/shared/config/env';
 import { handleRTKQueryValidation } from '../lib/utils';
 

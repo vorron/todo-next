@@ -2,8 +2,8 @@
 
 import { CreateTodoForm } from '@/features/todo/todo-create';
 import { TodoList } from '@/features/todo/ui/todo-list';
-import { TodosFiltersProvider, useTodosFilters } from './model/todos-filters-context';
-import { TodosFiltersBar } from './ui/todos-filters-bar';
+import { TodosFiltersProvider, useTodosFilters } from '../model/todos-filters-context';
+import { TodosFiltersBar } from './todos-filters-bar';
 
 export function TodosPage() {
   return (

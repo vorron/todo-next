@@ -35,7 +35,7 @@ export function TodoList({ filter = 'all' }: TodoListProps) {
 
   const { toggle } = useOptimisticToggle();
 
-  const { deleteTodo, isLoading: isDeleting } = useDeleteTodo();
+  const { deleteTodo } = useDeleteTodo();
   const confirm = useConfirm();
 
   const handleDelete = useCallback(

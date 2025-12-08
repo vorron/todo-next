@@ -1,12 +1,7 @@
-import { cn } from '@/shared/lib/utils';
+import { Skeleton } from '../skeleton-primitive';
 
-interface SkeletonProps {
-  className?: string;
-}
-
-export function Skeleton({ className }: SkeletonProps) {
-  return <div className={cn('animate-pulse rounded-md bg-gray-200', className)} />;
-}
+// Re-export shadcn Skeleton primitive
+export { Skeleton };
 
 // Готовые варианты скелетонов
 export function SkeletonCard() {

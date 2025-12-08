@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 
-export default function AboutPage() {
+export function AboutPage() {
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       <div className="text-center mb-8">

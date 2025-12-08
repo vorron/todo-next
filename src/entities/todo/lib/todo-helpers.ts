@@ -53,8 +53,15 @@ export function calculateCompletionPercentage(stats: TodoStats): number {
 /**
  * Группировка todos по дате
  */
-export function groupTodosByDate(todos: Todo[]): Record<string, Todo[]> {
-  const groups: Record<string, Todo[]> = {
+interface TodoGroups {
+  today: Todo[];
+  week: Todo[];
+  later: Todo[];
+  overdue: Todo[];
+}
+
+export function groupTodosByDate(todos: Todo[]): TodoGroups {
+  const groups: TodoGroups = {
     today: [],
     week: [],
     later: [],

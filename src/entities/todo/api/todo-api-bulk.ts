@@ -1,5 +1,5 @@
 import { todosSchema } from '../model/todo-schema';
-import { baseApi } from '@/shared/api';
+import { type baseApi } from '@/shared/api';
 
 type Builder = Parameters<typeof baseApi.injectEndpoints>[0]['endpoints'] extends (
   builder: infer TBuilder,

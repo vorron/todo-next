@@ -1,44 +1,53 @@
 'use client';
 
-import { useState } from 'react';
-import { Button, Input, Card, CardContent } from '@/shared/ui';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, Card, CardContent } from '@/shared/ui';
+import { Form, FormField, FormItem, FormControl, FormMessage } from '@/shared/ui/form';
+import { Input } from '@/shared/ui/input-primitive';
 import { useCreateTodo } from '../model/use-create-todo';
+import { createTodoFormSchema, type CreateTodoFormData } from '../model/create-todo-schema';
 
 export function CreateTodoForm() {
-  const [text, setText] = useState('');
-  const { create, isLoading, errors, clearErrors } = useCreateTodo();
+  const { create, isLoading } = useCreateTodo();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<CreateTodoFormData>({
+    resolver: zodResolver(createTodoFormSchema),
+    defaultValues: {
+      text: '',
+    },
+  });
 
-    const result = await create(text);
+  const onSubmit = async (data: CreateTodoFormData) => {
+    const result = await create(data.text.trim());
 
     if (result.success) {
-      setText('');
+      form.reset();
     }
   };
 
   return (
     <Card>
       <CardContent className="p-4">
-        <form onSubmit={handleSubmit} className="flex gap-2">
-          <div className="flex-1">
-            <Input
-              type="text"
-              value={text}
-              onChange={(e) => {
-                setText(e.target.value);
-                if (errors.text) clearErrors();
-              }}
-              placeholder="What needs to be done?"
-              error={errors.text}
-              disabled={isLoading}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2 items-start">
+            <FormField
+              control={form.control}
+              name="text"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormControl>
+                    <Input placeholder="What needs to be done?" disabled={isLoading} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <Button type="submit" disabled={!text.trim() || isLoading} isLoading={isLoading}>
-            Add
-          </Button>
-        </form>
+            <Button type="submit" disabled={isLoading} isLoading={isLoading}>
+              Add
+            </Button>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );

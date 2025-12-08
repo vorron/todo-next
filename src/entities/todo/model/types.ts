@@ -1,4 +1,4 @@
-import { Todo } from './todo-schema';
+import { type Todo } from './todo-schema';
 
 export type {
   Todo,

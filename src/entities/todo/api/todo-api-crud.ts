@@ -7,7 +7,7 @@ import {
   todoFilterSchema,
 } from '../model/todo-schema';
 import type { Todo, CreateTodoDto, UpdateTodoDto, TodoFilter } from '../model/types';
-import { baseApi } from '@/shared/api';
+import { type baseApi } from '@/shared/api';
 
 type Builder = Parameters<typeof baseApi.injectEndpoints>[0]['endpoints'] extends (
   builder: infer TBuilder,

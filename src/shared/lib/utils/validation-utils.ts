@@ -1,4 +1,4 @@
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { type FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { z } from 'zod';
 import { formatZodError } from './zod-utils';
 

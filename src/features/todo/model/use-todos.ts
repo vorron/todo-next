@@ -7,7 +7,7 @@ import {
   useDeleteTodoMutation,
 } from '@/entities/todo';
 import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { type FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 export function useTodos() {
   const { userId } = useAuth();

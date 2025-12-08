@@ -5,8 +5,11 @@ import type { User } from '../model/types';
  */
 export function getUserInitials(user: User): string {
   const names = user.name.split(' ');
-  if (names.length >= 2) {
-    return `${names[0][0]}${names[1][0]}`.toUpperCase();
+  const firstName = names[0];
+  const lastName = names[1];
+
+  if (names.length >= 2 && firstName && lastName) {
+    return `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase();
   }
   return user.name.substring(0, 2).toUpperCase();
 }
@@ -28,17 +31,17 @@ export function isValidUsername(username: string): boolean {
 /**
  * Генерация цвета аватара по имени
  */
-export function getAvatarColor(name: string): string {
-  const colors = [
-    'bg-red-500',
-    'bg-blue-500',
-    'bg-green-500',
-    'bg-yellow-500',
-    'bg-purple-500',
-    'bg-pink-500',
-    'bg-indigo-500',
-  ];
+const AVATAR_COLORS = [
+  'bg-red-500',
+  'bg-blue-500',
+  'bg-green-500',
+  'bg-yellow-500',
+  'bg-purple-500',
+  'bg-pink-500',
+  'bg-indigo-500',
+] as const;
 
-  const index = name.charCodeAt(0) % colors.length;
-  return colors[index];
+export function getAvatarColor(name: string): string {
+  const index = name.charCodeAt(0) % AVATAR_COLORS.length;
+  return AVATAR_COLORS[index] ?? 'bg-gray-500';
 }

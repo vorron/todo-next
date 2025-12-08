@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/shared/ui';
 import { cn } from '@/shared/lib/utils';
 import Image from 'next/image';
-import { getAvatarColor, getUserInitials, User } from '@/entities/user';
+import { getAvatarColor, getUserInitials, type User } from '@/entities/user';
 
 interface UserCardProps {
   user: User;

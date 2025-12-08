@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Todo App — Enterprise Template
 
-## Getting Started
+Production-ready шаблон для создания enterprise-приложений на базе Next.js 16.
 
-First, run the development server:
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript (strict mode)
+- **State Management**: Redux Toolkit + RTK Query
+- **Styling**: Tailwind CSS 4
+- **Validation**: Zod
+- **Architecture**: Feature-Sliced Design (FSD)
+
+## Quick Start
 
 ```bash
+# 1. Установка зависимостей
+npm install
+
+# 2. Настройка окружения
+cp .env.example .env
+
+# 3. Запуск mock API (в отдельном терминале)
+npm run json-server
+
+# 4. Запуск dev-сервера
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Приложение доступно на [http://localhost:3002](http://localhost:3002)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Команда                | Описание                |
+| ---------------------- | ----------------------- |
+| `npm run dev`          | Запуск dev-сервера      |
+| `npm run build`        | Production сборка       |
+| `npm run lint`         | ESLint проверка         |
+| `npm run format`       | Форматирование Prettier |
+| `npm run format:check` | Проверка форматирования |
+| `npm run json-server`  | Запуск mock API         |
 
-## Learn More
+## Project Structure (FSD)
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/              # App Router: роуты, layouts, providers
+│   ├── (protected)/  # Требует авторизации
+│   ├── (public)/     # Публичные страницы
+│   └── providers/    # React providers
+├── screens/          # Page-level компоненты
+├── widgets/          # Композиционные блоки UI
+├── features/         # Бизнес-логика и фичи
+├── entities/         # Доменные сущности
+└── shared/           # Переиспользуемая инфраструктура
+    ├── api/          # RTK Query base API
+    ├── config/       # Конфигурация
+    ├── lib/          # Утилиты
+    └── ui/           # UI Kit
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Docker
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# Build
+docker build --build-arg NEXT_PUBLIC_API_URL=https://api.example.com -t todo-app .
 
-## Deploy on Vercel
+# Run
+docker run -p 3000:3000 todo-app
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Documentation
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [ARCHITECTURE.md](./ARCHITECTURE.md) — детальное описание архитектуры
+
+## License
+
+MIT
