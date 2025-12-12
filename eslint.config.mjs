@@ -22,12 +22,12 @@ const eslintConfig = defineConfig([
     },
     settings: {
       'boundaries/elements': [
-        { type: 'app', pattern: 'src/app/*' },
-        { type: 'screens', pattern: 'src/screens/*' },
-        { type: 'widgets', pattern: 'src/widgets/*' },
-        { type: 'features', pattern: 'src/features/*' },
-        { type: 'entities', pattern: 'src/entities/*' },
-        { type: 'shared', pattern: 'src/shared/*' },
+        { type: 'app', pattern: 'src/app/**' },
+        { type: 'screens', pattern: 'src/screens/**' },
+        { type: 'widgets', pattern: 'src/widgets/**' },
+        { type: 'features', pattern: 'src/features/**' },
+        { type: 'entities', pattern: 'src/entities/**' },
+        { type: 'shared', pattern: 'src/shared/**' },
       ],
       'boundaries/ignore': ['**/*.test.*', '**/*.spec.*'],
     },

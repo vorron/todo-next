@@ -7,6 +7,7 @@ import { z } from 'zod';
 const envSchema = z.object({
   // Public env vars (available on client)
   NEXT_PUBLIC_API_URL: z.string().url('NEXT_PUBLIC_API_URL must be a valid URL'),
+  NEXT_PUBLIC_IMAGE_HOSTNAMES: z.string().default(''),
 
   // Server-only env vars
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
@@ -19,6 +20,7 @@ const envSchema = z.object({
 function parseEnv() {
   const parsed = envSchema.safeParse({
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    NEXT_PUBLIC_IMAGE_HOSTNAMES: process.env.NEXT_PUBLIC_IMAGE_HOSTNAMES,
     NODE_ENV: process.env.NODE_ENV,
   });
 
@@ -40,6 +42,9 @@ const parsedEnv = parseEnv();
  */
 export const env = {
   API_URL: parsedEnv.NEXT_PUBLIC_API_URL,
+  IMAGE_HOSTNAMES: parsedEnv.NEXT_PUBLIC_IMAGE_HOSTNAMES.split(',')
+    .map((v) => v.trim())
+    .filter(Boolean),
   NODE_ENV: parsedEnv.NODE_ENV,
   IS_PRODUCTION: parsedEnv.NODE_ENV === 'production',
   IS_DEVELOPMENT: parsedEnv.NODE_ENV === 'development',

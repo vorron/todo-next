@@ -48,3 +48,4 @@ export { PageLoader, Skeleton, SkeletonCard, SkeletonList } from './loading';
 export { EmptyState, EmptyTodos, EmptySearchResults } from './empty-state';
 export { ConfirmationDialog } from './dialog/confirmation-dialog';
 export { ErrorStateCard } from './error-state-card/error-state-card';
+export { HeaderProvider, useHeader, type HeaderBreadcrumb } from './header-context';

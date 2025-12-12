@@ -39,7 +39,9 @@ export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // Логирование, аналитика, но НЕ защита маршрутов
-  console.log(`Request to: ${path}`);
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`Request to: ${path}`);
+  }
 
   // Защита маршрутов происходит в layout'ах, а не здесь
   return NextResponse.next();

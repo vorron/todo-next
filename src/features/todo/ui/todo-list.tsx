@@ -14,7 +14,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/shared/config/routes';
 import { useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '@/shared/lib/hooks';
 import { selectCompactView } from '@/features/settings/model/selectors';
 import { useTodos } from '../model/use-todos';
 import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
@@ -29,7 +29,7 @@ export function TodoList({ filter = 'all' }: TodoListProps) {
   const router = useRouter();
   const [retryCount, setRetryCount] = useState(0);
 
-  const compactView = useSelector(selectCompactView);
+  const compactView = useAppSelector(selectCompactView);
 
   const { todos, isLoading, error, refetch } = useTodos();
 

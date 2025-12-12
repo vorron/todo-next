@@ -47,7 +47,7 @@ export function TodoCard({
               e.stopPropagation();
               onToggle?.();
             }}
-            className="flex-shrink-0 mt-1"
+            className="shrink-0 mt-1"
           >
             <div
               className={cn(
@@ -69,7 +69,7 @@ export function TodoCard({
           <div className="flex-1 min-w-0" onClick={onClick}>
             <p
               className={cn(
-                'text-gray-900 break-words cursor-pointer hover:text-blue-600',
+                'text-gray-900 wrap-break-word cursor-pointer hover:text-blue-600',
                 todo.completed && 'line-through text-gray-500',
               )}
             >

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     default: 'Todo App - Production Ready',
     template: '%s | Todo App',
   },
-  description: 'A modern todo app with Next.js 15 and best practices',
+  description: 'A modern todo app with Next.js 16 and best practices',
   keywords: ['todo', 'productivity', 'tasks', 'management'],
   authors: [{ name: 'Your Name' }],
   // viewport: 'width=device-width, initial-scale=1, user-scalable=no',
@@ -25,8 +25,7 @@ export const viewport: Viewport = {
   themeColor: 'black',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  userScalable: true,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -35,9 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${inter.className} h-full antialiased`}>
         <AppErrorBoundary>
           <Providers>
-            <div className="min-h-full flex flex-col">
-              <main className="flex-1">{children}</main>
-            </div>
+            <div className="min-h-full">{children}</div>
             <Toaster />
           </Providers>
         </AppErrorBoundary>

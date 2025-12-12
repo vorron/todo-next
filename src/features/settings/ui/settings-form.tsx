@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/shared/lib/hooks';
 import { Card, CardContent, CardHeader, CardTitle, Button } from '@/shared/ui';
 import { Switch } from '@/shared/ui/switch';
 import {
@@ -17,8 +17,8 @@ import {
 import { selectAllSettings } from '../model/selectors';
 
 export function SettingsForm() {
-  const dispatch = useDispatch();
-  const settings = useSelector(selectAllSettings);
+  const dispatch = useAppDispatch();
+  const settings = useAppSelector(selectAllSettings);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const handleThemeChange = (theme: Theme) => {

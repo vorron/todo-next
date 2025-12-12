@@ -2,13 +2,22 @@
 
 import { useAuth } from '@/features/auth';
 import { UserMenu, LogoutButton } from '@/features/auth';
-import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ROUTES, navigation } from '@/shared/config/routes';
 import { cn } from '@/shared/lib/utils';
+import { HeaderBreadcrumbs } from './breadcrumbs';
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/shared/ui';
 
 export function Navbar() {
-  const { isAuthenticated, session } = useAuth();
-  const router = useRouter();
+  const { isAuthenticated, logout } = useAuth();
   const pathname = usePathname();
 
   if (!isAuthenticated) return null;
@@ -19,55 +28,96 @@ export function Navbar() {
 
   return (
     <nav className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white/80 backdrop-blur-lg supports-backdrop-blur:bg-white/60">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center gap-3">
           {/* Logo */}
-          <div
-            className="flex items-center space-x-2 cursor-pointer group"
-            onClick={() => router.push(ROUTES.TODOS)}
-          >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-600">
+          <Link href={ROUTES.TODOS} className="flex items-center gap-2 cursor-pointer group">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-blue-500 to-purple-600">
               <span className="text-sm font-bold text-white">✓</span>
             </div>
             <span className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
               TodoApp
             </span>
-          </div>
+          </Link>
 
           {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-6">
-            {navigation.main.map((item) => (
-              <button
-                key={item.href}
-                onClick={() => router.push(item.href)}
-                className={cn(
-                  'text-sm font-medium transition-colors relative',
-                  isActiveRoute(item.href) ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600',
-                )}
-              >
-                {item.name}
-                {isActiveRoute(item.href) && (
-                  <span className="absolute -bottom-6 left-0 w-full h-0.5 bg-blue-600 rounded-full" />
-                )}
-              </button>
-            ))}
+          <div className="hidden md:flex items-center rounded-full bg-gray-100 p-1">
+            {navigation.main
+              .filter((item) => !item.auth || isAuthenticated)
+              .map((item) => {
+                const active = isActiveRoute(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={active ? 'page' : undefined}
+                    className={cn(
+                      'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
+                      active
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-white/60',
+                    )}
+                  >
+                    {item.name}
+                  </Link>
+                );
+              })}
           </div>
 
           {/* User Section */}
-          <div className="flex items-center space-x-4">
-            {/* User info */}
-            <div className="hidden sm:flex items-center space-x-3">
-              <span className="text-sm text-gray-600">
-                Welcome, <span className="font-semibold">{session?.name}</span>
-              </span>
-            </div>
+          <div className="ml-auto flex items-center gap-3">
+            <HeaderBreadcrumbs />
 
-            {/* User Menu */}
-            <UserMenu />
+            <div className="flex items-center gap-2">
+              {/* User Menu */}
+              <UserMenu />
 
-            {/* Logout Button - visible on desktop */}
-            <div className="hidden lg:block">
-              <LogoutButton variant="ghost" size="sm" />
+              {/* Logout Button - visible on desktop */}
+              <div className="hidden lg:block">
+                <LogoutButton variant="ghost" size="sm" />
+              </div>
+
+              {/* Mobile menu */}
+              <div className="md:hidden">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" aria-label="Open menu">
+                      <svg
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M4 6h16" />
+                        <path d="M4 12h16" />
+                        <path d="M4 18h16" />
+                      </svg>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    {navigation.main
+                      .filter((item) => !item.auth || isAuthenticated)
+                      .map((item) => (
+                        <DropdownMenuItem key={item.href} asChild>
+                          <Link href={item.href}>{item.name}</Link>
+                        </DropdownMenuItem>
+                      ))}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onSelect={(e) => {
+                        e.preventDefault();
+                        logout();
+                      }}
+                    >
+                      Sign out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
           </div>
         </div>

@@ -1,7 +1,6 @@
 import { useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
-import type { RootState } from '@/app/store';
+import { useAppDispatch, useAppSelector } from '@/shared/lib/hooks';
 import { setSession, clearSession, setLoading } from './auth-slice';
 import { useLoginMutation, useLogoutMutation } from '../api/auth-api';
 import { sessionStorage } from '../lib/session';
@@ -17,9 +16,9 @@ interface ApiError {
 }
 
 export function useAuth() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
-  const auth = useSelector((state: RootState) => state.auth);
+  const auth = useAppSelector((state) => state.auth);
 
   const [loginMutation, { isLoading: isLoggingIn }] = useLoginMutation();
   const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutMutation();

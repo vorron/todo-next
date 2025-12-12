@@ -1,5 +1,24 @@
 import type { NextConfig } from 'next';
 
+function getImageRemotePatterns() {
+  const raw = process.env.NEXT_PUBLIC_IMAGE_HOSTNAMES ?? '';
+  const hostnames = raw
+    .split(',')
+    .map((v) => v.trim())
+    .filter(Boolean);
+
+  return hostnames.flatMap((hostname) => {
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return [
+        { protocol: 'http' as const, hostname },
+        { protocol: 'https' as const, hostname },
+      ];
+    }
+
+    return [{ protocol: 'https' as const, hostname }];
+  });
+}
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
@@ -32,12 +51,7 @@ const nextConfig: NextConfig = {
 
   // Image optimization
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
+    remotePatterns: getImageRemotePatterns(),
   },
 
   // Строгий режим для production

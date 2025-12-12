@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { cookies } from 'next/headers';
-import { Navbar } from '@/widgets';
+import { AppShell, Navbar } from '@/widgets';
+import { HeaderProvider } from '@/shared/ui';
 
 interface PublicLayoutProps {
   children: ReactNode;
@@ -15,9 +16,8 @@ export default async function PublicLayout({ children }: PublicLayoutProps) {
   const hasSession = cookieStore.has('app_session_exists');
 
   return (
-    <div className="min-h-full flex flex-col">
-      {hasSession && <Navbar />}
-      <main className="flex-1">{children}</main>
-    </div>
+    <HeaderProvider>
+      <AppShell header={hasSession ? <Navbar /> : null}>{children}</AppShell>
+    </HeaderProvider>
   );
 }

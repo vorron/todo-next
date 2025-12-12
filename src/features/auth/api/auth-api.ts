@@ -1,6 +1,7 @@
 import { baseApi } from '@/shared/api';
 import { userSchema } from '@/entities/user';
 import type { User } from '@/entities/user';
+import { env } from '@/shared/config/env';
 import type { LoginDto, LoginResponse } from '../model/types';
 import { createMockSession } from '../lib/session';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
@@ -11,7 +12,7 @@ interface ApiError {
 }
 
 export const authApi = baseApi.injectEndpoints({
-  overrideExisting: process.env.NODE_ENV === 'development',
+  overrideExisting: env.IS_DEVELOPMENT,
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginDto>({
       async queryFn({ username }, _api, _extraOptions, baseQuery) {

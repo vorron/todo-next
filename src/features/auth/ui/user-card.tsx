@@ -11,6 +11,10 @@ interface UserCardProps {
 }
 
 export function UserCard({ user, isSelected, onClick, showEmail }: UserCardProps) {
+  const isExternalAvatar = Boolean(
+    user.avatar?.startsWith('http://') || user.avatar?.startsWith('https://'),
+  );
+
   return (
     <Card
       className={cn(
@@ -32,8 +36,9 @@ export function UserCard({ user, isSelected, onClick, showEmail }: UserCardProps
               <Image
                 src={user.avatar}
                 alt={user.name}
-                width={40} // или нужный размер
+                width={40}
                 height={40}
+                unoptimized={isExternalAvatar}
                 className="h-full w-full rounded-full object-cover"
               />
             ) : (
@@ -52,7 +57,7 @@ export function UserCard({ user, isSelected, onClick, showEmail }: UserCardProps
 
           {/* Selected indicator */}
           {isSelected && (
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               <svg className="h-6 w-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"

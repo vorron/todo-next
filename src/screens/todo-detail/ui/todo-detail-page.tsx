@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOptimisticToggle } from '@/features/todo/todo-update';
 import { useDeleteTodo } from '@/features/todo/todo-delete';
@@ -12,6 +13,7 @@ import {
   CardContent,
   Button,
   ErrorStateCard,
+  useHeader,
 } from '@/shared/ui';
 import { ROUTES } from '@/shared/config/routes';
 import { formatDueDate, TODO_PRIORITY_LABELS } from '@/entities/todo';
@@ -25,11 +27,24 @@ interface TodoDetailPageProps {
 
 export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
   const router = useRouter();
+  const { setHeader } = useHeader();
 
   const { todo, isLoading, isError } = useTodoDetail(todoId);
   const { toggle, isLoading: isToggling } = useOptimisticToggle();
   const { deleteTodo, isLoading: isDeleting } = useDeleteTodo();
   const confirm = useConfirm();
+
+  useEffect(() => {
+    if (!todo) return;
+
+    setHeader({
+      title: todo.text,
+      breadcrumbs: [
+        { href: ROUTES.TODOS, label: 'Todos' },
+        { href: ROUTES.TODO_DETAIL(todo.id), label: todo.text },
+      ],
+    });
+  }, [setHeader, todo]);
 
   const handleDelete = async () => {
     if (!todo) return;
@@ -76,7 +91,7 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
             ← Back to Todos
           </Button>
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900">Todo Details</h1>
+            <h1 className="max-w-[70%] truncate text-3xl font-bold text-gray-900">{todo.text}</h1>
             <TodoStatusBadge completed={todo.completed} />
           </div>
         </div>

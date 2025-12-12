@@ -1,8 +1,9 @@
 import { type ReactNode } from 'react';
 import { redirect } from 'next/navigation';
 import { ROUTES } from '@/shared/config/routes';
-import { Navbar } from '@/widgets';
+import { AppShell, Navbar } from '@/widgets';
 import { hasValidSession } from '@/features/auth/lib/server-session';
+import { HeaderProvider } from '@/shared/ui';
 
 interface ProtectedLayoutProps {
   children: ReactNode;
@@ -16,9 +17,8 @@ export default async function ProtectedLayout({ children }: ProtectedLayoutProps
   }
 
   return (
-    <div className="min-h-full flex flex-col">
-      <Navbar />
-      <main className="flex-1">{children}</main>
-    </div>
+    <HeaderProvider>
+      <AppShell header={<Navbar />}>{children}</AppShell>
+    </HeaderProvider>
   );
 }
