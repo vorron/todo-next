@@ -18,6 +18,7 @@ export type {
   UpdateTodoDto,
   TodoFilter,
   FilterType,
+  TodoSortBy,
   TodoStats,
 } from './model/types';
 export { TodoPriority } from './model/todo-schema';

@@ -37,7 +37,12 @@ export function CreateTodoForm() {
               render={({ field }) => (
                 <FormItem className="flex-1">
                   <FormControl>
-                    <Input placeholder="What needs to be done?" disabled={isLoading} {...field} />
+                    <Input
+                      id="create-todo-input"
+                      placeholder="What needs to be done?"
+                      disabled={isLoading}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -62,6 +62,7 @@ npm run dev
 | Команда                | Описание                                   |
 | ---------------------- | ------------------------------------------ |
 | `npm run dev`          | Запуск dev-сервера                         |
+| `npm run dev:e2e`      | Запуск json-server + dev-сервер (для E2E)  |
 | `npm run build`        | Production сборка                          |
 | `npm run start`        | Запуск production сервера                  |
 | `npm run lint`         | ESLint проверка                            |
@@ -73,6 +74,9 @@ npm run dev
 | `npm run test:watch`   | Unit tests watch mode                      |
 | `npm run check`        | Quality gate (format+lint+typecheck+tests) |
 | `npm run json-server`  | Запуск mock API                            |
+| `npm run e2e:install`  | Установка браузеров Playwright             |
+| `npm run e2e`          | E2E тесты (Playwright)                     |
+| `npm run e2e:ui`       | E2E тесты (Playwright UI)                  |
 
 ### Quality Gate
 
@@ -84,6 +88,78 @@ npm run dev
 - линт
 - типы
 - unit tests
+
+E2E тесты (Playwright) намеренно вынесены в отдельную команду (`npm run e2e`), чтобы `npm run check` оставался быстрым и предсказуемым.
+
+## Демо-функционал (как пользоваться)
+
+Этот репозиторий — не только пример архитектуры (FSD), но и набор «шаблонных» реализаций типовых продуктовых сценариев.
+
+### Todos: поиск + сортировка + shareable URL state
+
+На странице `/todos` доступны:
+
+- поиск по тексту и тегам
+- фильтры: all / active / completed
+- сортировка: Newest / Priority / A–Z
+
+Состояние синхронизировано с URL (удобно шарить ссылку и пользоваться back/forward):
+
+- `q` — строка поиска
+- `filter` — `active | completed` (значение `all` по умолчанию не пишется)
+- `sort` — `priority | alphabetical` (значение `date` по умолчанию не пишется)
+
+Пример:
+
+`/todos?q=refactor&filter=active&sort=priority`
+
+### Undo при удалении todo
+
+При удалении todo появляется toast с кнопкой **Undo**.
+
+Реализация сделана «универсально для шаблона»: Undo восстанавливает todo через `create` (создаётся новый `id`).
+
+### Selection mode + Bulk actions
+
+В списке todos есть режим выделения:
+
+- нажми **Select**
+- выбери несколько todo
+- выполни массовое действие:
+  - Mark done / Mark active
+  - Delete (также с Undo)
+  - Select all / Clear
+
+Также доступны глобальные действия:
+
+- Mark all done / Mark all active
+- Clear completed
+
+## E2E (Playwright)
+
+В проект добавлен smoke E2E тест: `login → todos → search → detail → back`.
+
+### Первый запуск
+
+1. Установить браузеры:
+
+```bash
+npm run e2e:install
+```
+
+2. Запустить E2E:
+
+```bash
+npm run e2e
+```
+
+Playwright сам поднимет dev-сервер приложения и mock API через `dev:e2e`.
+
+### UI режим
+
+```bash
+npm run e2e:ui
+```
 
 ## Project Structure (FSD)
 

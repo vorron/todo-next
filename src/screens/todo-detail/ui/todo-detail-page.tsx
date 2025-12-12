@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOptimisticToggle } from '@/features/todo/todo-update';
-import { useDeleteTodo } from '@/features/todo/todo-delete';
+import { useUndoableDeleteTodo } from '@/features/todo/todo-delete';
 import { useTodoDetail } from '@/features/todo/model/use-todo-detail';
 import {
   PageLoader,
@@ -31,7 +31,7 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
 
   const { todo, isLoading, isError } = useTodoDetail(todoId);
   const { toggle, isLoading: isToggling } = useOptimisticToggle();
-  const { deleteTodo, isLoading: isDeleting } = useDeleteTodo();
+  const { deleteTodo, isDeleting } = useUndoableDeleteTodo();
   const confirm = useConfirm();
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
     if (!ok) return;
 
     try {
-      await deleteTodo(todo.id);
+      await deleteTodo(todo);
       router.push(ROUTES.TODOS);
     } catch {
       //

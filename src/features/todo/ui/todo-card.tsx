@@ -16,6 +16,9 @@ interface TodoCardProps {
   variant?: 'default' | 'compact';
   showPriority?: boolean;
   showDueDate?: boolean;
+  selectionMode?: boolean;
+  selected?: boolean;
+  onSelectToggle?: () => void;
 }
 
 export function TodoCard({
@@ -26,9 +29,13 @@ export function TodoCard({
   variant = 'default',
   showPriority = true,
   showDueDate = true,
+  selectionMode,
+  selected,
+  onSelectToggle,
 }: TodoCardProps) {
   const isOverdue = isTodoOverdue(todo);
   const priority = todo.priority || 'medium';
+  const showDelete = Boolean(onDelete) && !selectionMode;
 
   return (
     <Card
@@ -42,28 +49,54 @@ export function TodoCard({
       <CardContent className={cn('p-0', variant === 'compact' ? 'space-y-2' : 'space-y-3')}>
         <div className="flex items-start gap-3">
           {/* Checkbox */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggle?.();
-            }}
-            className="shrink-0 mt-1"
-          >
-            <div
-              className={cn(
-                'h-5 w-5 rounded border-2 flex items-center justify-center transition-colors',
-                todo.completed
-                  ? 'bg-blue-500 border-blue-500'
-                  : 'border-gray-300 hover:border-blue-500',
-              )}
+          {selectionMode ? (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectToggle?.();
+              }}
+              className="shrink-0 mt-1"
+              aria-label={selected ? 'Deselect todo' : 'Select todo'}
             >
-              {todo.completed && (
-                <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 12 12">
-                  <path d="M10 3L4.5 8.5 2 6" stroke="currentColor" strokeWidth="2" fill="none" />
-                </svg>
-              )}
-            </div>
-          </button>
+              <div
+                className={cn(
+                  'h-5 w-5 rounded border-2 flex items-center justify-center transition-colors',
+                  selected
+                    ? 'bg-blue-500 border-blue-500'
+                    : 'border-gray-300 hover:border-blue-500',
+                )}
+              >
+                {selected && (
+                  <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 12 12">
+                    <path d="M10 3L4.5 8.5 2 6" stroke="currentColor" strokeWidth="2" fill="none" />
+                  </svg>
+                )}
+              </div>
+            </button>
+          ) : (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggle?.();
+              }}
+              className="shrink-0 mt-1"
+            >
+              <div
+                className={cn(
+                  'h-5 w-5 rounded border-2 flex items-center justify-center transition-colors',
+                  todo.completed
+                    ? 'bg-blue-500 border-blue-500'
+                    : 'border-gray-300 hover:border-blue-500',
+                )}
+              >
+                {todo.completed && (
+                  <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 12 12">
+                    <path d="M10 3L4.5 8.5 2 6" stroke="currentColor" strokeWidth="2" fill="none" />
+                  </svg>
+                )}
+              </div>
+            </button>
+          )}
 
           {/* Content */}
           <div className="flex-1 min-w-0" onClick={onClick}>
@@ -116,11 +149,11 @@ export function TodoCard({
           </div>
 
           {/* Delete button */}
-          {onDelete && (
+          {showDelete && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onDelete();
+                onDelete?.();
               }}
               className="shrink-0 text-gray-400 hover:text-red-500 transition-colors"
             >

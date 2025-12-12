@@ -14,6 +14,8 @@ export { TodoPriority } from './todo-schema';
  */
 export type FilterType = 'all' | 'active' | 'completed';
 
+export type TodoSortBy = 'date' | 'priority' | 'alphabetical';
+
 export interface TodoListItem extends Todo {
   isEditing?: boolean;
 }

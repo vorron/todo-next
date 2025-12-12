@@ -1,20 +1,18 @@
 'use client';
 
 import { createContext, useContext, useMemo, useReducer, type ReactNode } from 'react';
-import type { FilterType } from '@/entities/todo';
-
-export type TodosSortBy = 'date' | 'priority' | 'alphabetical';
+import type { FilterType, TodoSortBy } from '@/entities/todo';
 
 interface TodosFiltersState {
   filter: FilterType;
   search: string;
-  sortBy: TodosSortBy;
+  sortBy: TodoSortBy;
 }
 
 type TodosFiltersAction =
   | { type: 'SET_FILTER'; filter: FilterType }
   | { type: 'SET_SEARCH'; search: string }
-  | { type: 'SET_SORT_BY'; sortBy: TodosSortBy }
+  | { type: 'SET_SORT_BY'; sortBy: TodoSortBy }
   | { type: 'RESET' };
 
 const initialState: TodosFiltersState = {
@@ -44,7 +42,7 @@ function todosFiltersReducer(
 interface TodosFiltersContextValue extends TodosFiltersState {
   setFilter(filter: FilterType): void;
   setSearch(search: string): void;
-  setSortBy(sortBy: TodosSortBy): void;
+  setSortBy(sortBy: TodoSortBy): void;
   reset(): void;
 }
 
@@ -58,7 +56,7 @@ export function TodosFiltersProvider({ children }: { children: ReactNode }) {
       ...state,
       setFilter: (filter: FilterType) => dispatch({ type: 'SET_FILTER', filter }),
       setSearch: (search: string) => dispatch({ type: 'SET_SEARCH', search }),
-      setSortBy: (sortBy: TodosSortBy) => dispatch({ type: 'SET_SORT_BY', sortBy }),
+      setSortBy: (sortBy: TodoSortBy) => dispatch({ type: 'SET_SORT_BY', sortBy }),
       reset: () => dispatch({ type: 'RESET' }),
     }),
     [state],

@@ -1,10 +1,11 @@
 'use client';
 
 import { useOptimisticToggle } from '@/features/todo/todo-update';
-import { useDeleteTodo } from '@/features/todo/todo-delete';
+import { useUndoableDeleteTodo } from '@/features/todo/todo-delete';
 import {
   SkeletonList,
   EmptyTodos,
+  EmptySearchResults,
   Card,
   CardHeader,
   CardTitle,
@@ -19,13 +20,16 @@ import { selectCompactView } from '@/features/settings/model/selectors';
 import { useTodos } from '../model/use-todos';
 import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
 import { TodoCard } from './todo-card';
-import type { FilterType } from '@/entities/todo';
+import type { FilterType, Todo, TodoSortBy } from '@/entities/todo';
+import { TodoBulkActionsBar, useTodoSelection } from '@/features/todo/todo-bulk-actions';
 
 interface TodoListProps {
   filter?: FilterType;
+  search?: string;
+  sortBy?: TodoSortBy;
 }
 
-export function TodoList({ filter = 'all' }: TodoListProps) {
+export function TodoList({ filter = 'all', search = '', sortBy = 'date' }: TodoListProps) {
   const router = useRouter();
   const [retryCount, setRetryCount] = useState(0);
 
@@ -35,14 +39,16 @@ export function TodoList({ filter = 'all' }: TodoListProps) {
 
   const { toggle } = useOptimisticToggle();
 
-  const { deleteTodo } = useDeleteTodo();
+  const { selectionMode, toggleId, isSelected } = useTodoSelection();
+
+  const { deleteTodo } = useUndoableDeleteTodo();
   const confirm = useConfirm();
 
   const handleDelete = useCallback(
-    async (id: string, text: string) => {
+    async (todo: Todo) => {
       const ok = await confirm({
         title: 'Delete Todo?',
-        description: `Are you sure you want to delete "${text}"? This action cannot be undone.`,
+        description: `Are you sure you want to delete "${todo.text}"? This action cannot be undone.`,
         confirmLabel: 'Delete',
         cancelLabel: 'Cancel',
         variant: 'danger',
@@ -50,16 +56,20 @@ export function TodoList({ filter = 'all' }: TodoListProps) {
 
       if (!ok) return;
 
-      await deleteTodo(id);
+      await deleteTodo(todo);
     },
     [confirm, deleteTodo],
   );
 
   const handleTodoClick = useCallback(
     (id: string) => {
+      if (selectionMode) {
+        toggleId(id);
+        return;
+      }
       router.push(ROUTES.TODO_DETAIL(id));
     },
-    [router],
+    [router, selectionMode, toggleId],
   );
 
   const handleRetry = useCallback(() => {
@@ -68,11 +78,42 @@ export function TodoList({ filter = 'all' }: TodoListProps) {
   }, [refetch]);
 
   // Фильтрация
+  const normalizedSearch = search.trim().toLowerCase();
   const filteredTodos = todos?.filter((todo) => {
-    if (filter === 'active') return !todo.completed;
-    if (filter === 'completed') return todo.completed;
-    return true;
+    if (filter === 'active' && todo.completed) return false;
+    if (filter === 'completed' && !todo.completed) return false;
+
+    if (!normalizedSearch) return true;
+
+    const textMatch = todo.text.toLowerCase().includes(normalizedSearch);
+    const tagsMatch = (todo.tags ?? []).some((tag) => tag.toLowerCase().includes(normalizedSearch));
+
+    return textMatch || tagsMatch;
   });
+
+  const sortedTodos = filteredTodos
+    ? [...filteredTodos].sort((a, b) => {
+        if (sortBy === 'alphabetical') {
+          return a.text.localeCompare(b.text);
+        }
+
+        if (sortBy === 'priority') {
+          const rank = (p?: string) => {
+            if (p === 'high') return 3;
+            if (p === 'medium') return 2;
+            if (p === 'low') return 1;
+            return 0;
+          };
+          return rank(b.priority) - rank(a.priority);
+        }
+
+        const toTime = (t: { updatedAt?: string; createdAt?: string }) => {
+          const raw = t.updatedAt ?? t.createdAt;
+          return raw ? new Date(raw).getTime() : 0;
+        };
+        return toTime(b) - toTime(a);
+      })
+    : [];
 
   // Loading state
   if (isLoading) {
@@ -126,19 +167,27 @@ export function TodoList({ filter = 'all' }: TodoListProps) {
   }
 
   // Empty state
-  if (!filteredTodos || filteredTodos.length === 0) {
+  if (sortedTodos.length === 0) {
+    const hasSearch = normalizedSearch.length > 0;
+
     return (
       <Card>
         <CardHeader>
           <CardTitle>My Todos</CardTitle>
         </CardHeader>
         <CardContent>
-          <EmptyTodos
-            onCreateClick={() => {
-              const input = document.querySelector('input[type="text"]') as HTMLInputElement;
-              input?.focus();
-            }}
-          />
+          {hasSearch ? (
+            <EmptySearchResults />
+          ) : (
+            <EmptyTodos
+              onCreateClick={() => {
+                const input = document.getElementById(
+                  'create-todo-input',
+                ) as HTMLInputElement | null;
+                input?.focus();
+              }}
+            />
+          )}
         </CardContent>
       </Card>
     );
@@ -149,8 +198,9 @@ export function TodoList({ filter = 'all' }: TodoListProps) {
     <>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>My Todos ({filteredTodos.length})</CardTitle>
+          <CardTitle>My Todos ({sortedTodos.length})</CardTitle>
           <div className="flex gap-2">
+            <TodoBulkActionsBar allTodos={todos ?? []} visibleTodos={sortedTodos} />
             <Button variant="ghost" size="sm" onClick={() => refetch()}>
               Refresh
             </Button>
@@ -158,13 +208,16 @@ export function TodoList({ filter = 'all' }: TodoListProps) {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {filteredTodos.map((todo) => (
+            {sortedTodos.map((todo) => (
               <TodoCard
                 key={todo.id}
                 todo={todo}
                 variant={compactView ? 'compact' : 'default'}
-                onToggle={() => toggle(todo)}
-                onDelete={() => handleDelete(todo.id, todo.text)}
+                selectionMode={selectionMode}
+                selected={isSelected(todo.id)}
+                onSelectToggle={() => toggleId(todo.id)}
+                onToggle={selectionMode ? undefined : () => toggle(todo)}
+                onDelete={selectionMode ? undefined : () => handleDelete(todo)}
                 onClick={() => handleTodoClick(todo.id)}
               />
             ))}
