@@ -3,6 +3,8 @@
  * Централизованное управление путями с TypeScript поддержкой
  */
 
+import { capitalize } from '../lib/utils';
+
 export const ROUTES = {
   // Public routes
   HOME: '/',
@@ -16,15 +18,11 @@ export const ROUTES = {
 
   // Dynamic routes
   TODO_DETAIL: (id: string) => `/todos/${id}`,
+  TODO_EDIT: (id: string) => `/todos/${id}/edit`,
 } as const;
 
 // Type-safe navigation
 export type AppRoute = keyof typeof ROUTES;
-
-// Type guard для проверки маршрутов
-export function isAppRoute(route: string): route is AppRoute {
-  return route in ROUTES;
-}
 
 // Вспомогательные функции для навигации
 export const navigation = {
@@ -45,7 +43,7 @@ export const navigation = {
       currentPath += `/${segment}`;
       breadcrumbs.push({
         href: currentPath,
-        label: segment.charAt(0).toUpperCase() + segment.slice(1),
+        label: capitalize(segment),
       });
     }
 
