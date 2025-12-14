@@ -7,13 +7,7 @@ import {
   todoFilterSchema,
 } from '../model/todo-schema';
 import type { Todo, CreateTodoDto, UpdateTodoDto, TodoFilter } from '../model/types';
-import { type baseApi } from '@/shared/api';
-
-type Builder = Parameters<typeof baseApi.injectEndpoints>[0]['endpoints'] extends (
-  builder: infer TBuilder,
-) => unknown
-  ? TBuilder
-  : never;
+import type { BaseApiEndpointBuilder } from '@/shared/api';
 
 // Упрощенная схема фильтров без строгой UUID валидации
 const todoFilterQuerySchema = todoFilterSchema
@@ -30,7 +24,7 @@ const todoFilterQuerySchema = todoFilterSchema
       .transform((val) => (val ? val.split(',') : undefined)),
   });
 
-export function buildTodoCrudEndpoints(builder: Builder) {
+export function buildTodoCrudEndpoints(builder: BaseApiEndpointBuilder) {
   return {
     // Получение списка todos с фильтрами
     getTodos: builder.query<Todo[], TodoFilter | void>({

@@ -10,3 +10,7 @@ export const baseApi = createApi({
   tagTypes: ['Todo', 'User', 'Auth'],
   endpoints: () => ({}),
 });
+
+export type BaseApiEndpointsFactory = Parameters<typeof baseApi.injectEndpoints>[0]['endpoints'];
+
+export type BaseApiEndpointBuilder = Parameters<BaseApiEndpointsFactory>[0];

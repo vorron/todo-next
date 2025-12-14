@@ -1,13 +1,7 @@
 import { todosSchema } from '../model/todo-schema';
-import { type baseApi } from '@/shared/api';
+import type { BaseApiEndpointBuilder } from '@/shared/api';
 
-type Builder = Parameters<typeof baseApi.injectEndpoints>[0]['endpoints'] extends (
-  builder: infer TBuilder,
-) => unknown
-  ? TBuilder
-  : never;
-
-export function buildTodoBulkEndpoints(builder: Builder) {
+export function buildTodoBulkEndpoints(builder: BaseApiEndpointBuilder) {
   return {
     // Массовое обновление (пометить все как выполненные/невыполненные)
     toggleAllTodos: builder.mutation<void, { userId: string; completed: boolean }>({
