@@ -217,6 +217,7 @@ export function TodoList({ filter = 'all', search = '', sortBy = 'date' }: TodoL
                 selected={isSelected(todo.id)}
                 onSelectToggle={() => toggleId(todo.id)}
                 onToggle={selectionMode ? undefined : () => toggle(todo)}
+                onEdit={selectionMode ? undefined : () => router.push(ROUTES.TODO_EDIT(todo.id))}
                 onDelete={selectionMode ? undefined : () => handleDelete(todo)}
                 onClick={() => handleTodoClick(todo.id)}
               />

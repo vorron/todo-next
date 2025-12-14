@@ -4,7 +4,7 @@ import { useAuth } from '@/features/auth';
 import { UserMenu, LogoutButton } from '@/features/auth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ROUTES, navigation } from '@/shared/config/routes';
+import { ROUTES, mainNavigation } from '@/shared/config/routes';
 import { cn } from '@/shared/lib/utils';
 import { HeaderBreadcrumbs } from './breadcrumbs';
 import {
@@ -42,8 +42,8 @@ export function Navbar() {
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center rounded-full bg-gray-100 p-1">
-            {navigation.main
-              .filter((item) => !item.auth || isAuthenticated)
+            {mainNavigation
+              .filter((item) => !item.requiresAuth || isAuthenticated)
               .map((item) => {
                 const active = isActiveRoute(item.href);
                 return (
@@ -58,7 +58,7 @@ export function Navbar() {
                         : 'text-gray-600 hover:text-gray-900 hover:bg-white/60',
                     )}
                   >
-                    {item.name}
+                    {item.label}
                   </Link>
                 );
               })}
@@ -98,11 +98,11 @@ export function Navbar() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
-                    {navigation.main
-                      .filter((item) => !item.auth || isAuthenticated)
+                    {mainNavigation
+                      .filter((item) => !item.requiresAuth || isAuthenticated)
                       .map((item) => (
                         <DropdownMenuItem key={item.href} asChild>
-                          <Link href={item.href}>{item.name}</Link>
+                          <Link href={item.href}>{item.label}</Link>
                         </DropdownMenuItem>
                       ))}
                     <DropdownMenuSeparator />

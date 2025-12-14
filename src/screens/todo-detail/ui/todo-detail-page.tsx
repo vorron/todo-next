@@ -124,6 +124,13 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
                     {todo.completed ? 'Mark as Active' : 'Mark as Completed'}
                   </Button>
                   <Button
+                    variant="secondary"
+                    onClick={() => router.push(ROUTES.TODO_EDIT(todo.id))}
+                    disabled={isToggling || isDeleting}
+                  >
+                    Edit Todo
+                  </Button>
+                  <Button
                     variant="danger"
                     onClick={handleDelete}
                     isLoading={isDeleting}
