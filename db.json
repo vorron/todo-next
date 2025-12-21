@@ -72,23 +72,34 @@
     },
     {
       "id": "77f6",
-      "text": "111",
+      "text": "Приготовить обед",
       "completed": false,
       "userId": "4",
       "priority": "medium",
-      "tags": [],
-      "createdAt": "2025-11-30T06:57:08.878Z",
-      "updatedAt": "2025-11-30T06:57:08.878Z"
+      "tags": ["дом"],
+      "createdAt": "2025-12-21T03:00:28.429Z",
+      "updatedAt": "2025-12-21T03:00:28.429Z",
+      "dueDate": "2025-12-30"
     },
     {
       "id": "1d63",
       "text": "Рефакторинг текущего проекта",
-      "completed": false,
+      "completed": true,
       "userId": "4",
       "priority": "medium",
       "tags": [],
-      "createdAt": "2025-12-01T04:09:15.176Z",
-      "updatedAt": "2025-12-01T04:09:15.176Z"
+      "createdAt": "2025-12-20T06:45:12.034Z",
+      "updatedAt": "2025-12-20T06:45:12.034Z"
+    },
+    {
+      "id": "e67f",
+      "text": "Сходить в магазин",
+      "completed": true,
+      "userId": "4",
+      "priority": "medium",
+      "tags": [],
+      "createdAt": "2025-12-20T06:58:51.115Z",
+      "updatedAt": "2025-12-20T06:58:51.115Z"
     }
   ]
 }

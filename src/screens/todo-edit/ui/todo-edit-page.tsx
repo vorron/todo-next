@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { XCircle } from 'lucide-react';
 
 import { useUpdateTodoMutation, TODO_PRIORITY_LABELS } from '@/entities/todo';
-import { useTodoDetail } from '@/features/todo/model/use-todo-detail';
+import { useTodoDetail } from '@/features/todo/detail/model/use-todo-detail';
 import { ROUTES } from '@/shared/config/routes';
 import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
 import { handleZodError } from '@/shared/lib/utils';
@@ -38,6 +38,15 @@ const editTodoFormSchema = z.object({
     .min(1, 'Todo text is required')
     .max(500, 'Todo text must be at most 500 characters'),
   priority: z.enum(['low', 'medium', 'high']),
+  dueDate: z
+    .string()
+    .trim()
+    .optional()
+    .refine((value) => !value || !Number.isNaN(Date.parse(value)), 'Please provide a valid date'),
+  tagsInput: z
+    .string()
+    .max(200, 'Tags must be at most 200 characters')
+    .transform((value) => value.trim()),
 });
 
 type EditTodoFormData = z.infer<typeof editTodoFormSchema>;
@@ -58,15 +67,26 @@ export function TodoEditPage({ todoId }: TodoEditPageProps) {
     defaultValues: {
       text: '',
       priority: 'medium',
+      dueDate: '',
+      tagsInput: '',
     },
   });
 
   useEffect(() => {
     if (!todo) return;
 
+    const toDateInputValue = (date?: string | null) => {
+      if (!date) return '';
+      const parsed = new Date(date);
+      if (Number.isNaN(parsed.getTime())) return '';
+      return parsed.toISOString().slice(0, 10);
+    };
+
     form.reset({
       text: todo.text,
       priority: todo.priority || 'medium',
+      dueDate: toDateInputValue(todo.dueDate),
+      tagsInput: (todo.tags || []).join(', '),
     });
 
     setHeader({
@@ -82,11 +102,18 @@ export function TodoEditPage({ todoId }: TodoEditPageProps) {
   const onSubmit = async (data: EditTodoFormData) => {
     if (!todo) return;
 
+    const tags = data.tagsInput
+      .split(',')
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+
     try {
       await updateTodo({
         id: todo.id,
         text: data.text,
         priority: data.priority,
+        dueDate: data.dueDate || undefined,
+        tags,
       }).unwrap();
 
       handleApiSuccess('Todo updated successfully');
@@ -179,6 +206,41 @@ export function TodoEditPage({ todoId }: TodoEditPageProps) {
                         <option value="high">{TODO_PRIORITY_LABELS.high}</option>
                       </select>
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="dueDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Due date</FormLabel>
+                    <FormControl>
+                      <Input type="date" disabled={isUpdating} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="tagsInput"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tags</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="work, personal, urgent"
+                        disabled={isUpdating}
+                        {...field}
+                      />
+                    </FormControl>
+                    <p className="text-xs text-gray-500">
+                      Comma-separated. Example: work, planning.
+                    </p>
                     <FormMessage />
                   </FormItem>
                 )}

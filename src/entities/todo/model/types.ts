@@ -12,9 +12,13 @@ export { TodoPriority } from './todo-schema';
 /**
  * UI типы
  */
-export type FilterType = 'all' | 'active' | 'completed';
+export const FILTER_VALUES = ['all', 'active', 'completed'] as const;
 
-export type TodoSortBy = 'date' | 'priority' | 'alphabetical';
+export type FilterType = (typeof FILTER_VALUES)[number];
+
+export const SORT_VALUES = ['date', 'priority', 'alphabetical'] as const;
+
+export type TodoSortBy = (typeof SORT_VALUES)[number];
 
 export interface TodoListItem extends Todo {
   isEditing?: boolean;

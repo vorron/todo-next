@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { todoApi } from '../api/todo-api';
-import type { FilterType, TodoStats } from './types';
+import type { FilterType, TodoSortBy, TodoStats } from './types';
 
 /**
  * Базовые селекторы
@@ -30,10 +30,7 @@ export const selectFilteredTodos = (userId: string | undefined, filter: FilterTy
 /**
  * Сортировка todos
  */
-export const selectSortedTodos = (
-  userId: string | undefined,
-  sortBy: 'date' | 'priority' | 'alphabetical' = 'date',
-) =>
+export const selectSortedTodos = (userId: string | undefined, sortBy: TodoSortBy = 'date') =>
   createSelector([selectAllTodos(userId)], (todosResult) => {
     if (!todosResult.data) return [];
 

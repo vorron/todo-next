@@ -21,13 +21,14 @@ export type {
   TodoSortBy,
   TodoStats,
 } from './model/types';
+export { FILTER_VALUES, SORT_VALUES } from './model/types';
 export { TodoPriority } from './model/todo-schema';
 
 // Schemas
 export { todoSchema, todosSchema, createTodoSchema, updateTodoSchema } from './model/todo-schema';
 
 // Constants
-export { TODO_PRIORITY_LABELS, TODO_PRIORITY_COLORS, FILTER_OPTIONS } from './model/constants';
+export { TODO_PRIORITY_LABELS, TODO_PRIORITY_COLORS } from './model/constants';
 
 // Selectors
 export {

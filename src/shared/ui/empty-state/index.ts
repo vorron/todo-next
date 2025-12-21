@@ -1,1 +1,1 @@
-export { EmptyState, EmptyTodos, EmptySearchResults } from './empty-state';
+export { EmptyState, EmptySearchResults } from './empty-state';

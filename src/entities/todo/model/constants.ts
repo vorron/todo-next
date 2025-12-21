@@ -26,9 +26,3 @@ export const TODO_PRIORITY_COLORS = {
     border: 'border-red-300',
   },
 } as const;
-
-export const FILTER_OPTIONS = [
-  { value: 'all', label: 'All Todos' },
-  { value: 'active', label: 'Active' },
-  { value: 'completed', label: 'Completed' },
-] as const;

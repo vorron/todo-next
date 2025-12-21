@@ -1,5 +1,6 @@
 'use client';
 
+import { SORT_VALUES, type TodoSortBy } from '@/entities/todo';
 import {
   Button,
   DropdownMenu,
@@ -9,15 +10,20 @@ import {
 } from '@/shared/ui';
 
 export type TodoSortOption = {
-  value: 'date' | 'priority' | 'alphabetical';
+  value: TodoSortBy;
   label: string;
 };
 
-const SORT_OPTIONS: TodoSortOption[] = [
-  { value: 'date', label: 'Newest' },
-  { value: 'priority', label: 'Priority' },
-  { value: 'alphabetical', label: 'A–Z' },
-];
+const SORT_LABELS: Record<TodoSortBy, string> = {
+  date: 'Newest',
+  priority: 'Priority',
+  alphabetical: 'A–Z',
+};
+
+const SORT_OPTIONS: TodoSortOption[] = SORT_VALUES.map((value) => ({
+  value,
+  label: SORT_LABELS[value],
+}));
 
 interface TodoSortSelectProps {
   value: TodoSortOption['value'];

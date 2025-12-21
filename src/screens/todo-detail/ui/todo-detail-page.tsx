@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOptimisticToggle } from '@/features/todo/todo-update';
 import { useUndoableDeleteTodo } from '@/features/todo/todo-delete';
-import { useTodoDetail } from '@/features/todo/model/use-todo-detail';
+import { useTodoDetail } from '@/features/todo/detail/model/use-todo-detail';
 import {
   PageLoader,
   Card,
@@ -19,7 +19,7 @@ import { ROUTES } from '@/shared/config/routes';
 import { formatDueDate, TODO_PRIORITY_LABELS } from '@/entities/todo';
 import { XCircle } from 'lucide-react';
 import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
-import { TodoStatusBadge } from '@/features/todo/ui';
+import { TodoStatusBadge } from '@/features/todo/detail';
 
 interface TodoDetailPageProps {
   todoId: string;

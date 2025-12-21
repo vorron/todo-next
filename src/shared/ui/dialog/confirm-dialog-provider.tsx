@@ -41,8 +41,8 @@ export function ConfirmDialogProvider({ children }: { children: ReactNode }) {
         isOpen: true,
         title: options.title,
         description: options.description,
-        confirmLabel: options.confirmLabel,
-        cancelLabel: options.cancelLabel,
+        confirmLabel: options.confirmLabel ?? 'Confirm',
+        cancelLabel: options.cancelLabel ?? 'Cancel',
         variant: options.variant ?? 'danger',
       });
 

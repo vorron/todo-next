@@ -35,6 +35,7 @@ export function useBulkTodoActions() {
 
   const setSelectedCompleted = useCallback(
     async (ids: string[], completed: boolean) => {
+      if (ids.length === 0) return;
       try {
         await Promise.all(ids.map((id) => updateTodo({ id, completed }).unwrap()));
         handleApiSuccess(completed ? 'Todos marked as completed' : 'Todos marked as active');
@@ -48,6 +49,28 @@ export function useBulkTodoActions() {
 
   const deleteSelected = useCallback(
     async (todos: Todo[]) => {
+      if (todos.length === 0) return;
+      const restoreTodos = async () => {
+        try {
+          const uid = requireUserId();
+          await Promise.all(
+            todos.map((t) =>
+              createTodo({
+                text: t.text,
+                userId: t.userId ?? uid,
+                completed: t.completed,
+                priority: t.priority,
+                dueDate: t.dueDate,
+                tags: t.tags ?? [],
+              }).unwrap(),
+            ),
+          );
+          toast.success('Todos restored');
+        } catch (error) {
+          handleApiError(error as FetchBaseQueryError, 'Failed to restore todos');
+        }
+      };
+
       try {
         await Promise.all(todos.map((t) => deleteTodo(t.id).unwrap()));
 
@@ -56,26 +79,7 @@ export function useBulkTodoActions() {
           action: {
             label: 'Undo',
             onClick: () => {
-              void (async () => {
-                try {
-                  const uid = requireUserId();
-                  await Promise.all(
-                    todos.map((t) =>
-                      createTodo({
-                        text: t.text,
-                        userId: t.userId ?? uid,
-                        completed: t.completed,
-                        priority: t.priority,
-                        dueDate: t.dueDate,
-                        tags: t.tags ?? [],
-                      }).unwrap(),
-                    ),
-                  );
-                  toast.success('Todos restored');
-                } catch (error) {
-                  handleApiError(error as FetchBaseQueryError, 'Failed to restore todos');
-                }
-              })();
+              void restoreTodos();
             },
           },
         });
