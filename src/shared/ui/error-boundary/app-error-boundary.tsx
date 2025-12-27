@@ -1,7 +1,9 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+
+import { useRouter, usePathname } from 'next/navigation';
+
 import { ErrorBoundary } from 'react-error-boundary';
 
 import { ErrorFallback } from './error-fallback';

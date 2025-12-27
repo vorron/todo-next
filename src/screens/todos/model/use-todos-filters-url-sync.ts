@@ -1,7 +1,8 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { startTransition, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { useDebounce } from '@/shared/lib/hooks';
 

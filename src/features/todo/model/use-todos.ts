@@ -1,5 +1,6 @@
-import { type FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useCallback } from 'react';
+
+import { type FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import {
   useGetTodosQuery,

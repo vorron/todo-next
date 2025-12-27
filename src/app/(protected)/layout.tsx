@@ -1,5 +1,6 @@
-import { redirect } from 'next/navigation';
 import { type ReactNode } from 'react';
+
+import { redirect } from 'next/navigation';
 
 import { hasValidSession } from '@/features/auth/lib/server-session';
 import { ROUTES } from '@/shared/config/routes';

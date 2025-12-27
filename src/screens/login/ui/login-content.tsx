@@ -1,7 +1,8 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
+
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { LoginForm, useAuth } from '@/features/auth';
 import { ROUTES } from '@/shared/config/routes';

@@ -1,7 +1,8 @@
 'use client';
 
-import { XCircle } from 'lucide-react';
 import { useEffect } from 'react';
+
+import { XCircle } from 'lucide-react';
 
 import { formatDueDate, TODO_PRIORITY_LABELS } from '@/entities/todo';
 import { TodoStatusBadge } from '@/features/todo/detail';

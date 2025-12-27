@@ -88,7 +88,6 @@ const eslintConfig = defineConfig([
     },
     settings: {
       'import/resolver': {
-        // Respect tsconfig paths (e.g., @/*)
         typescript: {
           project: './tsconfig.json',
         },
@@ -104,19 +103,47 @@ const eslintConfig = defineConfig([
       'import/no-unresolved': ['error', { commonjs: true }],
       'import/no-named-default': 'warn',
       'import/order': [
-        'warn',
+        'warn', // или 'error' если хочешь строго
         {
-          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+          groups: [
+            'builtin', // node: fs, path
+            'external', // npm: react, next, lodash
+            'internal', // @/app, @/shared, @/entities
+            ['parent', 'sibling', 'index'], // ../..., ./..., ./index
+            'object', // re-export { ... } from
+            'type', // import type
+          ],
           pathGroups: [
+            // React и Next всегда первыми среди external
+            {
+              pattern: 'react',
+              group: 'external',
+              position: 'before',
+            },
+            {
+              pattern: 'next/**',
+              group: 'external',
+              position: 'before',
+            },
+            // Все @/ алиасы в internal, после external
             {
               pattern: '@/**',
               group: 'internal',
+              position: 'before',
+            },
+            // Стили в самом конце
+            {
+              pattern: '**/*.+(css|scss|sass|less|styl|stylus|png|jpg|jpeg|gif|svg)',
+              group: 'index',
               position: 'after',
             },
           ],
-          pathGroupsExcludedImportTypes: ['builtin'],
-          alphabetize: { order: 'asc', caseInsensitive: true },
-          'newlines-between': 'always',
+          pathGroupsExcludedImportTypes: ['builtin', 'type'], // type не влияет на группы
+          alphabetize: {
+            order: 'asc',
+            caseInsensitive: true,
+          },
+          'newlines-between': 'always', // одна пустая строка между группами
         },
       ],
     },

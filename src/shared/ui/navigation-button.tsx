@@ -1,7 +1,8 @@
 'use client';
 
-import { ArrowLeft, type LucideIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+
+import { ArrowLeft, type LucideIcon } from 'lucide-react';
 
 import { Button } from '@/shared/ui';
 

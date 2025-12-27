@@ -1,6 +1,6 @@
-import type { BaseApiEndpointBuilder } from '@/shared/api';
-
 import { todosSchema } from '../model/todo-schema';
+
+import type { BaseApiEndpointBuilder } from '@/shared/api';
 
 export function buildTodoBulkEndpoints(builder: BaseApiEndpointBuilder) {
   return {

@@ -4,13 +4,14 @@ import {
   formatDueDate,
 } from '@/entities/todo/lib/todo-helpers';
 import { TODO_PRIORITY_COLORS } from '@/entities/todo/model/constants';
-import type { Todo } from '@/entities/todo/model/types';
 import { selectCompactView } from '@/features/settings/model/selectors';
 import { useAppSelector } from '@/shared/lib/hooks';
 import { cn } from '@/shared/lib/utils';
 import { Card, CardContent } from '@/shared/ui';
 import { ActionBar } from '@/shared/ui/action-bar';
 import { Checkbox } from '@/shared/ui/checkbox';
+
+import type { Todo } from '@/entities/todo/model/types';
 import type { ConfirmFn } from '@/shared/ui/dialog/confirm-dialog-provider';
 
 interface TodoCardProps {

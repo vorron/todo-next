@@ -1,8 +1,9 @@
 'use client';
 
-import type { FilterType } from '@/entities/todo';
 import { FILTER_OPTIONS } from '@/entities/todo/model/filters';
 import { Button } from '@/shared/ui';
+
+import type { FilterType } from '@/entities/todo';
 
 interface TodosFilterButtonsProps {
   value: FilterType;

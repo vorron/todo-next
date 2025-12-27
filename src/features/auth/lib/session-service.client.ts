@@ -1,8 +1,7 @@
 'use client';
 
-import { sessionSchema } from '../model/auth-schema';
-
 import { SESSION_STORAGE_KEY, SESSION_COOKIE_NAME, SESSION_COOKIE_MAX_AGE } from './session-config';
+import { sessionSchema } from '../model/auth-schema';
 
 import type { Session } from '../model/types';
 

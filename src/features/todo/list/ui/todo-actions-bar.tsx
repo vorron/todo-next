@@ -1,11 +1,12 @@
 'use client';
 
-import type { Todo } from '@/entities/todo';
 import { ActionBar } from '@/shared/ui';
-import type { ActionBarItem } from '@/shared/ui/action-bar';
 import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
 
 import { useTodoSelection } from '../model/todo-selection-context';
+
+import type { Todo } from '@/entities/todo';
+import type { ActionBarItem } from '@/shared/ui/action-bar';
 
 type TodoActionsHandlers = {
   clearSelection: () => void;
