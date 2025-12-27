@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+
 import { useAppDispatch, useAppSelector } from '@/shared/lib/hooks';
 import { Card, CardContent, CardHeader, CardTitle, Button } from '@/shared/ui';
 import { Switch } from '@/shared/ui/switch';
+
+import { selectAllSettings } from '../model/selectors';
 import {
   setTheme,
   setLanguage,
@@ -14,7 +17,6 @@ import {
   type Theme,
   type Language,
 } from '../model/settings-slice';
-import { selectAllSettings } from '../model/selectors';
 
 export function SettingsForm() {
   const dispatch = useAppDispatch();

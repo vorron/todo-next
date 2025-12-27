@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { getRouteConfig, getRouteMetadata } from './router-utils';
+
 import { metadataConfig, paths } from '@/shared/config/routes';
+
+import { getRouteConfig, getRouteMetadata } from './router-utils';
 
 describe('router-utils', () => {
   it('getRouteConfig returns config for known route', () => {

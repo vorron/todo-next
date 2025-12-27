@@ -1,4 +1,7 @@
 import { z } from 'zod';
+
+import type { BaseApiEndpointBuilder } from '@/shared/api';
+
 import {
   todoSchema,
   todosSchema,
@@ -6,8 +9,8 @@ import {
   updateTodoSchema,
   todoFilterSchema,
 } from '../model/todo-schema';
+
 import type { Todo, CreateTodoDto, UpdateTodoDto, TodoFilter } from '../model/types';
-import type { BaseApiEndpointBuilder } from '@/shared/api';
 
 // Упрощенная схема фильтров без строгой UUID валидации
 const todoFilterQuerySchema = todoFilterSchema

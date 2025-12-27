@@ -1,10 +1,11 @@
 import { useCallback, useState } from 'react';
-import { useCreateTodoMutation } from '@/entities/todo';
+
+import { useCreateTodoMutation, createTodoSchema } from '@/entities/todo';
 import { useAuth } from '@/features/auth';
 import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
-import { createTodoSchema } from '@/entities/todo';
-import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { handleZodError } from '@/shared/lib/utils';
+
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 interface CreateResult {
   success: boolean;

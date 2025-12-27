@@ -1,5 +1,6 @@
-import { paths } from './paths';
 import { capitalize } from '@/shared/lib/utils';
+
+import { paths } from './paths';
 
 export type NavItem = {
   readonly label: string;

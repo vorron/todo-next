@@ -1,12 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { useRouter } from 'next/navigation';
 import { XCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { useUpdateTodoMutation, TODO_PRIORITY_LABELS } from '@/entities/todo';
 import { useTodoDetail } from '@/features/todo/detail/model/use-todo-detail';
@@ -30,6 +29,8 @@ import {
   useHeader,
 } from '@/shared/ui';
 import { Input } from '@/shared/ui/input-primitive';
+
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 const editTodoFormSchema = z.object({
   text: z

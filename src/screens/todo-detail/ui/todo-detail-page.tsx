@@ -1,8 +1,14 @@
 'use client';
 
+import { XCircle } from 'lucide-react';
 import { useEffect } from 'react';
-import { useUndoableDeleteTodo } from '@/features/todo/model/use-undoable-delete-todo';
+
+import { formatDueDate, TODO_PRIORITY_LABELS } from '@/entities/todo';
+import { TodoStatusBadge } from '@/features/todo/detail';
 import { useTodoDetail } from '@/features/todo/detail/model/use-todo-detail';
+import { useTodos } from '@/features/todo/list';
+import { useUndoableDeleteTodo } from '@/features/todo/model/use-undoable-delete-todo';
+import { ROUTES } from '@/shared/config/routes';
 import { useNavigation } from '@/shared/lib/navigation';
 import {
   PageLoader,
@@ -15,12 +21,7 @@ import {
   useHeader,
   NavigationButton,
 } from '@/shared/ui';
-import { ROUTES } from '@/shared/config/routes';
-import { formatDueDate, TODO_PRIORITY_LABELS } from '@/entities/todo';
-import { XCircle } from 'lucide-react';
 import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
-import { TodoStatusBadge } from '@/features/todo/detail';
-import { useTodos } from '@/features/todo/list';
 
 interface TodoDetailPageProps {
   todoId: string;

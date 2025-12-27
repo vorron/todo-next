@@ -1,8 +1,9 @@
 'use client';
 
-import { Button } from '@/shared/ui';
-import { useRouter } from 'next/navigation';
 import { ArrowLeft, type LucideIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+import { Button } from '@/shared/ui';
 
 interface NavigationButtonProps {
   href: string;

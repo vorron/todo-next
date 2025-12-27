@@ -1,5 +1,7 @@
 import { baseApi } from '@/shared/api';
+
 import { userSchema, usersSchema, createUserSchema, updateUserSchema } from '../model/user-schema';
+
 import type { User, CreateUserDto, UpdateUserDto } from '../model/types';
 
 /**

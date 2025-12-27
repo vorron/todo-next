@@ -1,8 +1,7 @@
 'use client';
 
-import * as React from 'react';
-import type * as LabelPrimitive from '@radix-ui/react-label';
 import { Slot } from '@radix-ui/react-slot';
+import * as React from 'react';
 import {
   Controller,
   FormProvider,
@@ -15,6 +14,8 @@ import {
 
 import { cn } from '@/shared/lib/utils/index';
 import { Label } from '@/shared/ui/label';
+
+import type * as LabelPrimitive from '@radix-ui/react-label';
 
 const Form = FormProvider;
 

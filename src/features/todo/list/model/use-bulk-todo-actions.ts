@@ -1,21 +1,21 @@
 import { useCallback } from 'react';
+
 import {
   useClearCompletedMutation,
-  useUpdateTodoMutation,
   useDeleteTodoMutation,
   useCreateTodoMutation,
   type Todo,
 } from '@/entities/todo';
 import { useAuth } from '@/features/auth';
 import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
-import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { toast } from '@/shared/ui';
+
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 export function useBulkTodoActions() {
   const { userId } = useAuth();
 
   const [clearCompleted] = useClearCompletedMutation();
-  const [updateTodo] = useUpdateTodoMutation();
   const [deleteTodo] = useDeleteTodoMutation();
   const [createTodo] = useCreateTodoMutation();
 

@@ -1,7 +1,8 @@
 'use client';
 
-import { Button } from '@/shared/ui/button';
 import { useRouter } from 'next/navigation';
+
+import { Button } from '@/shared/ui/button';
 
 interface ErrorFallbackProps {
   error: Error;

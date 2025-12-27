@@ -1,6 +1,7 @@
 import { baseApi } from '@/shared/api';
-import { buildTodoCrudEndpoints } from './todo-api-crud';
+
 import { buildTodoBulkEndpoints } from './todo-api-bulk';
+import { buildTodoCrudEndpoints } from './todo-api-crud';
 
 export const todoApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

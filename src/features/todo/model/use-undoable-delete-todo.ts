@@ -1,9 +1,11 @@
 import { useCallback } from 'react';
+
 import { useCreateTodoMutation, useDeleteTodoMutation, type Todo } from '@/entities/todo';
 import { useAuth } from '@/features/auth';
 import { handleApiError } from '@/shared/lib/errors';
-import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { toast } from '@/shared/ui';
+
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 export function useUndoableDeleteTodo() {
   const [deleteTodoMutation, { isLoading: isDeleting }] = useDeleteTodoMutation();

@@ -1,3 +1,5 @@
+import { ClipboardList } from 'lucide-react';
+
 import {
   Card,
   CardContent,
@@ -7,7 +9,6 @@ import {
   EmptySearchResults,
   EmptyState,
 } from '@/shared/ui';
-import { ClipboardList } from 'lucide-react';
 
 export function TodoListLoading({ title }: { title: string }) {
   return (

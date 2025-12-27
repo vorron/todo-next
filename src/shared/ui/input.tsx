@@ -1,8 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { Input as InputPrimitive } from './input-primitive';
+
 import { cn } from '@/shared/lib/utils';
+
+import { Input as InputPrimitive } from './input-primitive';
 
 export interface InputProps extends React.ComponentProps<'input'> {
   label?: string;

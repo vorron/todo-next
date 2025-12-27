@@ -1,8 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { Switch as SwitchPrimitive } from './switch-primitive';
+
 import { cn } from '@/shared/lib/utils';
+
+import { Switch as SwitchPrimitive } from './switch-primitive';
 
 export interface SwitchProps extends React.ComponentProps<typeof SwitchPrimitive> {
   label?: string;

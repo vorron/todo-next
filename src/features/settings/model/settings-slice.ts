@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+
 import { settingsStorage } from './settings-persistence';
 
 export type Theme = 'light' | 'dark' | 'system';

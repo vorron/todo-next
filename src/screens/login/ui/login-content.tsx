@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { LoginForm } from '@/features/auth';
-import { useAuth } from '@/features/auth';
+import { useEffect } from 'react';
+
+import { LoginForm, useAuth } from '@/features/auth';
 import { ROUTES } from '@/shared/config/routes';
+
 import { LoginPageSkeleton } from './login-page-skeleton';
 
 export function LoginContent() {

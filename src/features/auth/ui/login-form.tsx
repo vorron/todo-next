@@ -1,13 +1,16 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+
 import { Button, Card, CardHeader, CardTitle, CardContent } from '@/shared/ui';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/shared/ui/form';
 import { Input } from '@/shared/ui/input-primitive';
-import { useAuth } from '../model/use-auth';
+
 import { loginSchema } from '../model/auth-schema';
+import { useAuth } from '../model/use-auth';
+
 import type { LoginDto } from '../model/types';
 
 export function LoginForm() {

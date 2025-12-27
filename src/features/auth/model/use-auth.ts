@@ -1,11 +1,15 @@
-import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useCallback, useEffect } from 'react';
+
+import { ROUTES } from '@/shared/config/routes';
 import { useAppDispatch, useAppSelector } from '@/shared/lib/hooks';
-import { setSession, clearSession, setLoading } from './auth-slice';
+
 import { useLoginMutation, useLogoutMutation } from '../api/auth-api';
 import { sessionStorage } from '../lib/session';
+
+import { setSession, clearSession, setLoading } from './auth-slice';
+
 import type { LoginDto } from './types';
-import { ROUTES } from '@/shared/config/routes';
 
 type LoginResult = { success: true; message: string } | { success: false; message: string };
 

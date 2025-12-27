@@ -1,5 +1,6 @@
-import { type FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { type SerializedError } from '@reduxjs/toolkit';
+import { type FetchBaseQueryError } from '@reduxjs/toolkit/query';
+
 import { toast } from '@/shared/ui';
 
 export type ApiError = FetchBaseQueryError | SerializedError | Error;

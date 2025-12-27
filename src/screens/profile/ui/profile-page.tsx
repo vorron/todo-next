@@ -1,8 +1,7 @@
 'use client';
 
-import { useAuth } from '@/features/auth';
+import { useAuth, LogoutButton } from '@/features/auth';
 import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui';
-import { LogoutButton } from '@/features/auth';
 
 export function ProfilePage() {
   const { session } = useAuth();

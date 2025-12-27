@@ -1,5 +1,6 @@
-import type { Todo, TodoStats } from '../model/types';
 import { TodoPriority } from '../model/todo-schema';
+
+import type { Todo, TodoStats } from '../model/types';
 
 /**
  * Проверка просрочен ли todo

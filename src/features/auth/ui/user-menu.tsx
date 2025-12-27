@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useAuth } from '../model/use-auth';
+
 import { getUserInitials, getAvatarColor } from '@/entities/user';
 import { ROUTES } from '@/shared/config/routes';
 import { cn } from '@/shared/lib/utils';
@@ -13,6 +13,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/shared/ui';
+
+import { useAuth } from '../model/use-auth';
 
 export function UserMenu() {
   const { session, logout } = useAuth();

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
 import { getBreadcrumbs, mainNavigation, ROUTES } from '@/shared/config/routes';
 import { cn } from '@/shared/lib/utils';
 import { useHeader } from '@/shared/ui';

@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/shared/ui';
+
+import { Button, ConfirmationDialog } from '@/shared/ui';
+
 import { useAuth } from '../model/use-auth';
-import { ConfirmationDialog } from '@/shared/ui';
 
 interface LogoutButtonProps {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'link';

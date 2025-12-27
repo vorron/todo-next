@@ -1,12 +1,11 @@
 'use client';
 
-import { useAuth } from '@/features/auth';
-import { UserMenu, LogoutButton } from '@/features/auth';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
+import { useAuth, UserMenu, LogoutButton } from '@/features/auth';
 import { ROUTES, mainNavigation } from '@/shared/config/routes';
 import { cn } from '@/shared/lib/utils';
-import { HeaderBreadcrumbs } from './breadcrumbs';
 import {
   Button,
   DropdownMenu,
@@ -15,6 +14,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/shared/ui';
+
+import { HeaderBreadcrumbs } from './breadcrumbs';
 
 export function Navbar() {
   const { isAuthenticated, logout } = useAuth();

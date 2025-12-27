@@ -1,7 +1,9 @@
-import { type FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { type SerializedError } from '@reduxjs/toolkit';
-import { useRetryableRefetch } from '../model/use-retryable-refetch';
+import { type FetchBaseQueryError } from '@reduxjs/toolkit/query';
+
 import { Card, CardHeader, CardTitle, CardContent, Button } from '@/shared/ui';
+
+import { useRetryableRefetch } from '../model/use-retryable-refetch';
 
 type TodoListErrorProps = {
   error: FetchBaseQueryError | SerializedError | undefined;

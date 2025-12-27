@@ -1,4 +1,3 @@
-import type { Session } from '../model/types';
 import {
   loadClientSession,
   saveClientSession,
@@ -6,6 +5,8 @@ import {
   isClientSessionValid,
   createMockSession,
 } from './session-service.client';
+
+import type { Session } from '../model/types';
 
 export const sessionStorage = {
   save(session: Session): void {

@@ -1,8 +1,10 @@
 'use client';
 
-import type { Session } from '../model/types';
 import { sessionSchema } from '../model/auth-schema';
+
 import { SESSION_STORAGE_KEY, SESSION_COOKIE_NAME, SESSION_COOKIE_MAX_AGE } from './session-config';
+
+import type { Session } from '../model/types';
 
 function isBrowser(): boolean {
   return typeof window !== 'undefined' && typeof document !== 'undefined';

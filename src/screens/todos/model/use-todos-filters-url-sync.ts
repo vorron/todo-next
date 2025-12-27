@@ -1,10 +1,12 @@
 'use client';
 
-import { startTransition, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { useDebounce } from '@/shared/lib/hooks';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { buildTodosQuery, parseTodosQuery } from './todos-query-params';
+import { startTransition, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+
+import { useDebounce } from '@/shared/lib/hooks';
+
 import { useTodosFilters } from './todos-filters-context';
+import { buildTodosQuery, parseTodosQuery } from './todos-query-params';
 
 type SyncPhase = 'hydrating' | 'ready';
 

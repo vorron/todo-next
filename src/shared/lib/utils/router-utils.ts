@@ -1,5 +1,6 @@
-import type { Metadata } from 'next';
 import { getStaticMetadata } from '@/shared/config/routes';
+
+import type { Metadata } from 'next';
 
 // Хелпер для получения metadata (только для статических маршрутов)
 export function getRouteMetadata(path: string): Metadata {

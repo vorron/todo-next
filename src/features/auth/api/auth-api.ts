@@ -1,9 +1,11 @@
-import { baseApi } from '@/shared/api';
 import { userSchema } from '@/entities/user';
 import type { User } from '@/entities/user';
+import { baseApi } from '@/shared/api';
 import { env } from '@/shared/config/env';
-import type { LoginDto, LoginResponse } from '../model/types';
+
 import { createMockSession } from '../lib/session';
+
+import type { LoginDto, LoginResponse } from '../model/types';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 interface ApiError {

@@ -1,13 +1,16 @@
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { type z } from 'zod';
+
+import { env } from '@/shared/config/env';
+
+import { handleRTKQueryValidation } from '../lib/utils';
+
 import type {
   BaseQueryFn,
   FetchArgs,
   FetchBaseQueryError,
   BaseQueryApi,
 } from '@reduxjs/toolkit/query';
-import { type z } from 'zod';
-import { env } from '@/shared/config/env';
-import { handleRTKQueryValidation } from '../lib/utils';
 
 // Определяем тип для extraOptions
 type ExtraOptions = Record<string, unknown> & {

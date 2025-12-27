@@ -1,5 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
+
 import { todoApi } from '../api/todo-api';
+
 import type { FilterType, TodoSortBy, TodoStats } from './types';
 
 /**

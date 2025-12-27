@@ -1,11 +1,12 @@
 'use client';
 
+import { TodosFilterButtons } from '@/features/todo/filter-buttons/ui/todos-filter-buttons';
+import { TodoList } from '@/features/todo/list/ui/todo-list';
 import { CreateTodoForm } from '@/features/todo/todo-create';
 import { TodoSearchInput } from '@/features/todo/todo-search';
 import { TodoSortSelect } from '@/features/todo/todo-sort';
-import { TodoList } from '@/features/todo/list/ui/todo-list';
+
 import { useTodosFiltersViewModel } from '../model/use-todos-filters-view-model';
-import { TodosFilterButtons } from '@/features/todo/filter-buttons/ui/todos-filter-buttons';
 
 export function TodosPageContent() {
   const { filter, search, sortBy, setFilter, setSearch, setSortBy, debouncedSearch } =

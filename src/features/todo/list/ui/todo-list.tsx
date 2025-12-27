@@ -1,21 +1,24 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { ROUTES } from '@/shared/config/routes';
 import { useMemo } from 'react';
-import { Card, CardContent, CardHeader } from '@/shared/ui';
-import { useUndoableDeleteTodo } from '@/features/todo/model/use-undoable-delete-todo';
-import { useTodos } from '../../model/use-todos';
-import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
-import { TodoCard } from './todo-card';
+
 import type { FilterType, Todo, TodoSortBy } from '@/entities/todo';
-import { TodoListEmpty, TodoListLoading } from './todo-list-states';
+import { useUndoableDeleteTodo } from '@/features/todo/model/use-undoable-delete-todo';
+import { ROUTES } from '@/shared/config/routes';
+import { Card, CardContent, CardHeader } from '@/shared/ui';
+import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
+
+import { useTodos } from '../../model/use-todos';
 import { sortTodos } from '../model/sort-todos';
-import { useFilteredTodos } from '../model/use-filtered-todos';
-import { TodoListError } from './todo-list-error';
-import { TodoActionsBar } from './todo-actions-bar';
 import { TodoSelectionProvider, useTodoSelection } from '../model/todo-selection-context';
 import { useBulkTodoActions } from '../model/use-bulk-todo-actions';
+import { useFilteredTodos } from '../model/use-filtered-todos';
+
+import { TodoActionsBar } from './todo-actions-bar';
+import { TodoCard } from './todo-card';
+import { TodoListError } from './todo-list-error';
+import { TodoListEmpty, TodoListLoading } from './todo-list-states';
 
 interface TodoListProps {
   filter?: FilterType;

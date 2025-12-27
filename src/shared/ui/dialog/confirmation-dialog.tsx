@@ -1,8 +1,10 @@
 'use client';
 
-import { Button } from '../button';
 import { useEffect, useRef } from 'react';
+
 import { cn } from '@/shared/lib/utils';
+
+import { Button } from '../button';
 
 interface ConfirmationDialogProps {
   isOpen: boolean;

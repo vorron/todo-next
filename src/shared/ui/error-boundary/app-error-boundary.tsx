@@ -1,10 +1,12 @@
 'use client';
 
-import { ErrorBoundary } from 'react-error-boundary';
-import type { ErrorInfo } from 'react';
-import { ErrorFallback } from './error-fallback';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+
+import { ErrorFallback } from './error-fallback';
+
+import type { ErrorInfo } from 'react';
 
 export function AppErrorBoundary({ children }: { children: React.ReactNode }) {
   const router = useRouter();

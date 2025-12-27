@@ -1,5 +1,6 @@
+import { type FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useCallback } from 'react';
-import { useAuth } from '@/features/auth';
+
 import {
   useGetTodosQuery,
   useCreateTodoMutation,
@@ -8,8 +9,8 @@ import {
   useToggleTodoMutation,
   type Todo,
 } from '@/entities/todo';
+import { useAuth } from '@/features/auth';
 import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
-import { type FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 export function useTodos() {
   const { userId } = useAuth();

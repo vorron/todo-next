@@ -1,7 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { baseApi } from '@/shared/api';
+
 import { authReducer } from '@/features/auth';
 import settingsReducer from '@/features/settings/model/settings-slice';
+import { baseApi } from '@/shared/api';
 
 export const makeStore = () => {
   return configureStore({

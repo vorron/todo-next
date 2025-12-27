@@ -1,5 +1,6 @@
-import type { Metadata } from 'next';
 import { paths, type StaticPath } from './paths';
+
+import type { Metadata } from 'next';
 
 export const metadataConfig = {
   [paths.home]: {

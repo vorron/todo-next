@@ -1,6 +1,5 @@
 'use client';
 
-import { ConfirmationDialog } from '@/shared/ui/dialog/confirmation-dialog';
 import {
   createContext,
   useCallback,
@@ -10,6 +9,8 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+
+import { ConfirmationDialog } from '@/shared/ui/dialog/confirmation-dialog';
 
 type ConfirmVariant = 'danger' | 'warning' | 'info';
 

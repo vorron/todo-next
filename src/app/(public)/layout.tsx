@@ -1,7 +1,9 @@
-import type { ReactNode } from 'react';
 import { cookies } from 'next/headers';
-import { AppShell, Navbar } from '@/widgets';
+
 import { HeaderProvider } from '@/shared/ui';
+import { AppShell, Navbar } from '@/widgets';
+
+import type { ReactNode } from 'react';
 
 interface PublicLayoutProps {
   children: ReactNode;

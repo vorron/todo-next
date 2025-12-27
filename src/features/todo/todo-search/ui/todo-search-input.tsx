@@ -1,7 +1,7 @@
 'use client';
 
-import { Input, Button } from '@/shared/ui';
 import { cn } from '@/shared/lib/utils';
+import { Input, Button } from '@/shared/ui';
 
 interface TodoSearchInputProps {
   value: string;

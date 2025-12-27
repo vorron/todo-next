@@ -3,6 +3,7 @@ import nextVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
 import prettier from 'eslint-config-prettier/flat';
 import boundaries from 'eslint-plugin-boundaries';
+import importPlugin from 'eslint-plugin-import';
 
 /**
  * FSD Layers configuration for eslint-plugin-boundaries
@@ -76,6 +77,47 @@ const eslintConfig = defineConfig([
       '@typescript-eslint/no-unused-vars': [
         'warn',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+    },
+  },
+
+  // import hygiene (eslint-plugin-import)
+  {
+    plugins: {
+      import: importPlugin,
+    },
+    settings: {
+      'import/resolver': {
+        // Respect tsconfig paths (e.g., @/*)
+        typescript: {
+          project: './tsconfig.json',
+        },
+        node: true,
+      },
+    },
+    rules: {
+      'import/first': 'error',
+      'import/newline-after-import': ['warn', { count: 1 }],
+      'import/no-duplicates': 'error',
+      'import/no-mutable-exports': 'error',
+      'import/no-self-import': 'error',
+      'import/no-unresolved': ['error', { commonjs: true }],
+      'import/no-named-default': 'warn',
+      'import/order': [
+        'warn',
+        {
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+          pathGroups: [
+            {
+              pattern: '@/**',
+              group: 'internal',
+              position: 'after',
+            },
+          ],
+          pathGroupsExcludedImportTypes: ['builtin'],
+          alphabetize: { order: 'asc', caseInsensitive: true },
+          'newlines-between': 'always',
+        },
       ],
     },
   },

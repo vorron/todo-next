@@ -1,5 +1,6 @@
-import type { LucideIcon } from 'lucide-react';
 import { Check, Undo2, Pencil, Trash2 } from 'lucide-react';
+
+import type { LucideIcon } from 'lucide-react';
 
 export type IconName = 'Check' | 'Undo2' | 'Pencil' | 'Trash2';
 

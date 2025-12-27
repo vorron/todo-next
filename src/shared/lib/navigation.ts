@@ -1,5 +1,6 @@
-import { ROUTES } from '@/shared/config/routes';
 import { useRouter } from 'next/navigation';
+
+import { ROUTES } from '@/shared/config/routes';
 
 export function useNavigation() {
   const router = useRouter();

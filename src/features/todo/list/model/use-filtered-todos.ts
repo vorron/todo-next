@@ -1,5 +1,6 @@
-import type { Todo, FilterType } from '@/entities/todo';
 import { useMemo } from 'react';
+
+import type { Todo, FilterType } from '@/entities/todo';
 
 export function useFilteredTodos(todos: Todo[], filter: FilterType, search: string) {
   return useMemo(() => {

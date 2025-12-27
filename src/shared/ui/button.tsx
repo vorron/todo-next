@@ -1,9 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import { Button as ButtonPrimitive, buttonVariants } from './button-primitive';
+
 import { cn } from '@/shared/lib/utils';
+
+import { Button as ButtonPrimitive, buttonVariants } from './button-primitive';
 import { Spinner } from './spinner';
+
 import type { VariantProps } from 'class-variance-authority';
 
 /**
