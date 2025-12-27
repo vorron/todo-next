@@ -7,7 +7,6 @@ export {
   useUpdateTodoMutation,
   useDeleteTodoMutation,
   useToggleTodoMutation,
-  useToggleAllTodosMutation,
   useClearCompletedMutation,
 } from './api/todo-api';
 

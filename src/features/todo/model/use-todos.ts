@@ -5,12 +5,15 @@ import {
   useCreateTodoMutation,
   useUpdateTodoMutation,
   useDeleteTodoMutation,
+  useToggleTodoMutation,
+  type Todo,
 } from '@/entities/todo';
 import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
 import { type FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 export function useTodos() {
   const { userId } = useAuth();
+
   const {
     data: todos,
     isLoading,
@@ -20,6 +23,7 @@ export function useTodos() {
 
   const [createMutation] = useCreateTodoMutation();
   const [updateMutation] = useUpdateTodoMutation();
+  const [toggleMutation, { isLoading: isToggling }] = useToggleTodoMutation();
   const [deleteMutation] = useDeleteTodoMutation();
 
   const createTodo = useCallback(
@@ -44,7 +48,7 @@ export function useTodos() {
   );
 
   const updateTodo = useCallback(
-    async (data: { id: string; completed?: boolean; text?: string }) => {
+    async (data: Todo) => {
       try {
         await updateMutation(data).unwrap();
         handleApiSuccess('Todo updated successfully');
@@ -54,6 +58,21 @@ export function useTodos() {
       }
     },
     [updateMutation],
+  );
+
+  const toggleTodo = useCallback(
+    async (todo: Todo) => {
+      const newCompleted = !todo.completed;
+
+      try {
+        await toggleMutation(todo.id).unwrap();
+
+        handleApiSuccess(newCompleted ? 'Todo completed!' : 'Todo marked as active');
+      } catch (error: unknown) {
+        handleApiError(error as FetchBaseQueryError, 'Failed to update todo');
+      }
+    },
+    [toggleMutation],
   );
 
   const deleteTodo = useCallback(
@@ -69,16 +88,6 @@ export function useTodos() {
     [deleteMutation],
   );
 
-  const toggleTodo = useCallback(
-    async (todo: { id: string; completed: boolean }) => {
-      return updateTodo({
-        id: todo.id,
-        completed: !todo.completed,
-      });
-    },
-    [updateTodo],
-  );
-
   return {
     todos: todos || [],
     isLoading,
@@ -86,7 +95,8 @@ export function useTodos() {
     refetch,
     createTodo,
     updateTodo,
-    deleteTodo, // Добавляем deleteTodo в возвращаемый объект
+    deleteTodo,
     toggleTodo,
+    isToggling,
   };
 }

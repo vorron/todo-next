@@ -16,6 +16,5 @@ export const {
   useUpdateTodoMutation,
   useDeleteTodoMutation,
   useToggleTodoMutation,
-  useToggleAllTodosMutation,
   useClearCompletedMutation,
 } = todoApi;

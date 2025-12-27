@@ -2,20 +2,20 @@
 
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/shared/config/routes';
-import { useCallback } from 'react';
+import { useMemo } from 'react';
 import { Card, CardContent, CardHeader } from '@/shared/ui';
-import { useOptimisticToggle } from '@/features/todo/todo-update';
-import { useUndoableDeleteTodo } from '@/features/todo/todo-delete';
-import { useAppSelector } from '@/shared/lib/hooks';
-import { selectCompactView } from '@/features/settings/model/selectors';
-import { useTodos } from '../model/use-todos';
+import { useUndoableDeleteTodo } from '@/features/todo/model/use-undoable-delete-todo';
+import { useTodos } from '../../model/use-todos';
 import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
 import { TodoCard } from './todo-card';
 import type { FilterType, Todo, TodoSortBy } from '@/entities/todo';
-import { TodoActionsBar, TodoSelectionProvider, useTodoSelection } from '../bulk-actions';
 import { TodoListEmpty, TodoListLoading } from './todo-list-states';
-import { useFilteredTodos, useSortedTodos } from '../model/use-todo-list-derivations';
+import { sortTodos } from '../model/sort-todos';
+import { useFilteredTodos } from '../model/use-filtered-todos';
 import { TodoListError } from './todo-list-error';
+import { TodoActionsBar } from './todo-actions-bar';
+import { TodoSelectionProvider, useTodoSelection } from '../model/todo-selection-context';
+import { useBulkTodoActions } from '../model/use-bulk-todo-actions';
 
 interface TodoListProps {
   filter?: FilterType;
@@ -32,31 +32,19 @@ export function TodoList(props: TodoListProps) {
 }
 
 function TodoListContent({ filter = 'all', search = '', sortBy = 'date' }: TodoListProps) {
-  const { todos, isLoading, error, refetch } = useTodos();
-  const { deleteTodo } = useUndoableDeleteTodo();
-
   const router = useRouter();
   const confirm = useConfirm();
-  const compactView = useAppSelector(selectCompactView);
-  const { toggle } = useOptimisticToggle();
-  const { selectedIds, toggleSelection, checkSelected } = useTodoSelection();
 
-  const handleDelete = useCallback(
-    async (todo: Todo) => {
-      const isCancelDelete = await confirm({
-        title: 'Delete Todo?',
-        description: `Are you sure you want to delete "${todo.text}"? This action cannot be undone.`,
-      });
+  const { todos, isLoading, error, refetch, toggleTodo } = useTodos();
+  const { deleteTodo } = useUndoableDeleteTodo();
 
-      if (isCancelDelete) return;
-
-      await deleteTodo(todo);
-    },
-    [confirm, deleteTodo],
-  );
+  const { selectedIds, toggleSelection, checkSelected, selectIds, clearSelection } =
+    useTodoSelection();
+  const { deleteSelected, clearCompletedAll } = useBulkTodoActions();
 
   const { filtered, normalizedSearch } = useFilteredTodos(todos ?? [], filter, search);
-  const sortedTodos = useSortedTodos(filtered, sortBy);
+  const sortedTodos = useMemo(() => sortTodos(filtered, sortBy), [filtered, sortBy]);
+  const selectedTodos = sortedTodos.filter((todo: Todo) => selectedIds.includes(todo.id));
 
   // Loading state
   if (isLoading) {
@@ -70,14 +58,14 @@ function TodoListContent({ filter = 'all', search = '', sortBy = 'date' }: TodoL
 
   // Empty state
   if (sortedTodos.length === 0) {
-    const hasSearch = normalizedSearch.length > 0;
-    const focusCreateInput = () => {
-      const input = document.getElementById('create-todo-input') as HTMLInputElement | null;
-      input?.focus();
-    };
-
     return (
-      <TodoListEmpty title="My Todos" hasSearch={hasSearch} onCreateClick={focusCreateInput} />
+      <TodoListEmpty
+        hasSearch={normalizedSearch.length > 0}
+        onCreateClick={() => {
+          const input = document.getElementById('create-todo-input') as HTMLInputElement | null;
+          input?.focus();
+        }}
+      />
     );
   }
 
@@ -85,7 +73,16 @@ function TodoListContent({ filter = 'all', search = '', sortBy = 'date' }: TodoL
   return (
     <Card>
       <CardHeader className="flex flex-col items-stretch">
-        <TodoActionsBar visibleTodos={sortedTodos} onRefresh={() => refetch()} />
+        <TodoActionsBar
+          actions={{
+            clearSelection,
+            clearCompletedAll,
+            refetch,
+            selectAll: () => selectIds(sortedTodos.map((todo: Todo) => todo.id)),
+            delete: () => deleteSelected(selectedTodos),
+          }}
+          visibleTodos={sortedTodos}
+        />
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="text-xs text-slate-600">
@@ -95,12 +92,12 @@ function TodoListContent({ filter = 'all', search = '', sortBy = 'date' }: TodoL
           <TodoCard
             key={todo.id}
             todo={todo}
-            variant={compactView ? 'compact' : 'default'}
+            confirm={confirm}
             selected={checkSelected(todo.id)}
             onSelectToggle={() => toggleSelection(todo.id)}
-            onToggleComplete={() => toggle(todo)}
+            onToggleComplete={() => toggleTodo(todo)}
             onEdit={() => router.push(ROUTES.TODO_EDIT(todo.id))}
-            onDelete={() => handleDelete(todo)}
+            onDelete={() => deleteTodo(todo)}
             onClick={() => router.push(ROUTES.TODO_DETAIL(todo.id))}
           />
         ))}

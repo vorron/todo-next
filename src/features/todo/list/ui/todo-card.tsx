@@ -9,6 +9,9 @@ import {
 import { TODO_PRIORITY_COLORS } from '@/entities/todo/model/constants';
 import { ActionBar } from '@/shared/ui/action-bar';
 import { Checkbox } from '@/shared/ui/checkbox';
+import type { ConfirmFn } from '@/shared/ui/dialog/confirm-dialog-provider';
+import { useAppSelector } from '@/shared/lib/hooks';
+import { selectCompactView } from '@/features/settings/model/selectors';
 
 interface TodoCardProps {
   todo: Todo;
@@ -21,6 +24,7 @@ interface TodoCardProps {
   showDueDate?: boolean;
   selected?: boolean;
   onSelectToggle?: () => void;
+  confirm?: ConfirmFn;
 }
 
 export function TodoCard({
@@ -29,12 +33,15 @@ export function TodoCard({
   onEdit,
   onDelete,
   onClick,
-  variant = 'default',
+  confirm,
+  variant,
   showPriority = true,
   showDueDate = true,
   selected,
   onSelectToggle,
 }: TodoCardProps) {
+  const compactView = useAppSelector(selectCompactView);
+  const resolvedVariant = variant ?? (compactView ? 'compact' : 'default');
   const isOverdue = isTodoOverdue(todo);
 
   return (
@@ -43,13 +50,13 @@ export function TodoCard({
         'transition-all hover:shadow-sm border border-slate-200 rounded-lg',
         todo.completed && 'opacity-70',
         getPriorityClassName(todo.priority),
-        variant === 'compact' ? 'p-3' : 'p-4',
+        resolvedVariant === 'compact' ? 'p-3' : 'p-4',
       )}
     >
       <CardContent
         className={cn(
           'p-0 flex items-start gap-3',
-          variant === 'compact' ? 'space-y-2' : 'space-y-3',
+          resolvedVariant === 'compact' ? 'space-y-2' : 'space-y-3',
         )}
       >
         {/* Selection checkbox (always visible, left column) */}
@@ -115,6 +122,7 @@ export function TodoCard({
 
           <ActionBar
             align="end"
+            confirmDialog={confirm}
             actions={[
               {
                 key: 'toggle-complete',
@@ -138,6 +146,10 @@ export function TodoCard({
                 key: 'delete',
                 title: 'Удалить',
                 icon: 'Trash2',
+                confirm: {
+                  title: 'Delete Todo?',
+                  description: `Are you sure you want to delete "${todo.text}"? This action cannot be undone.`,
+                },
                 onClick: onDelete,
                 variant: 'danger',
               },

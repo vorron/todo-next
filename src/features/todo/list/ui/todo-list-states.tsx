@@ -23,18 +23,16 @@ export function TodoListLoading({ title }: { title: string }) {
 }
 
 export function TodoListEmpty({
-  title,
   hasSearch,
   onCreateClick,
 }: {
-  title: string;
   hasSearch: boolean;
   onCreateClick: () => void;
 }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle>My Todos</CardTitle>
       </CardHeader>
       <CardContent>
         {hasSearch ? (

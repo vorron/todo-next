@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import {
   useClearCompletedMutation,
-  useToggleAllTodosMutation,
   useUpdateTodoMutation,
   useDeleteTodoMutation,
   useCreateTodoMutation,
@@ -15,7 +14,6 @@ import { toast } from '@/shared/ui';
 export function useBulkTodoActions() {
   const { userId } = useAuth();
 
-  const [toggleAllTodos] = useToggleAllTodosMutation();
   const [clearCompleted] = useClearCompletedMutation();
   const [updateTodo] = useUpdateTodoMutation();
   const [deleteTodo] = useDeleteTodoMutation();
@@ -32,20 +30,6 @@ export function useBulkTodoActions() {
     }
     return userId;
   }, [userId]);
-
-  const setSelectedCompleted = useCallback(
-    async (ids: string[], completed: boolean) => {
-      if (ids.length === 0) return;
-      try {
-        await Promise.all(ids.map((id) => updateTodo({ id, completed }).unwrap()));
-        handleApiSuccess(completed ? 'Todos marked as completed' : 'Todos marked as active');
-      } catch (error) {
-        handleApiError(error as FetchBaseQueryError, 'Failed to update todos');
-        throw error;
-      }
-    },
-    [updateTodo],
-  );
 
   const deleteSelected = useCallback(
     async (todos: Todo[]) => {
@@ -91,22 +75,6 @@ export function useBulkTodoActions() {
     [createTodo, deleteTodo, requireUserId],
   );
 
-  const toggleAll = useCallback(
-    async (completed: boolean) => {
-      const uid = requireUserId();
-      try {
-        await toggleAllTodos({ userId: uid, completed }).unwrap();
-        handleApiSuccess(
-          completed ? 'All todos marked as completed' : 'All todos marked as active',
-        );
-      } catch (error) {
-        handleApiError(error as FetchBaseQueryError, 'Failed to update todos');
-        throw error;
-      }
-    },
-    [requireUserId, toggleAllTodos],
-  );
-
   const clearCompletedAll = useCallback(async () => {
     const uid = requireUserId();
     try {
@@ -119,9 +87,7 @@ export function useBulkTodoActions() {
   }, [clearCompleted, requireUserId]);
 
   return {
-    setSelectedCompleted,
     deleteSelected,
-    toggleAll,
     clearCompletedAll,
   };
 }

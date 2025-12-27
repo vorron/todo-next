@@ -25,7 +25,7 @@ interface ConfirmDialogState extends ConfirmDialogOptions {
   isOpen: boolean;
 }
 
-type ConfirmFn = (options: ConfirmDialogOptions) => Promise<boolean>;
+export type ConfirmFn = (options: ConfirmDialogOptions) => Promise<boolean>;
 
 const ConfirmDialogContext = createContext<ConfirmFn | null>(null);
 

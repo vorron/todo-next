@@ -2,8 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useOptimisticToggle } from '@/features/todo/todo-update';
-import { useUndoableDeleteTodo } from '@/features/todo/todo-delete';
+import { useUndoableDeleteTodo } from '@/features/todo/model/use-undoable-delete-todo';
 import { useTodoDetail } from '@/features/todo/detail/model/use-todo-detail';
 import {
   PageLoader,
@@ -20,6 +19,7 @@ import { formatDueDate, TODO_PRIORITY_LABELS } from '@/entities/todo';
 import { XCircle } from 'lucide-react';
 import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
 import { TodoStatusBadge } from '@/features/todo/detail';
+import { useTodos } from '@/features/todo/list';
 
 interface TodoDetailPageProps {
   todoId: string;
@@ -30,7 +30,7 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
   const { setHeader } = useHeader();
 
   const { todo, isLoading, isError } = useTodoDetail(todoId);
-  const { toggle, isLoading: isToggling } = useOptimisticToggle();
+  const { toggleTodo, isLoading: isToggling } = useTodos();
   const { deleteTodo, isDeleting } = useUndoableDeleteTodo();
   const confirm = useConfirm();
 
@@ -117,7 +117,7 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
                 <div className="flex flex-wrap gap-3">
                   <Button
                     variant={todo.completed ? 'secondary' : 'primary'}
-                    onClick={() => toggle(todo)}
+                    onClick={() => toggleTodo(todo)}
                     isLoading={isToggling}
                     disabled={isToggling}
                   >

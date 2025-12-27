@@ -34,9 +34,6 @@ function reducer(state: State, action: Action): State {
 }
 
 interface TodoSelectionContextValue extends State {
-  selectionMode: boolean;
-  enterSelectionMode(): void;
-  exitSelectionMode(): void;
   toggleSelection(id: string): void;
   selectIds(ids: string[]): void;
   clearSelection(): void;
@@ -47,22 +44,16 @@ const TodoSelectionContext = createContext<TodoSelectionContextValue | null>(nul
 
 export function TodoSelectionProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const selectionMode = state.selectedIds.length > 0;
 
   const value = useMemo<TodoSelectionContextValue>(
     () => ({
       ...state,
-      selectionMode,
-      enterSelectionMode: () => {
-        /* no-op: selectionMode derives from selectedIds */
-      },
-      exitSelectionMode: () => dispatch({ type: 'CLEAR' }),
       toggleSelection: (id: string) => dispatch({ type: 'TOGGLE_ID', id }),
       selectIds: (ids: string[]) => dispatch({ type: 'SET_SELECTED_IDS', ids }),
       clearSelection: () => dispatch({ type: 'CLEAR' }),
       checkSelected: (id: string) => state.selectedIds.includes(id),
     }),
-    [state, selectionMode],
+    [state],
   );
 
   return <TodoSelectionContext.Provider value={value}>{children}</TodoSelectionContext.Provider>;
