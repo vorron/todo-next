@@ -50,3 +50,4 @@ export { ConfirmationDialog } from './dialog/confirmation-dialog';
 export { ErrorStateCard } from './error-state-card/error-state-card';
 export { HeaderProvider, useHeader, type HeaderBreadcrumb } from './header-context';
 export { ActionBar, type ActionBarItem, type ActionBarProps } from './action-bar';
+export { NavigationButton } from './navigation-button';

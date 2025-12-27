@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useUndoableDeleteTodo } from '@/features/todo/model/use-undoable-delete-todo';
 import { useTodoDetail } from '@/features/todo/detail/model/use-todo-detail';
+import { useNavigation } from '@/shared/lib/navigation';
 import {
   PageLoader,
   Card,
@@ -13,6 +13,7 @@ import {
   Button,
   ErrorStateCard,
   useHeader,
+  NavigationButton,
 } from '@/shared/ui';
 import { ROUTES } from '@/shared/config/routes';
 import { formatDueDate, TODO_PRIORITY_LABELS } from '@/entities/todo';
@@ -26,7 +27,7 @@ interface TodoDetailPageProps {
 }
 
 export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
-  const router = useRouter();
+  const { navigateToTodos } = useNavigation();
   const { setHeader } = useHeader();
 
   const { todo, isLoading, isError } = useTodoDetail(todoId);
@@ -61,7 +62,7 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
 
     try {
       await deleteTodo(todo);
-      router.push(ROUTES.TODOS);
+      navigateToTodos();
     } catch {
       //
     }
@@ -78,7 +79,7 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
         title="Todo Not Found"
         description="The todo you're looking for doesn't exist or has been deleted."
         actionLabel="Back to Todos"
-        onAction={() => router.push(ROUTES.TODOS)}
+        onAction={navigateToTodos}
       />
     );
   }
@@ -87,9 +88,9 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
     <>
       <div className="container mx-auto py-8 px-4 max-w-4xl">
         <div className="mb-6">
-          <Button variant="ghost" onClick={() => router.push(ROUTES.TODOS)} className="mb-4">
-            ← Back to Todos
-          </Button>
+          <NavigationButton href={ROUTES.TODOS} variant="ghost" className="mb-4">
+            Back to Todos
+          </NavigationButton>
           <div className="flex items-center justify-between">
             <h1 className="max-w-[70%] truncate text-3xl font-bold text-gray-900">{todo.text}</h1>
             <TodoStatusBadge completed={todo.completed} />
@@ -123,13 +124,13 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
                   >
                     {todo.completed ? 'Mark as Active' : 'Mark as Completed'}
                   </Button>
-                  <Button
+                  <NavigationButton
+                    href={ROUTES.TODO_EDIT(todo.id)}
                     variant="secondary"
-                    onClick={() => router.push(ROUTES.TODO_EDIT(todo.id))}
                     disabled={isToggling || isDeleting}
                   >
                     Edit Todo
-                  </Button>
+                  </NavigationButton>
                   <Button
                     variant="danger"
                     onClick={handleDelete}
