@@ -6,7 +6,7 @@ import { FILTER_VALUES, SORT_VALUES } from '@/entities/todo';
 import { type TodosViewState } from '@/entities/todo/model/types';
 import { type Schema, useSchemaQueryParams } from '@/shared/hooks/use-query-params';
 
-import { useTodosView } from './todos-view-context';
+import type { useTodosViewState } from './use-todos-view-state';
 
 const schema = [
   {
@@ -36,8 +36,11 @@ function areTodosViewStatesEqual(a: TodosViewComparableState, b: TodosViewCompar
  * Keeps todos view state in sync with URL query params.
  * Expects a debounced search value to avoid pushing URL on every keystroke.
  */
-export function useTodosViewUrlSync(syncedSearch: string) {
-  const { filter, search, sortBy, setFilter, setSearch, setSortBy } = useTodosView();
+export function useTodosViewUrlSync(
+  view: ReturnType<typeof useTodosViewState>,
+  syncedSearch: string,
+) {
+  const { filter, search, sortBy, setFilter, setSearch, setSortBy } = view;
   const { state: urlState, buildQuery } = useSchemaQueryParams(schema);
 
   const isInitialLoad = useRef(true);

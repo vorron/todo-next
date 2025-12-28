@@ -1,1 +1,1 @@
-export { TodoStatusBadge } from './ui/todo-status-badge';
+export { TodoDetailContent } from './ui/todo-detail-content';

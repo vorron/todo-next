@@ -1,110 +1,108 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useTodoList } from './hooks/use-todo-list';
+import { TodoActionsBar } from './parts/todo-actions-bar';
+import { TodoCard } from './parts/todo-card';
+import { TodoListError } from './parts/todo-list-error';
+import { TodoListEmpty, TodoListLoading } from './parts/todo-list-states';
 
-import { useUndoableDeleteTodo } from '@/features/todo/model/use-undoable-delete-todo';
-import { useNavigation } from '@/shared/lib/navigation';
-import { Card, CardContent, CardHeader } from '@/shared/ui';
-import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
+import type { FilterType, TodoSortBy, Todo } from '@/entities/todo';
 
-import { TodoActionsBar } from './todo-actions-bar';
-import { TodoCard } from './todo-card';
-import { TodoListError } from './todo-list-error';
-import { TodoListEmpty, TodoListLoading } from './todo-list-states';
-import { useTodos } from '../../model/use-todos';
-import { sortTodos } from '../model/sort-todos';
-import { TodoSelectionProvider, useTodoSelection } from '../model/todo-selection-context';
-import { useBulkTodoActions } from '../model/use-bulk-todo-actions';
-import { useFilteredTodos } from '../model/use-filtered-todos';
-
-import type { FilterType, Todo, TodoSortBy } from '@/entities/todo';
-
-interface TodoListProps {
-  filter?: FilterType;
-  search?: string;
-  sortBy?: TodoSortBy;
+export interface TodoListProps {
+  filter: FilterType;
+  search: string;
+  sortBy: TodoSortBy;
+  onFocusCreateInput?: () => void;
+  onTodoClick?: (todo: Todo) => void;
+  onTodoEdit?: (todo: Todo) => void;
 }
 
-export function TodoList(props: TodoListProps) {
-  return (
-    <TodoSelectionProvider>
-      <TodoListContent {...props} />
-    </TodoSelectionProvider>
-  );
-}
+/**
+ * Facade component.
+ */
+export function TodoList({
+  filter,
+  search,
+  sortBy,
+  onFocusCreateInput,
+  onTodoClick: onTodoClickProp,
+  onTodoEdit: onTodoEditProp,
+}: TodoListProps) {
+  const {
+    todos,
+    isLoading,
+    error,
+    hasItems,
+    normalizedSearch,
+    stats,
+    checkSelected,
+    clearSelection,
+    handlers,
+    confirm,
+  } = useTodoList({
+    filter,
+    search,
+    sortBy,
+    onTodoClick: onTodoClickProp,
+    onTodoEdit: onTodoEditProp,
+  });
 
-function TodoListContent({ filter = 'all', search = '', sortBy = 'date' }: TodoListProps) {
-  const { navigateToTodoDetail, navigateToTodoEdit } = useNavigation();
+  const {
+    onSelectionToggle,
+    onTodoToggle,
+    onTodoEdit: onTodoEditHandler,
+    onTodoDelete,
+    onTodoClick: onTodoClickHandler,
+    onClearCompletedAll,
+    onRefetch,
+    onSelectAll,
+    onDeleteSelected,
+  } = handlers;
 
-  const confirm = useConfirm();
-
-  const { todos, isLoading, error, refetch, toggleTodo } = useTodos();
-  const { deleteTodo } = useUndoableDeleteTodo();
-
-  const { selectedIds, toggleSelection, checkSelected, selectIds, clearSelection } =
-    useTodoSelection();
-  const { deleteSelected, clearCompletedAll } = useBulkTodoActions();
-
-  const { filtered, normalizedSearch } = useFilteredTodos(todos ?? [], filter, search);
-  const sortedTodos = useMemo(() => sortTodos(filtered, sortBy), [filtered, sortBy]);
-  const selectedTodos = sortedTodos.filter((todo: Todo) => selectedIds.includes(todo.id));
-
-  // Loading state
   if (isLoading) {
     return <TodoListLoading title="My Todos" />;
   }
 
-  // Error state
-  if (!!error) {
-    return <TodoListError refetch={refetch} error={error} />;
+  if (error) {
+    return <TodoListError error={error} refetch={onRefetch} />;
   }
 
-  // Empty state
-  if (sortedTodos.length === 0) {
+  if (!hasItems) {
     return (
-      <TodoListEmpty
-        hasSearch={normalizedSearch.length > 0}
-        onCreateClick={() => {
-          const input = document.getElementById('create-todo-input') as HTMLInputElement | null;
-          input?.focus();
-        }}
-      />
+      <TodoListEmpty hasSearch={normalizedSearch.length > 0} onCreateClick={onFocusCreateInput} />
     );
   }
 
-  // Success state
   return (
-    <Card>
-      <CardHeader className="flex flex-col items-stretch">
-        <TodoActionsBar
-          actions={{
-            clearSelection,
-            clearCompletedAll,
-            refetch,
-            selectAll: () => selectIds(sortedTodos.map((todo: Todo) => todo.id)),
-            delete: () => deleteSelected(selectedTodos),
-          }}
-          visibleTodos={sortedTodos}
+    <div className="space-y-3">
+      <TodoActionsBar
+        totalCount={stats.total}
+        selectedCount={stats.selected}
+        hasCompleted={stats.hasCompleted}
+        actions={{
+          clearSelection,
+          clearCompletedAll: onClearCompletedAll,
+          refetch: onRefetch,
+          selectAll: onSelectAll,
+          delete: onDeleteSelected,
+        }}
+      />
+      <div className="text-xs text-slate-600">
+        Всего: {stats.total} &nbsp;|&nbsp; Выделено: {stats.selected}
+      </div>
+      {todos.map((todo) => (
+        <TodoCard
+          key={todo.id}
+          todo={todo}
+          confirm={confirm}
+          selected={checkSelected(todo.id)}
+          onSelectToggle={onSelectionToggle}
+          onToggleComplete={onTodoToggle}
+          onEdit={onTodoEditHandler}
+          onDelete={onTodoDelete}
+          onClick={onTodoClickHandler}
         />
-      </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="text-xs text-slate-600">
-          Всего: {sortedTodos.length} &nbsp;|&nbsp; Выделено: {selectedIds.length}
-        </div>
-        {sortedTodos.map((todo) => (
-          <TodoCard
-            key={todo.id}
-            todo={todo}
-            confirm={confirm}
-            selected={checkSelected(todo.id)}
-            onSelectToggle={() => toggleSelection(todo.id)}
-            onToggleComplete={() => toggleTodo(todo)}
-            onEdit={() => navigateToTodoEdit(todo.id)}
-            onDelete={() => deleteTodo(todo)}
-            onClick={() => navigateToTodoDetail(todo.id)}
-          />
-        ))}
-      </CardContent>
-    </Card>
+      ))}
+    </div>
   );
 }

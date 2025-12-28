@@ -94,12 +94,12 @@
     {
       "id": "d6e5",
       "text": "Сходить в магазин",
-      "completed": true,
+      "completed": false,
       "userId": "4",
       "priority": "medium",
       "tags": [],
       "createdAt": "2025-12-21T06:30:43.257Z",
-      "updatedAt": "2025-12-27T15:37:05.354Z"
+      "updatedAt": "2025-12-28T06:45:10.330Z"
     }
   ]
 }

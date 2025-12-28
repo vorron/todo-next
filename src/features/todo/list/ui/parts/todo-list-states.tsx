@@ -5,9 +5,9 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  SkeletonList,
   EmptySearchResults,
   EmptyState,
+  SkeletonList,
 } from '@/shared/ui';
 
 export function TodoListLoading({ title }: { title: string }) {
@@ -28,7 +28,7 @@ export function TodoListEmpty({
   onCreateClick,
 }: {
   hasSearch: boolean;
-  onCreateClick: () => void;
+  onCreateClick?: () => void;
 }) {
   return (
     <Card>
@@ -43,7 +43,7 @@ export function TodoListEmpty({
             icon={<ClipboardList className="w-8 h-8 text-gray-400" />}
             title="No todos yet"
             description="Get started by creating your first todo item"
-            action={{ label: 'Create Todo', onClick: onCreateClick }}
+            action={onCreateClick ? { label: 'Create Todo', onClick: onCreateClick } : undefined}
           />
         )}
       </CardContent>

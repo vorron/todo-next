@@ -1,12 +1,7 @@
 'use client';
 
-import { TodosViewProvider } from './model/todos-view-context';
-import { TodosPageContent } from './ui/todos-page-content';
+import { TodosPageContent } from './ui';
 
 export function TodosPage() {
-  return (
-    <TodosViewProvider>
-      <TodosPageContent />
-    </TodosViewProvider>
-  );
+  return <TodosPageContent />;
 }
