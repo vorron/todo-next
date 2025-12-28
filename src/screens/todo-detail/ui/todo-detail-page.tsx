@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
-
 import { XCircle } from 'lucide-react';
 
 import {
@@ -25,7 +23,7 @@ import {
   CardContent,
   Button,
   ErrorStateCard,
-  useHeader,
+  useHeaderFromTemplate,
   NavigationButton,
 } from '@/shared/ui';
 import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
@@ -36,7 +34,6 @@ interface TodoDetailPageProps {
 
 export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
   const { navigateToTodos } = useNavigation();
-  const { setHeader } = useHeader();
 
   const { data: todo, isLoading, isError } = useGetTodoByIdQuery(todoId);
 
@@ -44,17 +41,7 @@ export function TodoDetailPage({ todoId }: TodoDetailPageProps) {
   const { deleteTodo, isDeleting } = useUndoableDeleteTodo();
   const confirm = useConfirm();
 
-  useEffect(() => {
-    if (!todo) return;
-
-    setHeader({
-      title: todo.text,
-      breadcrumbs: [
-        { href: ROUTES.TODOS, label: 'Todos' },
-        { href: ROUTES.TODO_DETAIL(todo.id), label: todo.text },
-      ],
-    });
-  }, [setHeader, todo]);
+  useHeaderFromTemplate(todo, 'todoDetail');
 
   const formatDateTime = (value: string) =>
     new Date(value).toLocaleString(undefined, {

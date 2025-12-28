@@ -28,3 +28,7 @@ export { metadataConfig, dynamicMetadata, getStaticMetadata } from './metadata';
 export type { MetadataKey } from './metadata';
 
 export { publicPaths, protectedPaths, isPublicPath, isProtectedPath, requiresAuth } from './guards';
+
+export { headerTemplates } from './header';
+export type { HeaderTemplateKey } from './header';
+export type { HeaderTemplate, HeaderDescriptor } from '@/shared/types/header';

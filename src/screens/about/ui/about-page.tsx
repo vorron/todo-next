@@ -1,6 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
+'use client';
+
+import { Card, CardContent, CardHeader, CardTitle, useHeaderFromTemplate } from '@/shared/ui';
 
 export function AboutPage() {
+  useHeaderFromTemplate(undefined, 'about');
+
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       <div className="text-center mb-8">

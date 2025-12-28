@@ -4,15 +4,12 @@ import { createContext, useCallback, useContext, useMemo, useState, type ReactNo
 
 import { usePathname } from 'next/navigation';
 
-export type HeaderBreadcrumb = {
-  href: string;
-  label: string;
-};
+import type { HeaderBreadcrumb } from '@/shared/types/header';
 
 type HeaderState = {
   forPath?: string;
   title?: string;
-  breadcrumbs?: HeaderBreadcrumb[];
+  breadcrumbs?: readonly HeaderBreadcrumb[];
 };
 
 type HeaderContextValue = {

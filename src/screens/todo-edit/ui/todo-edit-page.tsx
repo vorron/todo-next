@@ -27,7 +27,7 @@ import {
   FormLabel,
   FormMessage,
   PageLoader,
-  useHeader,
+  useHeaderFromTemplate,
 } from '@/shared/ui';
 import { Input } from '@/shared/ui/input-primitive';
 
@@ -59,10 +59,10 @@ interface TodoEditPageProps {
 
 export function TodoEditPage({ todoId }: TodoEditPageProps) {
   const router = useRouter();
-  const { setHeader } = useHeader();
 
   const { data: todo, isLoading, isError } = useGetTodoByIdQuery(todoId);
   const [updateTodo, { isLoading: isUpdating }] = useUpdateTodoMutation();
+  useHeaderFromTemplate(todo, 'todoEdit');
 
   const form = useForm<EditTodoFormData>({
     resolver: zodResolver(editTodoFormSchema),
@@ -90,16 +90,7 @@ export function TodoEditPage({ todoId }: TodoEditPageProps) {
       dueDate: toDateInputValue(todo.dueDate),
       tagsInput: (todo.tags || []).join(', '),
     });
-
-    setHeader({
-      title: `Edit: ${todo.text}`,
-      breadcrumbs: [
-        { href: ROUTES.TODOS, label: 'Todos' },
-        { href: ROUTES.TODO_DETAIL(todo.id), label: 'Todo' },
-        { href: ROUTES.TODO_EDIT(todo.id), label: 'Edit' },
-      ],
-    });
-  }, [form, setHeader, todo]);
+  }, [form, todo]);
 
   const onSubmit = async (data: EditTodoFormData) => {
     if (!todo) return;

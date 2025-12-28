@@ -1,10 +1,11 @@
 'use client';
 
 import { useAuth, LogoutButton } from '@/features/auth';
-import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui';
+import { Card, CardHeader, CardTitle, CardContent, useHeaderFromTemplate } from '@/shared/ui';
 
 export function ProfilePage() {
   const { session } = useAuth();
+  useHeaderFromTemplate(undefined, 'profile');
 
   if (!session) return null;
 

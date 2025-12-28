@@ -1,6 +1,11 @@
+'use client';
+
 import { SettingsForm } from '@/features/settings/ui/settings-form';
+import { useHeaderFromTemplate } from '@/shared/ui';
 
 export function SettingsPage() {
+  useHeaderFromTemplate(undefined, 'settings');
+
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="max-w-4xl mx-auto">
