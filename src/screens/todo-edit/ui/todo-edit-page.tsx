@@ -9,8 +9,7 @@ import { XCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { useUpdateTodoMutation, TODO_PRIORITY_LABELS } from '@/entities/todo';
-import { useTodoDetail } from '@/features/todo/detail/model/use-todo-detail';
+import { useUpdateTodoMutation, TODO_PRIORITY_LABELS, useGetTodoByIdQuery } from '@/entities/todo';
 import { ROUTES } from '@/shared/config/routes';
 import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
 import { handleZodError } from '@/shared/lib/utils';
@@ -62,7 +61,7 @@ export function TodoEditPage({ todoId }: TodoEditPageProps) {
   const router = useRouter();
   const { setHeader } = useHeader();
 
-  const { todo, isLoading, isError } = useTodoDetail(todoId);
+  const { data: todo, isLoading, isError } = useGetTodoByIdQuery(todoId);
   const [updateTodo, { isLoading: isUpdating }] = useUpdateTodoMutation();
 
   const form = useForm<EditTodoFormData>({

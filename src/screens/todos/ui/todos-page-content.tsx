@@ -5,12 +5,17 @@ import { TodoList } from '@/features/todo/list/ui/todo-list';
 import { CreateTodoForm } from '@/features/todo/todo-create';
 import { TodoSearchInput } from '@/features/todo/todo-search';
 import { TodoSortSelect } from '@/features/todo/todo-sort';
+import { useDebounce } from '@/shared/lib/hooks';
 
-import { useTodosFiltersViewModel } from '../model/use-todos-filters-view-model';
+import { useTodosView } from '../model/todos-view-context';
+import { useTodosViewUrlSync } from '../model/use-todos-view-url-sync';
+
+export const TODOS_VIEW_DEBOUNCE_MS = 300;
 
 export function TodosPageContent() {
-  const { filter, search, sortBy, setFilter, setSearch, setSortBy, debouncedSearch } =
-    useTodosFiltersViewModel();
+  const { filter, search, sortBy, setFilter, setSearch, setSortBy } = useTodosView();
+  const debouncedSearch = useDebounce(search, TODOS_VIEW_DEBOUNCE_MS);
+  useTodosViewUrlSync(debouncedSearch);
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl space-y-6">

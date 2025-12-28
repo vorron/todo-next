@@ -2,10 +2,8 @@
 
 import { useMemo } from 'react';
 
-import { useRouter } from 'next/navigation';
-
 import { useUndoableDeleteTodo } from '@/features/todo/model/use-undoable-delete-todo';
-import { ROUTES } from '@/shared/config/routes';
+import { useNavigation } from '@/shared/lib/navigation';
 import { Card, CardContent, CardHeader } from '@/shared/ui';
 import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
 
@@ -36,7 +34,8 @@ export function TodoList(props: TodoListProps) {
 }
 
 function TodoListContent({ filter = 'all', search = '', sortBy = 'date' }: TodoListProps) {
-  const router = useRouter();
+  const { navigateToTodoDetail, navigateToTodoEdit } = useNavigation();
+
   const confirm = useConfirm();
 
   const { todos, isLoading, error, refetch, toggleTodo } = useTodos();
@@ -100,9 +99,9 @@ function TodoListContent({ filter = 'all', search = '', sortBy = 'date' }: TodoL
             selected={checkSelected(todo.id)}
             onSelectToggle={() => toggleSelection(todo.id)}
             onToggleComplete={() => toggleTodo(todo)}
-            onEdit={() => router.push(ROUTES.TODO_EDIT(todo.id))}
+            onEdit={() => navigateToTodoEdit(todo.id)}
             onDelete={() => deleteTodo(todo)}
-            onClick={() => router.push(ROUTES.TODO_DETAIL(todo.id))}
+            onClick={() => navigateToTodoDetail(todo.id)}
           />
         ))}
       </CardContent>

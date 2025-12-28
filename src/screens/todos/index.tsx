@@ -1,12 +1,12 @@
 'use client';
 
-import { TodosFiltersProvider } from './model/todos-filters-context';
+import { TodosViewProvider } from './model/todos-view-context';
 import { TodosPageContent } from './ui/todos-page-content';
 
 export function TodosPage() {
   return (
-    <TodosFiltersProvider>
+    <TodosViewProvider>
       <TodosPageContent />
-    </TodosFiltersProvider>
+    </TodosViewProvider>
   );
 }

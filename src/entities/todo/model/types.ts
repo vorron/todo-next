@@ -24,6 +24,12 @@ export interface TodoListItem extends Todo {
   isEditing?: boolean;
 }
 
+export interface TodosViewState {
+  filter: FilterType;
+  search: string;
+  sortBy: TodoSortBy;
+}
+
 export interface TodoStats {
   total: number;
   completed: number;
