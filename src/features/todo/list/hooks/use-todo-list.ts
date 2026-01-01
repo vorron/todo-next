@@ -6,10 +6,10 @@ import { useUndoableDeleteTodo, useToggleTodoAction, useTodos } from '@/features
 import { useNavigation } from '@/shared/lib/navigation';
 import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
 
-import { sortTodos } from '../../model/sort-todos';
-import { useBulkTodoActions } from '../../model/use-bulk-todo-actions';
-import { useFilteredTodos } from '../../model/use-filtered-todos';
-import { useTodoSelectionState } from '../../model/use-todo-selection';
+import { sortTodos } from '../model/sort-todos';
+import { useBulkTodoActions } from '../model/use-bulk-todo-actions';
+import { useFilteredTodos } from '../model/use-filtered-todos';
+import { useTodoSelectionState } from '../model/use-todo-selection';
 
 import type { Todo, FilterType, TodoSortBy } from '@/entities/todo';
 

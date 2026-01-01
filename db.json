@@ -71,35 +71,34 @@
       "updatedAt": "2025-11-16T02:46:34.539Z"
     },
     {
-      "id": "77f6",
+      "id": "9123",
+      "text": "Рефакторинг текущего проекта",
+      "completed": false,
+      "userId": "4",
+      "priority": "medium",
+      "tags": [],
+      "createdAt": "2025-12-31T07:05:59.655Z",
+      "updatedAt": "2025-12-31T07:05:59.655Z"
+    },
+    {
+      "id": "9052",
       "text": "Приготовить обед",
       "completed": false,
       "userId": "4",
       "priority": "medium",
-      "tags": ["дом"],
-      "createdAt": "2025-12-21T03:00:28.429Z",
-      "updatedAt": "2025-12-21T03:00:28.429Z",
-      "dueDate": "2025-12-30"
-    },
-    {
-      "id": "1d63",
-      "text": "Рефакторинг текущего проекта",
-      "completed": true,
-      "userId": "4",
-      "priority": "medium",
       "tags": [],
-      "createdAt": "2025-12-20T06:45:12.034Z",
-      "updatedAt": "2025-12-20T06:45:12.034Z"
+      "createdAt": "2025-12-31T07:06:02.284Z",
+      "updatedAt": "2025-12-31T07:06:02.284Z"
     },
     {
-      "id": "d6e5",
+      "id": "5a8f",
       "text": "Сходить в магазин",
       "completed": false,
       "userId": "4",
       "priority": "medium",
       "tags": [],
-      "createdAt": "2025-12-21T06:30:43.257Z",
-      "updatedAt": "2025-12-28T06:45:10.330Z"
+      "createdAt": "2025-12-31T07:06:05.185Z",
+      "updatedAt": "2025-12-31T07:06:05.185Z"
     }
   ]
 }

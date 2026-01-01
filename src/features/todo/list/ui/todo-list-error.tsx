@@ -3,7 +3,7 @@ import { type FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 
-import { useRetryableRefetch } from '../../model/use-retryable-refetch';
+import { useRetryableRefetch } from '../model/use-retryable-refetch';
 
 type TodoListErrorProps = {
   error: FetchBaseQueryError | SerializedError | undefined;

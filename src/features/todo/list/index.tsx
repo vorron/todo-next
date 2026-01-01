@@ -1,10 +1,11 @@
 'use client';
 
 import { useTodoList } from './hooks/use-todo-list';
-import { TodoActionsBar } from './parts/todo-actions-bar';
-import { TodoCard } from './parts/todo-card';
-import { TodoListError } from './parts/todo-list-error';
-import { TodoListEmpty, TodoListLoading } from './parts/todo-list-states';
+import { ListSkeleton } from './ui/skeletons/todo-list-skeleton';
+import { TodoActionsBar } from './ui/todo-actions-bar';
+import { TodoCard } from './ui/todo-card';
+import { TodoListEmpty } from './ui/todo-list-empty';
+import { TodoListError } from './ui/todo-list-error';
 
 import type { FilterType, TodoSortBy, Todo } from '@/entities/todo';
 
@@ -12,7 +13,6 @@ export interface TodoListProps {
   filter: FilterType;
   search: string;
   sortBy: TodoSortBy;
-  onFocusCreateInput?: () => void;
   onTodoClick?: (todo: Todo) => void;
   onTodoEdit?: (todo: Todo) => void;
 }
@@ -24,7 +24,6 @@ export function TodoList({
   filter,
   search,
   sortBy,
-  onFocusCreateInput,
   onTodoClick: onTodoClickProp,
   onTodoEdit: onTodoEditProp,
 }: TodoListProps) {
@@ -60,7 +59,7 @@ export function TodoList({
   } = handlers;
 
   if (isLoading) {
-    return <TodoListLoading title="My Todos" />;
+    return <ListSkeleton title="My Todos" />;
   }
 
   if (error) {
@@ -68,9 +67,7 @@ export function TodoList({
   }
 
   if (!hasItems) {
-    return (
-      <TodoListEmpty hasSearch={normalizedSearch.length > 0} onCreateClick={onFocusCreateInput} />
-    );
+    return <TodoListEmpty hasSearch={normalizedSearch.length > 0} />;
   }
 
   return (

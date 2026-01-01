@@ -1,1 +1,1 @@
-export { TodosPageContent } from './todos-page-content';
+export { TodosPageContent } from '../../../features/todo/content/page-content';
