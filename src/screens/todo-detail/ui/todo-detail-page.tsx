@@ -2,46 +2,23 @@
 
 import { XCircle } from 'lucide-react';
 
-import { TodoDetailContent } from '@/features/todo/detail';
-import { useTodoById, useUndoableDeleteTodo, useToggleTodo } from '@/features/todo/model';
+import { TodoDetailContent, useTodoDetail } from '@/features/todo/detail';
 import { ROUTES } from '@/shared/config/routes';
-import { useNavigation } from '@/shared/lib/navigation';
-import { PageLoader, ErrorStateCard, useHeaderFromTemplate, toast } from '@/shared/ui';
-import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
+import { PageLoader, ErrorStateCard, useHeaderFromTemplate } from '@/shared/ui';
 
 export function TodoDetailPage({ todoId }: { todoId: string }) {
-  const { navigateToTodos } = useNavigation();
-
-  const { todo, isLoading, error } = useTodoById(todoId);
-
-  const { toggleTodo, isToggling } = useToggleTodo();
-  const { deleteTodo, isDeleting } = useUndoableDeleteTodo();
-  const confirm = useConfirm();
+  const {
+    todo,
+    isLoading,
+    error,
+    handleDelete,
+    handleToggle,
+    isToggling,
+    isDeleting,
+    navigateToTodos,
+  } = useTodoDetail(todoId);
 
   useHeaderFromTemplate(todo, 'todoDetail');
-
-  const handleDelete = async () => {
-    if (!todo) return;
-
-    if (
-      !(await confirm({
-        title: 'Delete Todo?',
-        description: `Are you sure you want to delete "${todo.text}"? This action cannot be undone.`,
-        confirmLabel: 'Delete',
-        cancelLabel: 'Cancel',
-        variant: 'danger',
-      }))
-    )
-      return;
-
-    try {
-      await deleteTodo(todo);
-      navigateToTodos();
-    } catch (err) {
-      console.error('Delete todo failed', err);
-      toast.error('Failed to delete. Please try again.');
-    }
-  };
 
   if (isLoading) {
     return <PageLoader message="Loading todo details..." />;
@@ -60,16 +37,14 @@ export function TodoDetailPage({ todoId }: { todoId: string }) {
   }
 
   return (
-    <>
-      <TodoDetailContent
-        todo={todo}
-        onToggle={() => toggleTodo(todo)}
-        onDelete={handleDelete}
-        isToggling={isToggling}
-        isDeleting={isDeleting}
-        backHref={ROUTES.TODOS}
-        editHref={ROUTES.TODO_EDIT(todo.id)}
-      />
-    </>
+    <TodoDetailContent
+      todo={todo}
+      onToggle={handleToggle}
+      onDelete={handleDelete}
+      isToggling={isToggling}
+      isDeleting={isDeleting}
+      backHref={ROUTES.TODOS}
+      editHref={ROUTES.TODO_EDIT(todo.id)}
+    />
   );
 }

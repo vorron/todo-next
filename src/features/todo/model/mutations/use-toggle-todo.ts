@@ -10,7 +10,9 @@ export function useToggleTodo() {
     todoApi.endpoints.toggleTodo.useMutation();
 
   const toggleTodo = useCallback(
-    async (todo: Todo) => {
+    async (todo: Todo | undefined) => {
+      if (!todo) return;
+
       const nextCompleted = !todo.completed;
 
       try {

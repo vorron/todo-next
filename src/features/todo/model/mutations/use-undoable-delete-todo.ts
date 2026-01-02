@@ -4,6 +4,7 @@ import { todoApi, type Todo } from '@/entities/todo';
 import { useAuth } from '@/features/auth';
 import { handleApiError } from '@/shared/lib/errors';
 import { toast } from '@/shared/ui';
+import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
 
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
@@ -13,9 +14,22 @@ export function useUndoableDeleteTodo() {
   const [createTodoMutation, { isLoading: isRestoring }] =
     todoApi.endpoints.createTodo.useMutation();
   const { userId } = useAuth();
+  const confirm = useConfirm();
 
   const deleteTodo = useCallback(
-    async (todo: Todo) => {
+    async (todo: Todo | undefined) => {
+      if (!todo) return;
+
+      const confirmed = await confirm({
+        title: 'Delete Todo?',
+        description: `Are you sure you want to delete "${todo.text}"? This action cannot be undone.`,
+        confirmLabel: 'Delete',
+        cancelLabel: 'Cancel',
+        variant: 'danger',
+      });
+
+      if (!confirmed) return;
+
       const effectiveUserId = todo.userId ?? userId;
       if (!effectiveUserId) {
         const error: FetchBaseQueryError = {
@@ -58,7 +72,7 @@ export function useUndoableDeleteTodo() {
         throw error;
       }
     },
-    [createTodoMutation, deleteTodoMutation, userId],
+    [createTodoMutation, deleteTodoMutation, userId, confirm],
   );
 
   return {

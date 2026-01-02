@@ -51,6 +51,6 @@ export { ErrorStateCard } from './error-state-card/error-state-card';
 export { HeaderProvider, useHeader } from './header-context';
 export { useHeaderFromTemplate } from './use-header-from-template';
 export { ActionBar, type ActionBarItem, type ActionBarProps } from './action-bar';
-export { NavigationButton } from './navigation-button';
+export { NavigationButton, BackButton } from './navigation-button';
 export { Select } from './select';
 export { FilterButtons } from './filter-buttons';

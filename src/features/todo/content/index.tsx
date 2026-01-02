@@ -5,7 +5,7 @@ import { useTodosViewState, useTodosViewUrlSync } from '@/features/todo/content/
 import { TodoList } from '@/features/todo/list';
 import { FilterButtons, Select } from '@/shared/ui';
 
-import { CreateTodoForm } from './ui/create-todo-form';
+import { TodoForm } from '../form';
 import { TodoSearchInput } from './ui/search-input';
 
 export function TodosPageContent() {
@@ -35,7 +35,7 @@ export function TodosPageContent() {
         </div>
       </div>
 
-      <CreateTodoForm />
+      <TodoForm mode="create" />
 
       <TodoList filter={filter} search={search} sortBy={sortBy} />
     </div>

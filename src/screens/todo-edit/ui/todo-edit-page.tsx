@@ -1,134 +1,19 @@
 'use client';
 
-import { useEffect } from 'react';
-
 import { useRouter } from 'next/navigation';
 
-import { zodResolver } from '@hookform/resolvers/zod';
 import { XCircle } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
-import { TODO_PRIORITY_LABELS } from '@/entities/todo';
-import { useTodoById, useUpdateTodo } from '@/features/todo/model';
+import { TodoForm } from '@/features/todo/form';
+import { useTodoById } from '@/features/todo/model';
 import { ROUTES } from '@/shared/config/routes';
-import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
-import { handleZodError } from '@/shared/lib/utils';
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  ErrorStateCard,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  PageLoader,
-  useHeaderFromTemplate,
-} from '@/shared/ui';
-import { Input } from '@/shared/ui/input-primitive';
+import { BackButton, ErrorStateCard, PageLoader, useHeaderFromTemplate } from '@/shared/ui';
 
-import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-
-const editTodoFormSchema = z.object({
-  text: z
-    .string()
-    .trim()
-    .min(1, 'Todo text is required')
-    .max(500, 'Todo text must be at most 500 characters'),
-  priority: z.enum(['low', 'medium', 'high']),
-  dueDate: z
-    .string()
-    .trim()
-    .optional()
-    .refine((value) => !value || !Number.isNaN(Date.parse(value)), 'Please provide a valid date'),
-  tagsInput: z
-    .string()
-    .max(200, 'Tags must be at most 200 characters')
-    .transform((value) => value.trim()),
-});
-
-type EditTodoFormData = z.infer<typeof editTodoFormSchema>;
-
-interface TodoEditPageProps {
-  todoId: string;
-}
-
-export function TodoEditPage({ todoId }: TodoEditPageProps) {
+export function TodoEditPage({ todoId }: { todoId: string }) {
   const router = useRouter();
 
   const { todo, isLoading, error } = useTodoById(todoId);
-  const { updateTodo, isUpdating } = useUpdateTodo();
   useHeaderFromTemplate(todo, 'todoEdit');
-
-  const form = useForm<EditTodoFormData>({
-    resolver: zodResolver(editTodoFormSchema),
-    defaultValues: {
-      text: '',
-      priority: 'medium',
-      dueDate: '',
-      tagsInput: '',
-    },
-  });
-
-  useEffect(() => {
-    if (!todo) return;
-
-    const toDateInputValue = (date?: string | null) => {
-      if (!date) return '';
-      const parsed = new Date(date);
-      if (Number.isNaN(parsed.getTime())) return '';
-      return parsed.toISOString().slice(0, 10);
-    };
-
-    form.reset({
-      text: todo.text,
-      priority: todo.priority || 'medium',
-      dueDate: toDateInputValue(todo.dueDate),
-      tagsInput: (todo.tags || []).join(', '),
-    });
-  }, [form, todo]);
-
-  const onSubmit = async (data: EditTodoFormData) => {
-    if (!todo) return;
-
-    const tags = data.tagsInput
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter(Boolean);
-
-    try {
-      await updateTodo({
-        ...todo,
-        text: data.text,
-        priority: data.priority,
-        dueDate: data.dueDate || undefined,
-        tags,
-      });
-      handleApiSuccess('Todo updated successfully');
-      router.push(ROUTES.TODOS);
-    } catch (error: unknown) {
-      handleZodError<void>(error, {
-        onZodError: (fieldErrors) => {
-          for (const [field, message] of Object.entries(fieldErrors)) {
-            if (field === '_form') {
-              form.setError('text', { type: 'manual', message });
-              continue;
-            }
-
-            form.setError(field as keyof EditTodoFormData, { type: 'manual', message });
-          }
-        },
-        onOtherError: (err) => {
-          handleApiError(err as FetchBaseQueryError, 'Failed to update todo');
-        },
-      });
-    }
-  };
 
   if (isLoading) {
     return <PageLoader message="Loading todo..." />;
@@ -149,113 +34,11 @@ export function TodoEditPage({ todoId }: TodoEditPageProps) {
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl space-y-6">
       <div>
-        <Button
-          variant="ghost"
-          onClick={() => router.push(ROUTES.TODO_DETAIL(todo.id))}
-          className="mb-4"
-          disabled={isUpdating}
-        >
-          ← Back to Todo
-        </Button>
+        <BackButton href={ROUTES.TODO_DETAIL(todo.id)} label="Back to Todo" className="mb-4" />
         <h1 className="text-3xl font-bold text-gray-900">Edit Todo</h1>
         <p className="text-gray-600 mt-2">Update your task details</p>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="text"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Text</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Todo text" disabled={isUpdating} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="priority"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Priority</FormLabel>
-                    <FormControl>
-                      <select
-                        className="rounded-lg border border-gray-300 px-3 py-2 w-full"
-                        disabled={isUpdating}
-                        {...field}
-                      >
-                        <option value="low">{TODO_PRIORITY_LABELS.low}</option>
-                        <option value="medium">{TODO_PRIORITY_LABELS.medium}</option>
-                        <option value="high">{TODO_PRIORITY_LABELS.high}</option>
-                      </select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="dueDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Due date</FormLabel>
-                    <FormControl>
-                      <Input type="date" disabled={isUpdating} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="tagsInput"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tags</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="work, personal, urgent"
-                        disabled={isUpdating}
-                        {...field}
-                      />
-                    </FormControl>
-                    <p className="text-xs text-gray-500">
-                      Comma-separated. Example: work, planning.
-                    </p>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex gap-3 justify-end">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  disabled={isUpdating}
-                  onClick={() => router.push(ROUTES.TODO_DETAIL(todo.id))}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isUpdating} isLoading={isUpdating}>
-                  Save
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+      <TodoForm mode="edit" todoId={todoId} />;
     </div>
   );
 }
