@@ -10,12 +10,11 @@ export const todoApi = baseApi.injectEndpoints({
   }),
 });
 
+// Export only API definitions (no hooks!)
 export const {
-  useGetTodosQuery,
-  useGetTodoByIdQuery,
-  useCreateTodoMutation,
-  useUpdateTodoMutation,
-  useDeleteTodoMutation,
-  useToggleTodoMutation,
-  useClearCompletedMutation,
+  endpoints: todoApiEndpoints,
+  util: todoApiUtil,
+  reducerPath: todoApiReducerPath,
+  reducer: todoApiReducer,
+  middleware: todoApiMiddleware,
 } = todoApi;

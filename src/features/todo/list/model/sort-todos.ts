@@ -25,5 +25,5 @@ export function sortTodos(todos: Todo[], sortBy: TodoSortBy) {
     return toTime(b) - toTime(a);
   };
 
-  return [...todos].sort(compareFn);
+  return [...(todos ?? [])].sort(compareFn);
 }

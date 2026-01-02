@@ -1,11 +1,11 @@
 'use client';
 
+import { FILTER_LABELS, SORT_LABELS } from '@/entities/todo/model/types';
 import { useTodosViewState, useTodosViewUrlSync } from '@/features/todo/content/model';
-import { TodosFilterButtons } from '@/features/todo/filter-buttons/ui/todos-filter-buttons';
 import { TodoList } from '@/features/todo/list';
-import { CreateTodoForm } from '@/features/todo/todo-create';
-import { TodoSortSelect } from '@/features/todo/todo-sort';
+import { FilterButtons, Select } from '@/shared/ui';
 
+import { CreateTodoForm } from './ui/create-todo-form';
 import { TodoSearchInput } from './ui/search-input';
 
 export function TodosPageContent() {
@@ -22,11 +22,16 @@ export function TodosPageContent() {
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <TodosFilterButtons value={filter} onChange={setFilter} />
+        <FilterButtons value={filter} onChange={setFilter} valueLabels={FILTER_LABELS} />
 
         <div className="flex items-center gap-2">
           <TodoSearchInput value={search} onChange={setSearch} />
-          <TodoSortSelect value={sortBy} onChange={setSortBy} />
+          <Select
+            valueLabels={SORT_LABELS}
+            value={sortBy}
+            onChange={setSortBy}
+            placeholder="Sort todos"
+          />
         </div>
       </div>
 

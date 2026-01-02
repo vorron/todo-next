@@ -1,12 +1,13 @@
 import { useCallback } from 'react';
 
-import { useToggleTodoMutation, type Todo } from '@/entities/todo';
+import { todoApi, type Todo } from '@/entities/todo';
 import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
 
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-export function useToggleTodoAction() {
-  const [toggleTodoMutation, { isLoading: isToggling }] = useToggleTodoMutation();
+export function useToggleTodo() {
+  const [toggleTodoMutation, { isLoading: isToggling }] =
+    todoApi.endpoints.toggleTodo.useMutation();
 
   const toggleTodo = useCallback(
     async (todo: Todo) => {

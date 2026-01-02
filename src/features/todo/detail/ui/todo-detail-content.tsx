@@ -42,7 +42,7 @@ export function TodoDetailContent({
         <div className="flex flex-col gap-3">
           <div className="flex flex-wrap gap-3">
             <Button
-              variant={todo.completed ? 'secondary' : 'primary'}
+              variant={todo.completed ? 'secondary' : 'default'}
               onClick={onToggle}
               isLoading={isToggling}
               disabled={isToggling}

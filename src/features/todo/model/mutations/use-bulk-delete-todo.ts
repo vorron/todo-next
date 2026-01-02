@@ -1,23 +1,16 @@
 import { useCallback } from 'react';
 
-import {
-  useClearCompletedMutation,
-  useDeleteTodoMutation,
-  useCreateTodoMutation,
-  type Todo,
-} from '@/entities/todo';
+import { todoApi, type Todo } from '@/entities/todo';
 import { useAuth } from '@/features/auth';
-import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
+import { handleApiError } from '@/shared/lib/errors';
 import { toast } from '@/shared/ui';
 
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-export function useBulkTodoActions() {
+export function useBulkDeleteTodo() {
   const { userId } = useAuth();
-
-  const [clearCompleted] = useClearCompletedMutation();
-  const [deleteTodo] = useDeleteTodoMutation();
-  const [createTodo] = useCreateTodoMutation();
+  const [deleteTodo] = todoApi.endpoints.deleteTodo.useMutation();
+  const [createTodo] = todoApi.endpoints.createTodo.useMutation();
 
   const requireUserId = useCallback(() => {
     if (!userId) {
@@ -31,9 +24,10 @@ export function useBulkTodoActions() {
     return userId;
   }, [userId]);
 
-  const deleteSelected = useCallback(
+  const bulkDelete = useCallback(
     async (todos: Todo[]) => {
       if (todos.length === 0) return;
+
       const restoreTodos = async () => {
         try {
           const uid = requireUserId();
@@ -75,19 +69,8 @@ export function useBulkTodoActions() {
     [createTodo, deleteTodo, requireUserId],
   );
 
-  const clearCompletedAll = useCallback(async () => {
-    const uid = requireUserId();
-    try {
-      await clearCompleted(uid).unwrap();
-      handleApiSuccess('Completed todos cleared');
-    } catch (error) {
-      handleApiError(error as FetchBaseQueryError, 'Failed to clear completed todos');
-      throw error;
-    }
-  }, [clearCompleted, requireUserId]);
-
   return {
-    deleteSelected,
-    clearCompletedAll,
+    bulkDelete,
+    isBulkDeleting: false, // TODO: Add proper loading state if needed
   };
 }

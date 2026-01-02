@@ -57,7 +57,7 @@ export function ProfilePage() {
                   Sign out of your account. You&apos;ll need to sign in again to access your todos.
                 </p>
               </div>
-              <LogoutButton variant="danger" className="mt-3 sm:mt-0" />
+              <LogoutButton variant="destructive" className="mt-3 sm:mt-0" />
             </div>
           </CardContent>
         </Card>

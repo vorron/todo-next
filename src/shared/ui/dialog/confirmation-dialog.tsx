@@ -63,17 +63,17 @@ export function ConfirmationDialog({
     danger: {
       icon: 'text-red-600',
       iconBg: 'bg-red-100',
-      button: 'danger' as const,
+      button: 'destructive' as const,
     },
     warning: {
       icon: 'text-yellow-600',
       iconBg: 'bg-yellow-100',
-      button: 'primary' as const,
+      button: 'default' as const,
     },
     info: {
       icon: 'text-blue-600',
       iconBg: 'bg-blue-100',
-      button: 'primary' as const,
+      button: 'default' as const,
     },
   };
 

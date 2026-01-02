@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useCreateTodoMutation, useDeleteTodoMutation, type Todo } from '@/entities/todo';
+import { todoApi, type Todo } from '@/entities/todo';
 import { useAuth } from '@/features/auth';
 import { handleApiError } from '@/shared/lib/errors';
 import { toast } from '@/shared/ui';
@@ -8,8 +8,10 @@ import { toast } from '@/shared/ui';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 export function useUndoableDeleteTodo() {
-  const [deleteTodoMutation, { isLoading: isDeleting }] = useDeleteTodoMutation();
-  const [createTodoMutation, { isLoading: isRestoring }] = useCreateTodoMutation();
+  const [deleteTodoMutation, { isLoading: isDeleting }] =
+    todoApi.endpoints.deleteTodo.useMutation();
+  const [createTodoMutation, { isLoading: isRestoring }] =
+    todoApi.endpoints.createTodo.useMutation();
   const { userId } = useAuth();
 
   const deleteTodo = useCallback(

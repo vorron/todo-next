@@ -2,9 +2,8 @@
 
 import { XCircle } from 'lucide-react';
 
-import { useGetTodoByIdQuery } from '@/entities/todo';
 import { TodoDetailContent } from '@/features/todo/detail';
-import { useUndoableDeleteTodo, useToggleTodoAction } from '@/features/todo/model';
+import { useTodoById, useUndoableDeleteTodo, useToggleTodo } from '@/features/todo/model';
 import { ROUTES } from '@/shared/config/routes';
 import { useNavigation } from '@/shared/lib/navigation';
 import { PageLoader, ErrorStateCard, useHeaderFromTemplate, toast } from '@/shared/ui';
@@ -13,9 +12,9 @@ import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
 export function TodoDetailPage({ todoId }: { todoId: string }) {
   const { navigateToTodos } = useNavigation();
 
-  const { data: todo, isLoading, isError } = useGetTodoByIdQuery(todoId);
+  const { todo, isLoading, error } = useTodoById(todoId);
 
-  const { toggleTodo, isToggling } = useToggleTodoAction();
+  const { toggleTodo, isToggling } = useToggleTodo();
   const { deleteTodo, isDeleting } = useUndoableDeleteTodo();
   const confirm = useConfirm();
 
@@ -48,7 +47,7 @@ export function TodoDetailPage({ todoId }: { todoId: string }) {
     return <PageLoader message="Loading todo details..." />;
   }
 
-  if (isError || !todo) {
+  if (error || !todo) {
     return (
       <ErrorStateCard
         icon={<XCircle className="w-8 h-8 text-red-600" />}

@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 
-import { useUpdateTodoMutation, type Todo } from '@/entities/todo';
+import { todoApi, type Todo } from '@/entities/todo';
 import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
 
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-export function useUpdateTodoAction() {
-  const [updateMutation, { isLoading: isUpdating }] = useUpdateTodoMutation();
+export function useUpdateTodo() {
+  const [updateMutation, { isLoading: isUpdating }] = todoApi.endpoints.updateTodo.useMutation();
 
   const updateTodo = useCallback(
     async (data: Todo) => {

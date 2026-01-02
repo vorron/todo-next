@@ -9,8 +9,8 @@ import { Button } from '@/shared/ui';
 interface NavigationButtonProps {
   href: string;
   children?: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'ghost' | 'outline' | 'danger';
-  size?: 'sm' | 'md' | 'lg' | 'icon' | 'icon-sm' | 'icon-lg';
+  variant?: 'default' | 'secondary' | 'ghost' | 'outline' | 'destructive';
+  size?: 'default' | 'sm' | 'lg' | 'icon' | 'icon-sm' | 'icon-lg';
   className?: string;
   disabled?: boolean;
   icon?: LucideIcon;
@@ -21,8 +21,8 @@ interface NavigationButtonProps {
 export function NavigationButton({
   href,
   children,
-  variant = 'primary',
-  size = 'md',
+  variant = 'default',
+  size = 'default',
   className,
   disabled,
   icon,

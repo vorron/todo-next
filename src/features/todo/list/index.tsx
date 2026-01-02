@@ -1,6 +1,20 @@
 'use client';
 
-import { useTodoList } from './hooks/use-todo-list';
+import { useMemo } from 'react';
+
+import {
+  useTodos,
+  useUndoableDeleteTodo,
+  useToggleTodo,
+  useBulkDeleteTodo,
+  useClearCompletedTodos,
+} from '@/features/todo/model';
+import { useNavigation } from '@/shared/lib/navigation';
+import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
+
+import { filterTodos } from './model/filter-todos';
+import { sortTodos } from './model/sort-todos';
+import { useTodoSelectionState } from './model/use-todo-selection';
 import { ListSkeleton } from './ui/skeletons/todo-list-skeleton';
 import { TodoActionsBar } from './ui/todo-actions-bar';
 import { TodoCard } from './ui/todo-card';
@@ -13,91 +27,81 @@ export interface TodoListProps {
   filter: FilterType;
   search: string;
   sortBy: TodoSortBy;
-  onTodoClick?: (todo: Todo) => void;
-  onTodoEdit?: (todo: Todo) => void;
 }
 
-/**
- * Facade component.
- */
-export function TodoList({
-  filter,
-  search,
-  sortBy,
-  onTodoClick: onTodoClickProp,
-  onTodoEdit: onTodoEditProp,
-}: TodoListProps) {
-  const {
-    todos,
-    isLoading,
-    error,
-    hasItems,
-    normalizedSearch,
-    stats,
-    checkSelected,
-    clearSelection,
-    handlers,
-    confirm,
-  } = useTodoList({
-    filter,
-    search,
-    sortBy,
-    onTodoClick: onTodoClickProp,
-    onTodoEdit: onTodoEditProp,
-  });
+export function TodoList({ filter, search, sortBy }: TodoListProps) {
+  // Data fetching
+  const { todos, isLoading, error, refetch } = useTodos();
 
-  const {
-    onSelectionToggle,
-    onTodoToggle,
-    onTodoEdit: onTodoEditHandler,
-    onTodoDelete,
-    onTodoClick: onTodoClickHandler,
-    onClearCompletedAll,
-    onRefetch,
-    onSelectAll,
-    onDeleteSelected,
-  } = handlers;
+  const { toggleTodo } = useToggleTodo();
+  const { deleteTodo } = useUndoableDeleteTodo();
+  const { bulkDelete } = useBulkDeleteTodo();
+  const { clearCompletedAll } = useClearCompletedTodos();
+
+  // Navigation
+  const { navigateToTodoDetail, navigateToTodoEdit } = useNavigation();
+
+  // UI helpers
+  const confirm = useConfirm();
+
+  // Data processing
+  const filteredTodos = useMemo(() => filterTodos(todos, filter, search), [todos, filter, search]);
+  const displayTodos = useMemo(() => sortTodos(filteredTodos, sortBy), [filteredTodos, sortBy]);
+
+  // Selection state
+  const { selectedIds, toggleSelection, checkSelected, selectIds, clearSelection } =
+    useTodoSelectionState();
+
+  // Action handlers
+  const handleTodoClick = (todo: Todo) => navigateToTodoDetail(todo.id);
+  const handleTodoEdit = (todo: Todo) => navigateToTodoEdit(todo.id);
+  const handleTodoToggle = (todo: Todo) => toggleTodo(todo);
+  const handleTodoDelete = (todo: Todo) => deleteTodo(todo);
+  const handleSelectionToggle = (todoId: string) => toggleSelection(todoId);
+  const handleSelectAll = () => selectIds(displayTodos.map((todo) => todo.id));
+  const handleDeleteSelected = () =>
+    bulkDelete(displayTodos.filter((todo) => selectedIds.includes(todo.id)));
 
   if (isLoading) {
     return <ListSkeleton title="My Todos" />;
   }
 
   if (error) {
-    return <TodoListError error={error} refetch={onRefetch} />;
+    return <TodoListError error={error} refetch={refetch} />;
   }
 
-  if (!hasItems) {
-    return <TodoListEmpty hasSearch={normalizedSearch.length > 0} />;
+  if (displayTodos.length === 0) {
+    return <TodoListEmpty hasSearch={search.length > 0} />;
   }
 
   return (
     <div className="space-y-3">
       <TodoActionsBar
-        totalCount={stats.total}
-        selectedCount={stats.selected}
-        hasCompleted={stats.hasCompleted}
+        totalCount={displayTodos.length}
+        selectedCount={selectedIds.length}
+        hasCompleted={displayTodos.some((todo) => todo.completed)}
         actions={{
           clearSelection,
-          clearCompletedAll: onClearCompletedAll,
-          refetch: onRefetch,
-          selectAll: onSelectAll,
-          delete: onDeleteSelected,
+          clearCompletedAll,
+          refetch,
+          selectAll: handleSelectAll,
+          delete: handleDeleteSelected,
         }}
       />
       <div className="text-xs text-slate-600">
-        Всего: {stats.total} &nbsp;|&nbsp; Выделено: {stats.selected}
+        Всего: {displayTodos.length} &nbsp;|&nbsp; Выделено: {selectedIds.length}
       </div>
-      {todos.map((todo) => (
+      {displayTodos.map((todo) => (
         <TodoCard
           key={todo.id}
           todo={todo}
           confirm={confirm}
           selected={checkSelected(todo.id)}
-          onSelectToggle={onSelectionToggle}
-          onToggleComplete={onTodoToggle}
-          onEdit={onTodoEditHandler}
-          onDelete={onTodoDelete}
-          onClick={onTodoClickHandler}
+          onSelectToggle={handleSelectionToggle}
+          onToggleComplete={handleTodoToggle}
+          onEdit={handleTodoEdit}
+          onDelete={handleTodoDelete}
+          onClick={handleTodoClick}
         />
       ))}
     </div>

@@ -7,8 +7,8 @@ import { Button, ConfirmationDialog } from '@/shared/ui';
 import { useAuth } from '../model/use-auth';
 
 interface LogoutButtonProps {
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'link';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'secondary' | 'destructive' | 'ghost' | 'link';
+  size?: 'sm' | 'default' | 'lg';
   className?: string;
   withConfirmation?: boolean;
   showIcon?: boolean;

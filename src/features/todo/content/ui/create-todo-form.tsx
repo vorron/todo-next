@@ -3,15 +3,14 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
+import { createTodoFormSchema, type CreateTodoFormData } from '@/entities/todo';
+import { useCreateTodo } from '@/features/todo/model';
 import { Button, Card, CardContent } from '@/shared/ui';
 import { Form, FormField, FormItem, FormControl, FormMessage } from '@/shared/ui/form';
 import { Input } from '@/shared/ui/input-primitive';
 
-import { createTodoFormSchema, type CreateTodoFormData } from '../model/create-todo-schema';
-import { useCreateTodo } from '../model/use-create-todo';
-
 export function CreateTodoForm() {
-  const { create, isLoading } = useCreateTodo();
+  const { createTodo, isCreating } = useCreateTodo();
 
   const form = useForm<CreateTodoFormData>({
     resolver: zodResolver(createTodoFormSchema),
@@ -21,10 +20,13 @@ export function CreateTodoForm() {
   });
 
   const onSubmit = async (data: CreateTodoFormData) => {
-    const result = await create(data.text.trim());
-
-    if (result.success) {
+    try {
+      await createTodo({
+        text: data.text,
+      });
       form.reset();
+    } catch {
+      // Error handling is done in the hook
     }
   };
 
@@ -42,7 +44,7 @@ export function CreateTodoForm() {
                     <Input
                       id="create-todo-input"
                       placeholder="What needs to be done?"
-                      disabled={isLoading}
+                      disabled={isCreating}
                       {...field}
                     />
                   </FormControl>
@@ -50,7 +52,7 @@ export function CreateTodoForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isLoading} isLoading={isLoading}>
+            <Button type="submit" disabled={isCreating} isLoading={isCreating}>
               Add
             </Button>
           </form>

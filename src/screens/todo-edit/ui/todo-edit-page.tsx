@@ -9,7 +9,8 @@ import { XCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { useUpdateTodoMutation, TODO_PRIORITY_LABELS, useGetTodoByIdQuery } from '@/entities/todo';
+import { TODO_PRIORITY_LABELS } from '@/entities/todo';
+import { useTodoById, useUpdateTodo } from '@/features/todo/model';
 import { ROUTES } from '@/shared/config/routes';
 import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
 import { handleZodError } from '@/shared/lib/utils';
@@ -60,8 +61,8 @@ interface TodoEditPageProps {
 export function TodoEditPage({ todoId }: TodoEditPageProps) {
   const router = useRouter();
 
-  const { data: todo, isLoading, isError } = useGetTodoByIdQuery(todoId);
-  const [updateTodo, { isLoading: isUpdating }] = useUpdateTodoMutation();
+  const { todo, isLoading, error } = useTodoById(todoId);
+  const { updateTodo, isUpdating } = useUpdateTodo();
   useHeaderFromTemplate(todo, 'todoEdit');
 
   const form = useForm<EditTodoFormData>({
@@ -102,15 +103,14 @@ export function TodoEditPage({ todoId }: TodoEditPageProps) {
 
     try {
       await updateTodo({
-        id: todo.id,
+        ...todo,
         text: data.text,
         priority: data.priority,
         dueDate: data.dueDate || undefined,
         tags,
-      }).unwrap();
-
+      });
       handleApiSuccess('Todo updated successfully');
-      router.push(ROUTES.TODO_DETAIL(todo.id));
+      router.push(ROUTES.TODOS);
     } catch (error: unknown) {
       handleZodError<void>(error, {
         onZodError: (fieldErrors) => {
@@ -134,7 +134,7 @@ export function TodoEditPage({ todoId }: TodoEditPageProps) {
     return <PageLoader message="Loading todo..." />;
   }
 
-  if (isError || !todo) {
+  if (error || !todo) {
     return (
       <ErrorStateCard
         icon={<XCircle className="w-8 h-8 text-red-600" />}
