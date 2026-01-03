@@ -13,6 +13,8 @@ export type NavItem<T extends RoutePath = RoutePath> = {
   readonly href: T;
   readonly icon?: string;
   readonly requiresAuth?: boolean;
+  readonly hideWhenAuthenticated?: boolean;
+  readonly order: number;
 };
 
 export type Breadcrumb = {

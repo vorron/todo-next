@@ -45,6 +45,7 @@ export function Navbar() {
           <div className="hidden md:flex items-center rounded-full bg-gray-100 p-1">
             {mainNavigation
               .filter((item) => !item.requiresAuth || isAuthenticated)
+              .filter((item) => !item.hideWhenAuthenticated || !isAuthenticated)
               .map((item) => {
                 const active = isActiveRoute(item.href);
                 return (
@@ -101,6 +102,7 @@ export function Navbar() {
                   <DropdownMenuContent align="end" className="w-56">
                     {mainNavigation
                       .filter((item) => !item.requiresAuth || isAuthenticated)
+                      .filter((item) => !item.hideWhenAuthenticated || !isAuthenticated)
                       .map((item) => (
                         <DropdownMenuItem key={item.href} asChild>
                           <Link href={item.href}>{item.label}</Link>

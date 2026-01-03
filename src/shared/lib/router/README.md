@@ -1,205 +1,149 @@
-# Router Architecture Documentation
+# Router System
 
-## 🎯 **Overview**
+🎯 **Единая система маршрутизации с идеальной архитектурой**
 
-Эталонная архитектура роутинга с максимальным DX и соответствием лучшим практикам.
-
-## 📁 **Structure**
+## 📁 Структура
 
 ```
-src/shared/lib/router/
-├── config.ts              # Единая конфигурация маршрутов
-├── generators.ts          # Простые генераторы данных
-├── utils.ts               # Утилиты для работы с путями
-├── guards.ts              # Guards для защиты маршрутов
-├── types.ts               # Общие типы
-├── router-utils.ts        # Хелперы для metadata
-├── router-utils.test.ts   # Тесты хелперов
-├── index.ts               # Чистый API
-└── README.md              # Документация
+router/
+├── data.ts              # 🗂️  Единственный источник правды (данные)
+├── config-types.ts      # 📝 TypeScript типы
+├── generators.ts        # ⚙️  Автоматическая генерация утилит
+├── config.ts           # 🔄 Legacy compatibility layer
+├── utils.ts            # 🛠️  Переиспользуемые утилиты
+├── guards.ts           # 🛡️  Guards для маршрутизации
+├── types.ts            # 🔧 Общие типы
+├── validation.ts       # ✅ Runtime валидация
+└── index.ts            # 📤 Публичный API
 ```
 
-## 🏗️ **Architecture Principles**
+## 🎯 Принципы
 
-### 1. **Single Source of Truth**
+### ✅ Single Responsibility
 
-- `config.ts` содержит всю конфигурацию маршрутов
-- Один файл для изменения любого маршрута
+- `data.ts` - только данные конфигурации
+- `generators.ts` - только генерация утилит
+- `utils.ts` - только переиспользуемая логика
 
-### 2. **Separation of Concerns**
+### ✅ Separation of Concerns
 
-- **Config**: Данные маршрутов
-- **Generators**: Преобразование конфига в usable данные
-- **Utils**: Переиспользуемые функции
-- **Guards**: Логика защиты маршрутов
-- **Router Utils**: Хелперы для metadata
-- **Types**: TypeScript типы
+- Данные отделены от логики
+- Типизация отделена от реализации
+- UI зависит только от абстракций
 
-### 3. **No Circular Dependencies**
+### ✅ DRY Principle
 
-- Shared слой не зависит от app слоя
-- Чистая архитектура без циклов
+- Автоматическая генерация путей, метаданных, навигации
+- Переиспользуемые guards и утилиты
+- Единственный источник правды
 
-### 4. **Maximum DX**
+## 🚀 Usage
 
-- Автогенерация типов из конфига
-- Удобные константы (ROUTES.HOME)
-- Простые функции (isPublicPath, requiresAuth)
-
-### 5. **Principle of Locality**
-
-- Вся логика роутинга в одной папке
-- Тесты рядом с кодом
-- Логические сгруппированные файлы
-
-## 🚀 **Usage Examples**
-
-### Basic Navigation
+### Базовое использование
 
 ```typescript
-import { ROUTES, paths } from '@/shared/lib/router';
+import { ROUTES, paths, dynamicPaths } from '@/shared/lib/router';
 
-// Константы для backward compatibility
-const href = ROUTES.HOME; // '/'
-const href = ROUTES.TODO_DETAIL; // Function
+// Статические пути
+ROUTES.HOME; // '/'
+ROUTES.TODOS; // '/todos'
 
-// Типизированные пути
-const href = paths.home; // '/'
-const href = paths.todos; // '/todos'
+// Динамические пути
+dynamicPaths.todoDetail('123'); // '/todos/123'
 ```
 
-### Dynamic Routes
+### Продвинутое использование
 
 ```typescript
-import { dynamicPaths } from '@/shared/lib/router';
+import {
+  mainNavigation,
+  isProtectedPath,
+  headerTemplates,
+  validateRouteConfig,
+} from '@/shared/lib/router';
 
-const todoUrl = dynamicPaths.todoDetail('123'); // '/todos/123'
-const editUrl = dynamicPaths.todoEdit('123'); // '/todos/123/edit'
-```
+// Фильтрованная навигация
+const nav = mainNavigation.filter((item) => !item.hideWhenAuthenticated);
 
-### Guards
-
-```typescript
-import { isPublicPath, requiresAuth } from '@/shared/lib/router';
-
-if (requiresAuth(currentPath)) {
-  // Redirect to login
+// Guards
+if (isProtectedPath(path)) {
+  // redirect to login
 }
 
-if (isPublicPath(currentPath)) {
-  // Allow access
-}
+// Валидация
+const validation = validateRouteConfig();
 ```
 
-### Navigation
+## 🔧 Конфигурация
+
+### Добавление нового маршрута
 
 ```typescript
-import { mainNavigation, filterNavigation } from '@/shared/lib/router';
-
-const navItems = filterNavigation(mainNavigation, isAuthenticated);
-```
-
-### Metadata
-
-```typescript
-import { metadataConfig, getRouteMetadata } from '@/shared/lib/router';
-
-// Прямой доступ к конфигу
-const meta = metadataConfig['/todos']; // Typed metadata
-
-// Удобный хелпер
-const meta = getRouteMetadata('/todos'); // Same result
-```
-
-## 🔧 **Configuration**
-
-### Adding New Routes
-
-```typescript
-// config.ts
-export const routeConfig = {
-  newRoute: {
-    path: '/new-route' as const,
-    public: true,
-    metadata: { title: 'New Route' },
-    navigation: { label: 'New', order: 5 },
+// В data.ts добавить:
+newRoute: {
+  path: '/new-route' as const,
+  protected: true,
+  metadata: { title: 'New Route' } satisfies Metadata,
+  navigation: {
+    label: 'New Route',
+    order: 5,
+    hideWhenAuthenticated?: boolean, // опционально
   },
-} as const;
-```
-
-### Dynamic Routes
-
-```typescript
-// config.ts
-export const dynamicRouteConfig = {
-  userDetail: {
-    path: '/users/:id',
-    protected: true,
-    metadata: (title) => ({ title: `${title} - User` }),
+  header: {
+    type: 'static' as const,
+    descriptor: { title: 'New Route', breadcrumbs: [...] }
   },
-};
-
-export const dynamicPaths = {
-  userDetail: (id: string) => createDynamicPath('/users/:id', { id }),
-};
+} satisfies RouteConfig,
 ```
 
-## 🎨 **Benefits**
+### Порядок навигации
 
-### ✅ **Developer Experience**
+- 0-9: Основная навигация
+- 10-19: Второстепенные элементы
+- 20-29: Административные функции
 
-- Автодополнение для всех маршрутов
-- Типизация путей и параметров
-- Единый стиль импортов
-- Все в одной папке
+## 🎨 Features
 
-### ✅ **Maintainability**
+### ✨ Автоматическая генерация
 
-- Легко добавлять новые маршруты
-- Централизованная конфигурация
-- Четкое разделение ответственности
-- Локальность кода и тестов
+- `paths` - статические пути
+- `dynamicPaths` - динамические пути
+- `navigationConfig` - конфигурация навигации
+- `mainNavigation` - отсортированная навигация
+- `metadataConfig` - метаданные для всех маршрутов
+- `protectedPatterns` - regex patterns для динамических маршрутов
 
-### ✅ **Performance**
+### 🛡️ Guards
 
-- Compile-time генерация
-- Нет runtime оверхеда
-- Оптимизированные guards
+- `isPublicPath()` - проверка публичных маршрутов
+- `isProtectedPath()` - проверка защищенных маршрутов
+- `requiresAuth()` - комбинированная проверка
 
-### ✅ **Architecture**
+### ✅ Валидация
 
-- Следует FSD принципам
-- Нет циклических зависимостей
-- Переиспользуемые компоненты
-- Принцип локальности
+- Runtime валидация в development
+- Проверка дубликатов путей
+- Проверка навигационных порядков
+- Проверка формата динамических путей
 
-## 🔄 **Migration from Old Architecture**
+### 🎯 Типизация
 
-1. **All imports now from** `@/shared/lib/router`
-2. **Same API** - backward compatible
-3. **Better types** - improved autocompletion
-4. **Cleaner structure** - easier to maintain
-5. **Tests included** - comprehensive coverage
+- Строгая типизация всех конфигураций
+- Автоматические типы из данных
+- `Strict*` типы для максимальной безопасности
 
-## 📝 **Best Practices**
+## 🔄 Migration
 
-1. **Always import from** `@/shared/lib/router`
-2. **Use ROUTES constants** for backward compatibility
-3. **Prefer typed paths** over string literals
-4. **Add navigation config** for routes in menu
-5. **Use guards** for auth checks
-6. **Keep tests nearby** - same folder
+Для существующих проектов используйте `config.ts` как compatibility layer.
 
-## 🧪 **Testing**
+## 📈 Best Practices
 
-```bash
-# Запустить тесты роутера
-npm test src/shared/lib/router/router-utils.test.ts
-
-# Все тесты
-npm test
-```
+1. **Изменяйте только `data.ts`** для добавления маршрутов
+2. **Используйте `order` свойство** для сортировки навигации
+3. **Используйте `hideWhenAuthenticated`** для страниц авторизации
+4. **Следуйте диапазонам order** для предсказуемой сортировки
+5. **Валидируйте в development** с помощью `validateConfigInDev()`
 
 ---
 
-**This architecture serves as a reference implementation for routing in Next.js applications with FSD methodology.**
+🎉 **Идеальная система маршрутизации готова к масштабированию!**
