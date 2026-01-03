@@ -28,16 +28,11 @@ export function createPublicPathGuard(publicPaths: Set<string>) {
  */
 export function createProtectedPathGuard(protectedPaths: Set<string>, protectedPatterns: RegExp[]) {
   return function isProtectedPath(path: string): boolean {
-    if (protectedPaths.has(path)) return true;
-    return protectedPatterns.some((pattern) => pattern.test(path));
+    return requiresAuthentication(path, protectedPaths, protectedPatterns);
   };
 }
 
 /**
  * Создает комбинированный guard для проверки аутентификации
  */
-export function createAuthGuard(protectedPaths: Set<string>, protectedPatterns: RegExp[]) {
-  return function requiresAuth(path: string): boolean {
-    return requiresAuthentication(path, protectedPaths, protectedPatterns);
-  };
-}
+export const createAuthGuard = createProtectedPathGuard;

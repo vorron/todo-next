@@ -10,21 +10,16 @@ export function validateRouteConfig() {
   const allPaths = new Set<string>();
   const duplicates: string[] = [];
 
-  Object.entries(routeConfigData).forEach(([, config]) => {
-    if (allPaths.has(config.path)) {
-      duplicates.push(config.path);
-    } else {
-      allPaths.add(config.path);
-    }
-  });
-
-  Object.entries(dynamicRouteConfigData).forEach(([, config]) => {
-    if (allPaths.has(config.path)) {
-      duplicates.push(config.path);
-    } else {
-      allPaths.add(config.path);
-    }
-  });
+  // Объединенная проверка для статических и динамических маршрутов
+  [...Object.entries(routeConfigData), ...Object.entries(dynamicRouteConfigData)].forEach(
+    ([, config]) => {
+      if (allPaths.has(config.path)) {
+        duplicates.push(config.path);
+      } else {
+        allPaths.add(config.path);
+      }
+    },
+  );
 
   if (duplicates.length > 0) {
     errors.push(`Duplicate paths found: ${duplicates.join(', ')}`);

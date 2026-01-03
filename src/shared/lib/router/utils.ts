@@ -18,14 +18,11 @@ export function extractPathParams(path: string, template: string): Record<string
   const pathSegments = path.split('/').filter(Boolean);
   const templateSegments = template.split('/').filter(Boolean);
 
-  for (let i = 0; i < templateSegments.length; i++) {
-    const segment = templateSegments[i];
-    if (segment && segment.startsWith(':')) {
-      const paramName = segment.slice(1);
-      const pathSegment = pathSegments[i];
-      params[paramName] = pathSegment || '';
+  templateSegments.forEach((segment, i) => {
+    if (segment.startsWith(':')) {
+      params[segment.slice(1)] = pathSegments[i] || '';
     }
-  }
+  });
 
   return params;
 }

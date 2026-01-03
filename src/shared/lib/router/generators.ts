@@ -61,12 +61,7 @@ export const dynamicMetadata = Object.fromEntries(
 // === Header Generator ===
 export const headerTemplates = {
   ...Object.fromEntries(
-    Object.entries(routeConfigData)
-      .filter(([_, config]) => config.header)
-      .map(([key, config]) => [key, config.header]),
-  ),
-  ...Object.fromEntries(
-    Object.entries(dynamicRouteConfigData)
+    [...Object.entries(routeConfigData), ...Object.entries(dynamicRouteConfigData)]
       .filter(([_, config]) => config.header)
       .map(([key, config]) => [key, config.header]),
   ),

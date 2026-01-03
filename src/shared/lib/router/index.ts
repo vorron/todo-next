@@ -88,13 +88,9 @@ export const ROUTES = {
 export type AppRoute = keyof typeof ROUTES;
 
 // === Convenience Functions ===
-export function getStaticMetadata(path: string) {
-  return metadataConfig[path as keyof typeof metadataConfig];
-}
-
-// Backward compatibility functions
 export function getRouteMetadata(path: string) {
   return metadataConfig[path as keyof typeof metadataConfig] ?? {};
 }
 
+export const getStaticMetadata = getRouteMetadata;
 export const getBreadcrumbs = createBreadcrumbs;
