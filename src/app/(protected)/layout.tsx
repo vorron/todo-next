@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { redirect } from 'next/navigation';
 
 import { hasValidSession } from '@/features/auth/lib/server-session';
-import { ROUTES } from '@/shared/config/routes';
+import { ROUTES } from '@/shared/lib/router';
 import { HeaderProvider } from '@/shared/ui';
 import { AppShell, Navbar } from '@/widgets';
 

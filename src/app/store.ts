@@ -16,5 +16,10 @@ export const makeStore = () => {
 };
 
 export type AppStore = ReturnType<typeof makeStore>;
-export type RootState = ReturnType<AppStore['getState']>;
 export type AppDispatch = AppStore['dispatch'];
+
+// Глобальные типы для использования в FSD архитектуре
+declare global {
+  type RootState = ReturnType<AppStore['getState']>;
+  type AppDispatch = AppStore['dispatch'];
+}

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { useAuth, UserMenu, LogoutButton } from '@/features/auth';
-import { ROUTES, mainNavigation } from '@/shared/config/routes';
+import { mainNavigation, ROUTES } from '@/shared/lib/router';
 import { cn } from '@/shared/lib/utils';
 import {
   Button,

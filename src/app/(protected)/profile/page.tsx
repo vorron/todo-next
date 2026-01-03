@@ -1,8 +1,7 @@
 import { type Metadata } from 'next';
 
 import { ProfilePage } from '@/screens/profile';
-import { ROUTES } from '@/shared/config/routes';
-import { getRouteMetadata } from '@/shared/lib/utils/router-utils';
+import { ROUTES, getRouteMetadata } from '@/shared/lib/router';
 
 export const metadata: Metadata = getRouteMetadata(ROUTES.PROFILE);
 

@@ -3,7 +3,7 @@
 import { XCircle } from 'lucide-react';
 
 import { TodoDetailContent, useTodoDetail } from '@/features/todo/detail';
-import { ROUTES } from '@/shared/config/routes';
+import { ROUTES } from '@/shared/lib/router';
 import { PageLoader, ErrorStateCard, useHeaderFromTemplate } from '@/shared/ui';
 
 export function TodoDetailPage({ todoId }: { todoId: string }) {
@@ -44,7 +44,7 @@ export function TodoDetailPage({ todoId }: { todoId: string }) {
       isToggling={isToggling}
       isDeleting={isDeleting}
       backHref={ROUTES.TODOS}
-      editHref={ROUTES.TODO_EDIT(todo.id)}
+      editHref={ROUTES.TODO_EDIT?.(todo.id) || '#'}
     />
   );
 }

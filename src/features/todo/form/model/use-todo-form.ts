@@ -15,8 +15,8 @@ import {
   formatTagsForInput,
   toDateInputValue,
 } from '@/entities/todo/model/todo-form-schemas';
-import { ROUTES } from '@/shared/config/routes';
 import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
+import { ROUTES } from '@/shared/lib/router';
 import { handleZodError } from '@/shared/lib/utils';
 
 import { useTodoFormApi } from '../api/todo-form-api';
@@ -72,7 +72,9 @@ export const useTodoForm = ({ mode, todoId }: UseTodoFormProps) => {
         handleApiSuccess('Todo created successfully');
       } else {
         handleApiSuccess('Todo updated successfully');
-        router.push(ROUTES.TODO_DETAIL(todoId!));
+        if (ROUTES.TODO_DETAIL) {
+          router.push(ROUTES.TODO_DETAIL(todoId!));
+        }
       }
     } catch (error: unknown) {
       handleZodError<void>(error, {

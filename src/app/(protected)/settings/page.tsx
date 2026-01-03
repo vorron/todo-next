@@ -1,6 +1,5 @@
 import { SettingsPage } from '@/screens/settings';
-import { ROUTES } from '@/shared/config/routes';
-import { getRouteMetadata } from '@/shared/lib/utils/router-utils';
+import { ROUTES, getRouteMetadata } from '@/shared/lib/router';
 
 import type { Metadata } from 'next';
 

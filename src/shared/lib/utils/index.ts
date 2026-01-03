@@ -1,7 +1,6 @@
 export { cn } from '@/shared/lib/utils/cn';
 export { formatZodError, handleZodError } from './zod-utils';
 export * from './cn';
-export * from './router-utils';
 export * from './validation-utils';
 export * from './zod-utils';
 export * from './options-utils';

@@ -2,8 +2,8 @@ import { useCallback, useEffect } from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { ROUTES } from '@/shared/config/routes';
 import { useAppDispatch, useAppSelector } from '@/shared/lib/hooks';
+import { ROUTES } from '@/shared/lib/router';
 
 import { setSession, clearSession, setLoading } from './auth-slice';
 import { useLoginMutation, useLogoutMutation } from '../api/auth-api';

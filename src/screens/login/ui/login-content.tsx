@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { LoginForm, useAuth } from '@/features/auth';
-import { ROUTES } from '@/shared/config/routes';
+import { ROUTES } from '@/shared/lib/router';
 
 import { LoginPageSkeleton } from './login-page-skeleton';
 

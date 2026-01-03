@@ -6,7 +6,7 @@ import { XCircle } from 'lucide-react';
 
 import { TodoForm } from '@/features/todo/form';
 import { useTodoById } from '@/features/todo/model';
-import { ROUTES } from '@/shared/config/routes';
+import { ROUTES } from '@/shared/lib/router';
 import { BackButton, ErrorStateCard, PageLoader, useHeaderFromTemplate } from '@/shared/ui';
 
 export function TodoEditPage({ todoId }: { todoId: string }) {
@@ -34,7 +34,11 @@ export function TodoEditPage({ todoId }: { todoId: string }) {
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl space-y-6">
       <div>
-        <BackButton href={ROUTES.TODO_DETAIL(todo.id)} label="Back to Todo" className="mb-4" />
+        <BackButton
+          href={ROUTES.TODO_DETAIL?.(todo.id) || '#'}
+          label="Back to Todo"
+          className="mb-4"
+        />
         <h1 className="text-3xl font-bold text-gray-900">Edit Todo</h1>
         <p className="text-gray-600 mt-2">Update your task details</p>
       </div>

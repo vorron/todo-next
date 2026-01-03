@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 import { getUserInitials, getAvatarColor } from '@/entities/user';
-import { ROUTES } from '@/shared/config/routes';
+import { ROUTES } from '@/shared/lib/router';
 import { cn } from '@/shared/lib/utils';
 import {
   DropdownMenu,

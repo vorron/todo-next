@@ -35,22 +35,51 @@
     {
       "id": "dce1",
       "text": "Приготовить обед",
-      "completed": false,
+      "completed": true,
       "userId": "4",
       "priority": "medium",
       "tags": [],
       "createdAt": "2026-01-02T06:36:46.159Z",
-      "updatedAt": "2026-01-02T06:36:46.159Z"
+      "updatedAt": "2026-01-03T04:33:19.101Z"
     },
     {
       "id": "df05",
       "text": "Сходить в магазин",
       "completed": false,
       "userId": "4",
-      "priority": "medium",
+      "priority": "low",
       "tags": [],
       "createdAt": "2026-01-02T06:36:49.513Z",
-      "updatedAt": "2026-01-02T06:36:49.513Z"
+      "updatedAt": "2026-01-03T02:46:55.474Z"
+    }
+  ],
+  "projects": [
+    {
+      "id": "p1",
+      "name": "Web Development",
+      "description": "Разработка веб-приложений",
+      "isActive": true,
+      "workspaceId": "4",
+      "createdAt": "2026-01-01T10:00:00.000Z",
+      "updatedAt": "2026-01-01T10:00:00.000Z"
+    },
+    {
+      "id": "p2",
+      "name": "Mobile App",
+      "description": "Разработка мобильных приложений",
+      "isActive": true,
+      "workspaceId": "4",
+      "createdAt": "2026-01-01T11:00:00.000Z",
+      "updatedAt": "2026-01-01T11:00:00.000Z"
+    },
+    {
+      "id": "p3",
+      "name": "Learning",
+      "description": "Изучение новых технологий",
+      "isActive": true,
+      "workspaceId": "4",
+      "createdAt": "2026-01-02T09:00:00.000Z",
+      "updatedAt": "2026-01-02T09:00:00.000Z"
     }
   ]
 }
