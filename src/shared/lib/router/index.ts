@@ -3,23 +3,27 @@
  * Простой, прозрачный и типизированный интерфейс
  */
 
+// Runtime валидация в development
+
 // === Imports for local use ===
-import { dynamicPaths } from './config';
-import { paths, metadataConfig } from './generators';
+import { paths, metadataConfig, dynamicPaths } from './generators';
 import { createBreadcrumbs } from './utils';
+import { validateConfigInDev } from './validation';
+
+validateConfigInDev();
 
 // === Generated Data ===
 export {
-  routeConfig,
-  dynamicRouteConfig,
-  dynamicPaths,
-  dynamicMetadata,
-  protectedPatterns,
-} from './config';
+  routeConfigData as routeConfig,
+  dynamicRouteConfigData as dynamicRouteConfig,
+} from '../../config/router-config';
+
+export { dynamicMetadata, protectedPatterns } from './generators';
 
 export {
   paths,
   routes,
+  dynamicPaths,
   navigationConfig,
   mainNavigation,
   metadataConfig,
@@ -40,6 +44,9 @@ export {
   createBreadcrumbs,
   filterNavigationByAuth,
 } from './utils';
+
+// === Validation ===
+export { validateRouteConfig, validateConfigInDev } from './validation';
 
 // === Guards ===
 export {
@@ -70,7 +77,7 @@ export type {
   AppStaticPath,
   AppDynamicPath,
   AppRoutePath,
-} from './config';
+} from './config-types';
 
 export type { HeaderTemplateKey, MetadataKey, NavConfigKey } from './generators';
 
