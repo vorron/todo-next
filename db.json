@@ -58,8 +58,14 @@
       "id": "p1",
       "name": "Web Development",
       "description": "Разработка веб-приложений",
+      "config": {
+        "color": "#3B82F6",
+        "icon": "globe",
+        "sortOrder": 1,
+        "isPinned": true
+      },
       "isActive": true,
-      "workspaceId": "4",
+      "workspaceId": "w1",
       "createdAt": "2026-01-01T10:00:00.000Z",
       "updatedAt": "2026-01-01T10:00:00.000Z"
     },
@@ -67,8 +73,14 @@
       "id": "p2",
       "name": "Mobile App",
       "description": "Разработка мобильных приложений",
+      "config": {
+        "color": "#10B981",
+        "icon": "smartphone",
+        "sortOrder": 2,
+        "isPinned": false
+      },
       "isActive": true,
-      "workspaceId": "4",
+      "workspaceId": "w1",
       "createdAt": "2026-01-01T11:00:00.000Z",
       "updatedAt": "2026-01-01T11:00:00.000Z"
     },
@@ -76,10 +88,140 @@
       "id": "p3",
       "name": "Learning",
       "description": "Изучение новых технологий",
+      "config": {
+        "color": "#F59E0B",
+        "icon": "book",
+        "sortOrder": 3,
+        "isPinned": false
+      },
       "isActive": true,
-      "workspaceId": "4",
+      "workspaceId": "w1",
       "createdAt": "2026-01-02T09:00:00.000Z",
       "updatedAt": "2026-01-02T09:00:00.000Z"
+    }
+  ],
+  "workspaces": [
+    {
+      "id": "w1",
+      "name": "Personal Workspace",
+      "ownerId": "4",
+      "createdAt": "2026-01-01T09:00:00.000Z",
+      "updatedAt": "2026-01-01T09:00:00.000Z"
+    },
+    {
+      "id": "w2",
+      "name": "Team Workspace",
+      "ownerId": "1",
+      "createdAt": "2026-01-01T08:00:00.000Z",
+      "updatedAt": "2026-01-01T08:00:00.000Z"
+    }
+  ],
+  "workspaceMembers": [
+    {
+      "id": "wm1",
+      "workspaceId": "w1",
+      "userId": "4",
+      "role": "admin",
+      "joinedAt": "2026-01-01T09:00:00.000Z",
+      "createdAt": "2026-01-01T09:00:00.000Z",
+      "updatedAt": "2026-01-01T09:00:00.000Z"
+    },
+    {
+      "id": "wm2",
+      "workspaceId": "w2",
+      "userId": "1",
+      "role": "admin",
+      "joinedAt": "2026-01-01T08:00:00.000Z",
+      "createdAt": "2026-01-01T08:00:00.000Z",
+      "updatedAt": "2026-01-01T08:00:00.000Z"
+    },
+    {
+      "id": "wm3",
+      "workspaceId": "w2",
+      "userId": "2",
+      "role": "member",
+      "joinedAt": "2026-01-01T08:30:00.000Z",
+      "createdAt": "2026-01-01T08:30:00.000Z",
+      "updatedAt": "2026-01-01T08:30:00.000Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "description": "Создать компонент таймера",
+      "createdBy": "4",
+      "tags": ["development", "frontend"],
+      "isActive": true,
+      "estimatedDuration": 7200,
+      "projectId": "p1",
+      "userId": "4",
+      "createdAt": "2026-01-03T09:00:00.000Z",
+      "updatedAt": "2026-01-03T09:00:00.000Z"
+    },
+    {
+      "id": "t2",
+      "description": "Настроить CI/CD pipeline",
+      "createdBy": "4",
+      "tags": ["devops", "automation"],
+      "isActive": true,
+      "estimatedDuration": 3600,
+      "projectId": "p1",
+      "userId": "4",
+      "createdAt": "2026-01-03T10:00:00.000Z",
+      "updatedAt": "2026-01-03T10:00:00.000Z"
+    },
+    {
+      "id": "t3",
+      "description": "Изучить React Server Components",
+      "createdBy": "4",
+      "tags": ["learning", "react"],
+      "isActive": true,
+      "estimatedDuration": 5400,
+      "projectId": "p3",
+      "userId": "4",
+      "createdAt": "2026-01-03T11:00:00.000Z",
+      "updatedAt": "2026-01-03T11:00:00.000Z"
+    }
+  ],
+  "timeEntries": [
+    {
+      "id": "te1",
+      "startTime": "2026-01-03T09:00:00.000Z",
+      "endTime": "2026-01-03T10:30:00.000Z",
+      "duration": 5400,
+      "description": "Разработка UI компонента таймера",
+      "billable": false,
+      "tags": ["development", "frontend"],
+      "taskId": "t1",
+      "userId": "4",
+      "createdAt": "2026-01-03T09:00:00.000Z",
+      "updatedAt": "2026-01-03T10:30:00.000Z"
+    },
+    {
+      "id": "te2",
+      "startTime": "2026-01-03T11:00:00.000Z",
+      "endTime": "2026-01-03T11:45:00.000Z",
+      "duration": 2700,
+      "description": "Чтение документации по RSC",
+      "billable": false,
+      "tags": ["learning", "research"],
+      "taskId": "t3",
+      "userId": "4",
+      "createdAt": "2026-01-03T11:00:00.000Z",
+      "updatedAt": "2026-01-03T11:45:00.000Z"
+    },
+    {
+      "id": "te3",
+      "startTime": "2026-01-03T14:00:00.000Z",
+      "endTime": null,
+      "duration": null,
+      "description": "Настройка GitHub Actions",
+      "billable": true,
+      "tags": ["devops", "automation"],
+      "taskId": "t2",
+      "userId": "4",
+      "createdAt": "2026-01-03T14:00:00.000Z",
+      "updatedAt": "2026-01-03T14:00:00.000Z"
     }
   ]
 }
