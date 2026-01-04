@@ -61,7 +61,7 @@ export type {
   HeaderTemplate,
   RouteGuard,
   RouteConfig,
-} from './types';
+} from './config-types';
 
 export type {
   RouteKey,

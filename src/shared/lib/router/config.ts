@@ -1,14 +1,21 @@
 /**
- * Router Config - Legacy compatibility layer
- * Импортирует данные из data.ts и переэкспортирует их вместе с генераторами
- * Обеспечивает обратную совместимость существующего кода
+ * Router API - Единая точка входа для всей функциональности роутера
+ *
+ * Импортирует конфигурацию маршрутов из shared/config/router-config.ts
+ * и экспортирует готовые утилиты, типы и функции для работы с маршрутизацией
+ *
+ * Основной экспорт для использования в приложении:
+ * - routeConfig, dynamicRouteConfig - конфигурация маршрутов
+ * - paths, routes, dynamicPaths - сгенерированные пути и утилиты
+ * - isPublicPath, isProtectedPath - guards для проверки доступа
+ * - validateRouteConfig - валидация конфигурации
  */
 
 // === Import raw data ===
 export {
   routeConfigData as routeConfig,
   dynamicRouteConfigData as dynamicRouteConfig,
-} from './data';
+} from '../../config/router-config';
 
 // === Import generated utilities ===
 export {

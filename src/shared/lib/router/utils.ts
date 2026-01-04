@@ -1,4 +1,4 @@
-import type { RouteParams, Breadcrumb } from './types';
+import type { RouteParams, Breadcrumb } from './config-types';
 
 /**
  * Создает динамический путь с параметрами

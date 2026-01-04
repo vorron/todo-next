@@ -1,4 +1,4 @@
-import type { RouteConfig, DynamicRouteConfig } from './config-types';
+import type { RouteConfig, DynamicRouteConfig } from '../lib/router/config-types';
 import type { Metadata } from 'next';
 
 /**

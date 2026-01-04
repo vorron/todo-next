@@ -1,9 +1,19 @@
-import { routeConfigData, dynamicRouteConfigData } from './data';
+import { routeConfigData, dynamicRouteConfigData } from '../../config/router-config';
 
 /**
- * Валидация конфигурации маршрутов
+ * Кеширование результатов валидации для производительности
+ */
+let validationCache: { isValid: boolean; errors: string[] } | null = null;
+
+/**
+ * Валидация конфигурации маршрутов с кешированием
  */
 export function validateRouteConfig() {
+  // Возвращаем кешированный результат если есть
+  if (validationCache !== null) {
+    return validationCache;
+  }
+
   const errors: string[] = [];
 
   // Проверка дубликатов путей
@@ -42,20 +52,32 @@ export function validateRouteConfig() {
     }
   });
 
-  return {
+  validationCache = {
     isValid: errors.length === 0,
     errors,
   };
+
+  return validationCache;
 }
 
 /**
- * Runtime валидация для development
+ * Runtime валидация для development с кешированием
  */
 export function validateConfigInDev() {
   if (process.env.NODE_ENV === 'development') {
     const validation = validateRouteConfig();
     if (!validation.isValid) {
-      console.error('Route configuration validation failed:', validation.errors);
+      console.error('❌ Route configuration validation failed:', validation.errors);
+      console.log('💡 Fix these issues in shared/config/router-config.ts');
+    } else {
+      console.log('✅ Route configuration is valid');
     }
   }
+}
+
+/**
+ * Сброс кеши валидации (для тестов и hot reload)
+ */
+export function clearValidationCache() {
+  validationCache = null;
 }

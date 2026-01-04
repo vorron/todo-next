@@ -5,7 +5,7 @@ import { useEffect, useMemo } from 'react';
 import { headerTemplates, type HeaderTemplateKey } from '@/shared/lib/router';
 import { useHeader } from '@/shared/ui/header-context';
 
-import type { HeaderTemplate } from '@/shared/lib/router/types';
+import type { HeaderTemplate } from '@/shared/lib/router/config-types';
 
 type TemplateKeyOrObj<T> = HeaderTemplateKey | HeaderTemplate<T>;
 

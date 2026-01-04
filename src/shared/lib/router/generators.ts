@@ -1,9 +1,9 @@
-import { routeConfigData, dynamicRouteConfigData } from './data';
 import { createPublicPathGuard, createProtectedPathGuard, createAuthGuard } from './guards';
 import { createDynamicPath } from './utils';
 import { validateConfigInDev } from './validation';
+import { routeConfigData, dynamicRouteConfigData } from '../../config/router-config';
 
-import type { NavItem } from './types';
+import type { NavItem } from './config-types';
 import type { Metadata } from 'next';
 
 // Runtime валидация в development
