@@ -116,7 +116,7 @@
       "updatedAt": "2026-01-01T08:00:00.000Z"
     }
   ],
-  "workspaceMembers": [
+  "workspaceUsers": [
     {
       "id": "wm1",
       "workspaceId": "w1",

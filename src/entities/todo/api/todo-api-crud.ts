@@ -1,30 +1,17 @@
-import { z } from 'zod';
+import { createValidatedEndpoint, createEntityTags } from '@/shared/api';
 
 import {
   todoSchema,
   todosSchema,
   createTodoSchema,
   updateTodoSchema,
-  todoFilterSchema,
+  todoFilterQuerySchema,
 } from '../model/todo-schema';
 
 import type { Todo, CreateTodoDto, UpdateTodoDto, TodoFilter } from '../model/types';
 import type { BaseApiEndpointBuilder } from '@/shared/api';
 
-// Упрощенная схема фильтров без строгой UUID валидации
-const todoFilterQuerySchema = todoFilterSchema
-  .pick({
-    completed: true,
-    priority: true,
-    search: true,
-  })
-  .extend({
-    userId: z.string().optional(), // Разрешаем любую строку
-    tags: z
-      .string()
-      .optional()
-      .transform((val) => (val ? val.split(',') : undefined)),
-  });
+const todoTags = createEntityTags('Todo');
 
 export function buildTodoCrudEndpoints(builder: BaseApiEndpointBuilder) {
   return {
@@ -43,25 +30,15 @@ export function buildTodoCrudEndpoints(builder: BaseApiEndpointBuilder) {
           params: validatedFilters,
         };
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Todo' as const, id })),
-              { type: 'Todo', id: 'LIST' },
-            ]
-          : [{ type: 'Todo', id: 'LIST' }],
-      transformResponse: (response: unknown) => {
-        return todosSchema.parse(response);
-      },
+      providesTags: todoTags.provideListTags,
+      ...createValidatedEndpoint(todosSchema),
     }),
 
     // Получение одного todo по ID
     getTodoById: builder.query<Todo, string>({
       query: (id) => `todos/${id}`,
       providesTags: (result, error, id) => [{ type: 'Todo', id }],
-      transformResponse: (response: unknown) => {
-        return todoSchema.parse(response);
-      },
+      ...createValidatedEndpoint(todoSchema),
     }),
 
     // Создание todo
@@ -79,10 +56,8 @@ export function buildTodoCrudEndpoints(builder: BaseApiEndpointBuilder) {
           },
         };
       },
-      invalidatesTags: [{ type: 'Todo', id: 'LIST' }],
-      transformResponse: (response: unknown) => {
-        return todoSchema.parse(response);
-      },
+      invalidatesTags: todoTags.invalidateListTags,
+      ...createValidatedEndpoint(todoSchema),
     }),
 
     // Обновление todo
@@ -103,9 +78,7 @@ export function buildTodoCrudEndpoints(builder: BaseApiEndpointBuilder) {
         { type: 'Todo', id },
         { type: 'Todo', id: 'LIST' },
       ],
-      transformResponse: (response: unknown) => {
-        return todoSchema.parse(response);
-      },
+      ...createValidatedEndpoint(todoSchema),
     }),
 
     // Удаление todo

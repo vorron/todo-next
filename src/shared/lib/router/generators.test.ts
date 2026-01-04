@@ -96,7 +96,7 @@ describe('router generators', () => {
 
     it('handles hideWhenAuthenticated property', () => {
       expect(navigationConfig.login.hideWhenAuthenticated).toBe(true);
-      expect(navigationConfig.home.hideWhenAuthenticated).toBeUndefined();
+      expect(navigationConfig.about.hideWhenAuthenticated).toBeUndefined();
     });
   });
 

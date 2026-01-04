@@ -1,35 +1,29 @@
-import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { type z } from 'zod';
+import { fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 
 import { env } from '@/shared/config/env';
 
-import { handleRTKQueryValidation } from '../lib/utils';
-
-import type {
-  BaseQueryFn,
-  FetchArgs,
-  FetchBaseQueryError,
-  BaseQueryApi,
-} from '@reduxjs/toolkit/query';
+import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 // Определяем тип для extraOptions
-type ExtraOptions = Record<string, unknown> & {
-  shout?: boolean; // пример дополнительных опций
-};
+type ExtraOptions = Record<string, unknown>;
 
-export const baseQuery = fetchBaseQuery({
-  baseUrl: env.API_URL,
-  prepareHeaders: (headers) => {
-    headers.set('Content-Type', 'application/json');
-    return headers;
-  },
-});
+export const baseQuery = retry(
+  fetchBaseQuery({
+    baseUrl: env.API_URL,
+    timeout: 10000,
+    prepareHeaders: (headers) => {
+      headers.set('Content-Type', 'application/json');
+      return headers;
+    },
+  }),
+  { maxRetries: 3 },
+);
 
 export const baseQueryWithLogging: BaseQueryFn<
   string | FetchArgs,
   unknown,
   FetchBaseQueryError,
-  ExtraOptions // добавляем тип для extraOptions
+  ExtraOptions
 > = async (args, api, extraOptions) => {
   const start = Date.now();
 
@@ -61,20 +55,3 @@ export const baseQueryWithLogging: BaseQueryFn<
 
   return result;
 };
-
-export function createValidatedQuery<TSchema extends z.ZodTypeAny>(schema: TSchema) {
-  return async (
-    args: string | FetchArgs,
-    api: BaseQueryApi,
-    extraOptions: ExtraOptions,
-  ): Promise<{ data: z.infer<TSchema> } | { error: FetchBaseQueryError }> => {
-    const result = await baseQueryWithLogging(args, api, extraOptions);
-
-    if (result.error) {
-      return { error: result.error };
-    }
-
-    // Заменяем блок try-catch на вызов хелпера
-    return handleRTKQueryValidation(schema, result.data);
-  };
-}

@@ -1,8 +1,10 @@
-import { baseApi } from '@/shared/api';
+import { baseApi, createValidatedEndpoint, createEntityTags } from '@/shared/api';
 
 import { userSchema, usersSchema, createUserSchema, updateUserSchema } from '../model/user-schema';
 
 import type { User, CreateUserDto, UpdateUserDto } from '../model/types';
+
+const userTags = createEntityTags('User');
 
 /**
  * API endpoints для работы с пользователями
@@ -12,51 +14,35 @@ export const userApi = baseApi.injectEndpoints({
     // Получение всех пользователей
     getUsers: builder.query<User[], void>({
       query: () => 'users',
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'User' as const, id })),
-              { type: 'User', id: 'LIST' },
-            ]
-          : [{ type: 'User', id: 'LIST' }],
-      transformResponse: (response: unknown) => {
-        return usersSchema.parse(response);
-      },
+      providesTags: userTags.provideListTags,
+      ...createValidatedEndpoint(usersSchema),
     }),
 
     // Получение пользователя по ID
     getUserById: builder.query<User, string>({
       query: (id) => `users/${id}`,
       providesTags: (result, error, id) => [{ type: 'User', id }],
-      transformResponse: (response: unknown) => {
-        return userSchema.parse(response);
-      },
+      ...createValidatedEndpoint(userSchema),
     }),
 
     // Создание пользователя
     createUser: builder.mutation<User, CreateUserDto>({
       query: (data) => {
-        // Валидируем данные перед отправкой
         const validatedData = createUserSchema.parse(data);
-
         return {
           url: 'users',
           method: 'POST',
           body: validatedData,
         };
       },
-      invalidatesTags: [{ type: 'User', id: 'LIST' }],
-      transformResponse: (response: unknown) => {
-        return userSchema.parse(response);
-      },
+      invalidatesTags: userTags.invalidateListTags,
+      ...createValidatedEndpoint(userSchema),
     }),
 
     // Обновление пользователя
     updateUser: builder.mutation<User, UpdateUserDto>({
       query: ({ id, ...data }) => {
-        // Валидируем данные
         const validatedData = updateUserSchema.parse({ id, ...data });
-
         return {
           url: `users/${id}`,
           method: 'PATCH',
@@ -67,9 +53,7 @@ export const userApi = baseApi.injectEndpoints({
         { type: 'User', id },
         { type: 'User', id: 'LIST' },
       ],
-      transformResponse: (response: unknown) => {
-        return userSchema.parse(response);
-      },
+      ...createValidatedEndpoint(userSchema),
     }),
 
     // Удаление пользователя

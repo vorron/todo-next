@@ -1,34 +1,52 @@
 import type { RouteConfig, DynamicRouteConfig } from '../lib/router/config-types';
 import type { Metadata } from 'next';
 
+/** Постфикс для всех title страниц */
+export const TITLE_POSTFIX = ' - Todo App';
+
+/**
+ * Application Routes - удобный объект для использования в коде
+ * Единственный источник правды для всех констант маршрутов
+ */
+export const ROUTES = {
+  HOME: '/',
+  LOGIN: '/login',
+  ABOUT: '/about',
+  TODOS: '/todos',
+  WORKSPACES: '/workspaces',
+  PROFILE: '/profile',
+  SETTINGS: '/settings',
+  TODO_DETAIL: (id: string) => `/todos/${id}`,
+  TODO_EDIT: (id: string) => `/todos/${id}/edit`,
+} as const;
+
 /**
  * Чистые данные конфигурации маршрутов приложения
  * Единственный источник правды для всех данных маршрутизации
  * На новых проектах нужно изменять только этот файл
  */
 export const routeConfigData = {
-  // Public routes
   home: {
-    path: '/' as const,
+    path: ROUTES.HOME,
     public: true,
     metadata: {
-      title: 'Home - Todo App',
+      title: 'Home',
       description: 'Welcome to our application',
     } satisfies Metadata,
     header: {
       type: 'static' as const,
       descriptor: {
         title: 'Home',
-        breadcrumbs: [{ href: '/', label: 'Home' }],
+        breadcrumbs: [{ href: ROUTES.HOME, label: 'Home' }],
       },
     },
   } satisfies RouteConfig,
 
   login: {
-    path: '/login' as const,
+    path: ROUTES.LOGIN,
     public: true,
     metadata: {
-      title: 'Login - Todo App',
+      title: 'Login',
       description: 'Sign in to your account',
     } satisfies Metadata,
     // Не отображается в навигации для аутентифицированных пользователей
@@ -41,37 +59,36 @@ export const routeConfigData = {
       type: 'static' as const,
       descriptor: {
         title: 'Login',
-        breadcrumbs: [{ href: '/login', label: 'Login' }],
+        breadcrumbs: [{ href: ROUTES.LOGIN, label: 'Login' }],
       },
     },
   } satisfies RouteConfig,
 
   about: {
-    path: '/about' as const,
+    path: ROUTES.ABOUT,
     public: true,
     metadata: {
-      title: 'About - Todo App',
+      title: 'About',
       description: 'Learn about our application',
     } satisfies Metadata,
     navigation: {
       label: 'About',
-      order: 4,
+      order: 5,
     },
     header: {
       type: 'static' as const,
       descriptor: {
         title: 'About',
-        breadcrumbs: [{ href: '/about', label: 'About' }],
+        breadcrumbs: [{ href: ROUTES.ABOUT, label: 'About' }],
       },
     },
   } satisfies RouteConfig,
 
-  // Protected routes
   todos: {
-    path: '/todos' as const,
+    path: ROUTES.TODOS,
     protected: true,
     metadata: {
-      title: 'My Todos - Todo App',
+      title: 'My Todos',
       description: 'Manage your tasks',
     } satisfies Metadata,
     navigation: {
@@ -82,47 +99,67 @@ export const routeConfigData = {
       type: 'static' as const,
       descriptor: {
         title: 'Todos',
-        breadcrumbs: [{ href: '/todos', label: 'Todos' }],
+        breadcrumbs: [{ href: ROUTES.TODOS, label: 'Todos' }],
       },
     },
   } satisfies RouteConfig,
 
-  profile: {
-    path: '/profile' as const,
+  workspaces: {
+    path: ROUTES.WORKSPACES,
     protected: true,
     metadata: {
-      title: 'Profile - Todo App',
-      description: 'Manage your account',
+      title: 'Workspaces',
+      description: 'Manage your workspaces',
     } satisfies Metadata,
     navigation: {
-      label: 'Profile',
-      order: 3,
-    },
-    header: {
-      type: 'static' as const,
-      descriptor: {
-        title: 'Profile',
-        breadcrumbs: [{ href: '/profile', label: 'Profile' }],
-      },
-    },
-  } satisfies RouteConfig,
-
-  settings: {
-    path: '/settings' as const,
-    protected: true,
-    metadata: {
-      title: 'Settings - Todo App',
-      description: 'Customize your experience',
-    } satisfies Metadata,
-    navigation: {
-      label: 'Settings',
+      label: 'Workspaces',
       order: 2,
     },
     header: {
       type: 'static' as const,
       descriptor: {
+        title: 'Todos',
+        breadcrumbs: [{ href: ROUTES.TODOS, label: 'Todos' }],
+      },
+    },
+  } satisfies RouteConfig,
+
+  profile: {
+    path: ROUTES.PROFILE,
+    protected: true,
+    metadata: {
+      title: 'Profile',
+      description: 'Manage your account',
+    } satisfies Metadata,
+    navigation: {
+      label: 'Profile',
+      order: 4,
+    },
+    header: {
+      type: 'static' as const,
+      descriptor: {
+        title: 'Profile',
+        breadcrumbs: [{ href: ROUTES.PROFILE, label: 'Profile' }],
+      },
+    },
+  } satisfies RouteConfig,
+
+  settings: {
+    path: ROUTES.SETTINGS,
+    protected: true,
+    metadata: {
+      title: 'Settings',
+      description: 'Customize your experience',
+    } satisfies Metadata,
+    navigation: {
+      label: 'Settings',
+      order: 3,
+    },
+    header: {
+      type: 'static' as const,
+      descriptor: {
         title: 'Settings',
-        breadcrumbs: [{ href: '/settings', label: 'Settings' }],
+        breadcrumbs: [{ href: ROUTES.SETTINGS, label: 'Settings' }],
       },
     },
   } satisfies RouteConfig,
@@ -136,7 +173,7 @@ export const dynamicRouteConfigData = {
     path: '/todos/:id',
     protected: true,
     metadata: (title: string): Metadata => ({
-      title: `${title} - Todo App`,
+      title,
       description: `Details for ${title}`,
     }),
     header: {
@@ -144,15 +181,15 @@ export const dynamicRouteConfigData = {
       fallback: {
         title: 'Loading todo...',
         breadcrumbs: [
-          { href: '/todos', label: 'Todos' },
+          { href: ROUTES.TODOS, label: 'Todos' },
           { href: '#', label: '...' },
         ],
       },
       build: (todo: { id: string; text: string }) => ({
         title: todo.text,
         breadcrumbs: [
-          { href: '/todos', label: 'Todos' },
-          { href: `/todos/${todo.id}`, label: todo.text },
+          { href: ROUTES.TODOS, label: 'Todos' },
+          { href: ROUTES.TODO_DETAIL(todo.id), label: todo.text },
         ],
       }),
     },
@@ -161,7 +198,7 @@ export const dynamicRouteConfigData = {
     path: '/todos/:id/edit',
     protected: true,
     metadata: (title: string): Metadata => ({
-      title: `Edit: ${title} - Todo App`,
+      title: `Edit: ${title}`,
       description: `Edit details for ${title}`,
     }),
     header: {
@@ -169,16 +206,16 @@ export const dynamicRouteConfigData = {
       fallback: {
         title: 'Edit Todo',
         breadcrumbs: [
-          { href: '/todos', label: 'Todos' },
+          { href: ROUTES.TODOS, label: 'Todos' },
           { href: '#', label: '...' },
         ],
       },
       build: (todo: { id: string; text: string }) => ({
         title: `Edit: ${todo.text}`,
         breadcrumbs: [
-          { href: '/todos', label: 'Todos' },
-          { href: `/todos/${todo.id}`, label: todo.text },
-          { href: `/todos/${todo.id}/edit`, label: 'Edit' },
+          { href: ROUTES.TODOS, label: 'Todos' },
+          { href: ROUTES.TODO_DETAIL(todo.id), label: todo.text },
+          { href: ROUTES.TODO_EDIT(todo.id), label: 'Edit' },
         ],
       }),
     },

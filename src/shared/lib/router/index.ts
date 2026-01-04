@@ -6,9 +6,10 @@
 // Runtime валидация в development
 
 // === Imports for local use ===
-import { paths, metadataConfig, dynamicPaths } from './generators';
+import { metadataConfig } from './generators';
 import { createBreadcrumbs } from './utils';
 import { validateConfigInDev } from './validation';
+import { type ROUTES } from '../../config/router-config';
 
 validateConfigInDev();
 
@@ -16,6 +17,7 @@ validateConfigInDev();
 export {
   routeConfigData as routeConfig,
   dynamicRouteConfigData as dynamicRouteConfig,
+  ROUTES,
 } from '../../config/router-config';
 
 export { dynamicMetadata, protectedPatterns } from './generators';
@@ -44,6 +46,9 @@ export {
   createBreadcrumbs,
   filterNavigationByAuth,
 } from './utils';
+
+// === Config Constants ===
+export { TITLE_POSTFIX } from '../../config/router-config';
 
 // === Validation ===
 export { validateRouteConfig, validateConfigInDev } from './validation';
@@ -80,17 +85,6 @@ export type {
 } from './config-types';
 
 export type { HeaderTemplateKey, MetadataKey, NavConfigKey } from './generators';
-
-export const ROUTES = {
-  HOME: paths.home,
-  LOGIN: paths.login,
-  ABOUT: paths.about,
-  TODOS: paths.todos,
-  PROFILE: paths.profile,
-  SETTINGS: paths.settings,
-  TODO_DETAIL: dynamicPaths.todoDetail,
-  TODO_EDIT: dynamicPaths.todoEdit,
-} as const;
 
 export type AppRoute = keyof typeof ROUTES;
 

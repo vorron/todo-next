@@ -1,6 +1,6 @@
 import { createPublicPathGuard, createProtectedPathGuard, createAuthGuard } from './guards';
 import { createDynamicPath } from './utils';
-import { routeConfigData, dynamicRouteConfigData } from '../../config/router-config';
+import { routeConfigData, dynamicRouteConfigData, TITLE_POSTFIX } from '../../config/router-config';
 
 import type { NavItem } from './config-types';
 import type { Metadata } from 'next';
@@ -34,9 +34,9 @@ export const navigationConfig = Object.fromEntries(
         ).navigation.label,
         href: config.path,
         requiresAuth: 'protected' in config && !!config.protected,
-        hideWhenAuthenticated:
-          (config as typeof config & { navigation: { hideWhenAuthenticated?: boolean } }).navigation
-            ?.hideWhenAuthenticated ?? false,
+        hideWhenAuthenticated: (
+          config as typeof config & { navigation: { hideWhenAuthenticated?: boolean } }
+        ).navigation?.hideWhenAuthenticated,
         order: (config as typeof config & { navigation: { order: number } }).navigation.order,
       } satisfies NavItem,
     ]),
@@ -46,12 +46,24 @@ export const mainNavigation = Object.values(navigationConfig).sort((a, b) => a.o
 
 // === Metadata Generator ===
 export const metadataConfig = Object.fromEntries(
-  Object.entries(routeConfigData).map(([, config]) => [config.path, config.metadata]),
+  Object.entries(routeConfigData).map(([, config]) => [
+    config.path,
+    {
+      ...config.metadata,
+      title: `${config.metadata.title}${TITLE_POSTFIX}`,
+    },
+  ]),
 ) as Record<string, Metadata>;
 
 // === Dynamic Metadata Generator (автоматически из конфига) ===
 export const dynamicMetadata = Object.fromEntries(
-  Object.entries(dynamicRouteConfigData).map(([key, config]) => [key, config.metadata]),
+  Object.entries(dynamicRouteConfigData).map(([key, config]) => [
+    key,
+    (title: string): Metadata => ({
+      ...config.metadata(title),
+      title: `${config.metadata(title).title}${TITLE_POSTFIX}`,
+    }),
+  ]),
 ) as Record<keyof typeof dynamicRouteConfigData, (title: string) => Metadata>;
 
 // === Header Generator ===
