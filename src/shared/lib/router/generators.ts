@@ -6,7 +6,47 @@ import {
   TITLE_POSTFIX,
 } from '../../config/router-config';
 
+import type { RouteConfig, DynamicRouteConfig, StatefulRouteConfig } from './config-types';
 import type { Metadata } from 'next';
+
+// === Type Guards для безопасной типизации ===
+function hasNavigation(config: unknown): config is {
+  navigation: {
+    label: string;
+    order?: number;
+    hideWhenAuthenticated?: boolean;
+  };
+} {
+  return typeof config === 'object' && config !== null && 'navigation' in config;
+}
+
+function hasMetadata(config: unknown): config is {
+  metadata: (data?: unknown) => Metadata;
+} {
+  return (
+    typeof config === 'object' &&
+    config !== null &&
+    'metadata' in config &&
+    typeof (config as { metadata?: unknown }).metadata === 'function'
+  );
+}
+
+function hasUrlPattern(config: unknown): config is {
+  urlPattern: string;
+} {
+  return (
+    typeof config === 'object' &&
+    config !== null &&
+    'urlPattern' in config &&
+    typeof (config as { urlPattern?: unknown }).urlPattern === 'string'
+  );
+}
+
+function isProtectedRoute(
+  config: RouteConfig | DynamicRouteConfig | StatefulRouteConfig,
+): config is (RouteConfig & { protected: true }) | DynamicRouteConfig | StatefulRouteConfig {
+  return 'protected' in config && config.protected === true;
+}
 
 // === Static Paths ===
 export const paths = Object.fromEntries(
@@ -62,18 +102,16 @@ type NavigationItem = {
 
 export const navigationConfig = Object.fromEntries(
   Object.entries(routeConfigData)
-    .filter(([_, config]) => 'navigation' in config && config.navigation)
+    .filter(([_, config]) => hasNavigation(config))
     .map(([key, config]) => [
       key,
       {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        label: (config as any).navigation.label,
+        label: (config as { navigation: { label: string } }).navigation.label,
         href: config.path,
-        requiresAuth: 'protected' in config && !!config.protected,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        hideWhenAuthenticated: (config as any).navigation?.hideWhenAuthenticated,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        order: (config as any).navigation.order,
+        requiresAuth: isProtectedRoute(config),
+        hideWhenAuthenticated: (config as { navigation: { hideWhenAuthenticated?: boolean } })
+          .navigation.hideWhenAuthenticated,
+        order: (config as { navigation: { order?: number } }).navigation.order,
       } as NavigationItem,
     ]),
 ) as Record<keyof typeof routeConfigData, NavigationItem>;
@@ -95,25 +133,31 @@ export const statefulNavigationConfig = Object.fromEntries(
   Object.entries(statefulRouteConfigData).map(([key, config]) => [
     key,
     {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      label: (config as any).navigation?.label || key,
+      label: hasNavigation(config)
+        ? (config as { navigation: { label: string } }).navigation.label
+        : key,
       href: config.path,
-      requiresAuth: config.protected,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      order: (config as any).navigation?.order,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      hideWhenAuthenticated: (config as any).navigation?.hideWhenAuthenticated,
+      requiresAuth: isProtectedRoute(config),
+      order: hasNavigation(config)
+        ? (config as { navigation: { order?: number } }).navigation.order
+        : undefined,
+      hideWhenAuthenticated: hasNavigation(config)
+        ? (config as { navigation: { hideWhenAuthenticated?: boolean } }).navigation
+            .hideWhenAuthenticated
+        : undefined,
       isStateful: true,
       states: Object.fromEntries(
         Object.entries(config.states).map(([stateKey, stateConfig]) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const navConfig = (stateConfig as any).navigation;
+          const navConfig = hasNavigation(stateConfig)
+            ? (stateConfig as { navigation: { label: string; order?: number } }).navigation
+            : undefined;
           return [
             stateKey,
             {
               label: navConfig?.label ?? stateKey,
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              href: (stateConfig as any).urlPattern ?? config.path,
+              href: hasUrlPattern(stateConfig)
+                ? (stateConfig as { urlPattern: string }).urlPattern
+                : config.path,
               order: navConfig?.order,
             },
           ];
@@ -125,9 +169,7 @@ export const statefulNavigationConfig = Object.fromEntries(
 
 // === Main Navigation ===
 export const mainNavigation = [
-  ...Object.values(navigationConfig)
-    .filter((item) => !item.hideWhenAuthenticated)
-    .sort((a, b) => (a.order ?? 999) - (b.order ?? 999)),
+  ...Object.values(navigationConfig).filter((item) => !item.hideWhenAuthenticated),
   ...Object.values(statefulNavigationConfig)
     .filter((item) => !item.hideWhenAuthenticated)
     .filter(
@@ -136,9 +178,8 @@ export const mainNavigation = [
           (staticItem) => staticItem.href === statefulItem.href,
         ),
     )
-    .sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
     .map(({ states: _states, ...item }) => item),
-];
+].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
 
 // === Metadata ===
 type StatefulMetadataItem = {
@@ -156,13 +197,11 @@ export const statefulMetadataConfig = Object.fromEntries(
       },
       states: Object.fromEntries(
         Object.entries(config.states).map(([stateKey, stateConfig]) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const stateConfigAny = stateConfig as any;
-          if (stateConfigAny.metadata) {
+          if (hasMetadata(stateConfig)) {
             return [
               stateKey,
               (data?: unknown) => {
-                const metadata = stateConfigAny.metadata(data);
+                const metadata = stateConfig.metadata(data);
                 return {
                   ...metadata,
                   title: `${metadata.title}${TITLE_POSTFIX}`,
@@ -216,13 +255,32 @@ export const dynamicMetadata = Object.fromEntries(
 ) as Record<keyof typeof dynamicRouteConfigData, (title: string) => Metadata>;
 
 // === Protected Patterns ===
+// Включаем статические защищенные маршруты
+const staticProtectedPaths = Object.entries(routeConfigData)
+  .filter(([_, config]) => isProtectedRoute(config))
+  .map(([_, config]) => config.path);
+
 export const protectedPatterns = [
+  ...staticProtectedPaths,
   ...Object.values(dynamicRouteConfigData).map((config) => config.path),
   ...Object.values(statefulRouteConfigData).map((config) => config.path),
 ];
 
 export const protectedPatternsArray = protectedPatterns.map(
   (pattern) => new RegExp(`^${pattern.replace(/:[^/]+/g, '([^/]+)')}$`),
+);
+
+// === Path Sets для удобного использования ===
+export const publicPaths = new Set(
+  Object.entries(routeConfigData)
+    .filter(([_, config]) => !isProtectedRoute(config))
+    .map(([_, config]) => config.path),
+);
+
+export const protectedPaths = new Set(
+  Object.entries(routeConfigData)
+    .filter(([_, config]) => isProtectedRoute(config))
+    .map(([_, config]) => config.path),
 );
 
 // === Guards ===

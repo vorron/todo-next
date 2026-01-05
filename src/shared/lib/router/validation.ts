@@ -1,4 +1,8 @@
-import { routeConfigData, dynamicRouteConfigData } from '../../config/router-config';
+import {
+  routeConfigData,
+  dynamicRouteConfigData,
+  statefulRouteConfigData,
+} from '../../config/router-config';
 
 /**
  * Кеширование результатов валидации для производительности
@@ -16,23 +20,31 @@ export function validateRouteConfig() {
 
   const errors: string[] = [];
 
-  // Проверка дубликатов путей
+  // Проверка дубликатов путей между всеми типами маршрутов
   const allPaths = new Set<string>();
   const duplicates: string[] = [];
+  const pathSources: Record<string, string[]> = {};
 
-  // Объединенная проверка для статических и динамических маршрутов
-  [...Object.entries(routeConfigData), ...Object.entries(dynamicRouteConfigData)].forEach(
-    ([, config]) => {
-      if (allPaths.has(config.path)) {
-        duplicates.push(config.path);
-      } else {
-        allPaths.add(config.path);
-      }
-    },
-  );
+  // Собираем все пути и их источники
+  [
+    ...Object.entries(routeConfigData),
+    ...Object.entries(dynamicRouteConfigData),
+    ...Object.entries(statefulRouteConfigData),
+  ].forEach(([key, config]) => {
+    if (allPaths.has(config.path)) {
+      duplicates.push(config.path);
+      pathSources[config.path] = (pathSources[config.path] || []).concat(key);
+    } else {
+      allPaths.add(config.path);
+      pathSources[config.path] = [key];
+    }
+  });
 
   if (duplicates.length > 0) {
-    errors.push(`Duplicate paths found: ${duplicates.join(', ')}`);
+    const duplicateDetails = duplicates
+      .map((path) => `${path} (${(pathSources[path] || []).join(' vs ')})`)
+      .join(', ');
+    errors.push(`Duplicate paths found: ${duplicateDetails}`);
   }
 
   // Проверка навигационных порядков
@@ -89,6 +101,48 @@ export function validateRouteConfig() {
     if (!config.path.includes(':')) {
       errors.push(`Dynamic route ${routeKey} missing path parameters`);
     }
+  });
+
+  // Проверка корректности urlPattern в stateful конфигурациях
+  Object.entries(statefulRouteConfigData).forEach(([routeKey, config]) => {
+    Object.entries(config.states).forEach(([stateKey, stateConfig]) => {
+      if ('urlPattern' in stateConfig && stateConfig.urlPattern) {
+        const urlPattern = stateConfig.urlPattern as string;
+        // Проверка что urlPattern начинается с / или содержит корректные параметры
+        if (!urlPattern.startsWith('/') && urlPattern !== config.path) {
+          errors.push(
+            `Stateful route ${routeKey}.${stateKey} has invalid urlPattern: ${urlPattern}`,
+          );
+        }
+
+        // Проверка конфликтов urlPattern с другими маршрутами
+        if (allPaths.has(urlPattern) && urlPattern !== config.path) {
+          errors.push(
+            `Stateful route ${routeKey}.${stateKey} urlPattern conflicts with existing route: ${urlPattern}`,
+          );
+        }
+      }
+    });
+  });
+
+  // Проверка обязательных полей в metadata
+  [...Object.entries(routeConfigData), ...Object.entries(statefulRouteConfigData)].forEach(
+    ([routeKey, config]) => {
+      if (!config.metadata.title) {
+        errors.push(`Route ${routeKey} missing required metadata.title`);
+      }
+    },
+  );
+
+  // Проверка корректности header конфигурации
+  Object.entries(statefulRouteConfigData).forEach(([routeKey, config]) => {
+    Object.entries(config.states).forEach(([stateKey, stateConfig]) => {
+      if ('header' in stateConfig && stateConfig.header) {
+        if (stateConfig.header.type === 'entity' && !stateConfig.header.fallback) {
+          errors.push(`Stateful route ${routeKey}.${stateKey} with entity header missing fallback`);
+        }
+      }
+    });
   });
 
   validationCache = {

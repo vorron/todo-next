@@ -123,29 +123,6 @@ export const routeConfigData = {
     },
   } satisfies RouteConfig,
 
-  workspace: {
-    path: ROUTES.WORKSPACE,
-    protected: true,
-    metadata: {
-      title: 'Workspace',
-      description: 'Manage your workspaces',
-    } satisfies Metadata,
-    navigation: {
-      label: 'Workspaces',
-      order: 2,
-    },
-    header: {
-      type: 'static' as const,
-      descriptor: {
-        title: 'Workspace',
-        breadcrumbs: [{ href: ROUTES.WORKSPACE, label: 'Workspace' }] as Array<{
-          href: string;
-          label: string;
-        }>,
-      },
-    },
-  } satisfies RouteConfig,
-
   profile: {
     path: ROUTES.PROFILE,
     protected: true,

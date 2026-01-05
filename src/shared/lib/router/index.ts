@@ -39,6 +39,8 @@ export {
   statefulHeaderTemplates,
   protectedPatterns,
   protectedPatternsArray,
+  publicPaths,
+  protectedPaths,
   isPublicPath,
   isProtectedPath,
   requiresAuth,
@@ -58,6 +60,18 @@ export { TITLE_POSTFIX } from '../../config/router-config';
 
 // === Validation ===
 export { validateRouteConfig, validateConfigInDev } from './validation';
+
+// === Development Utils ===
+export {
+  getRouteInfo,
+  findRouteByPath,
+  getProtectedRoutes,
+  getPublicRoutes,
+  debugRouting,
+  createPathGenerator,
+  createRouteTester,
+  devShortcuts,
+} from './dev-utils';
 
 // === Guards ===
 export {
