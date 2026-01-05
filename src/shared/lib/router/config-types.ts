@@ -16,7 +16,7 @@ export type NavItem<T extends RoutePath = RoutePath> = {
   readonly icon?: string;
   readonly requiresAuth?: boolean;
   readonly hideWhenAuthenticated?: boolean;
-  readonly order: number;
+  readonly order?: number;
 };
 
 export type Breadcrumb = {
@@ -26,13 +26,14 @@ export type Breadcrumb = {
 
 export type HeaderDescriptor = {
   readonly title: string;
-  readonly breadcrumbs: Breadcrumb[];
+  readonly breadcrumbs: ReadonlyArray<{ href: string; label: string }>;
 };
 
 export type HeaderTemplate<T = unknown> = {
   readonly type: 'static' | 'entity';
   readonly descriptor?: HeaderDescriptor;
   readonly fallback?: HeaderDescriptor;
+
   readonly build?: (data: T) => HeaderDescriptor;
 };
 
@@ -50,7 +51,7 @@ type BaseRouteConfig = {
   metadata: Metadata;
   navigation?: {
     label: string;
-    order: number;
+    order?: number;
     hideWhenAuthenticated?: boolean;
   };
   header?: HeaderTemplate;
@@ -66,21 +67,45 @@ export type RouteConfig = PublicRouteConfig | ProtectedRouteConfig;
  * Dynamic route configuration types
  */
 export type DynamicRouteConfig = {
-  path: string;
-  protected: boolean;
-  metadata: (title: string) => Metadata;
-  header: {
-    type: 'entity';
-    fallback: {
-      title: string;
-      breadcrumbs: Array<{ href: string; label: string }>;
+  readonly path: string;
+  readonly protected: boolean;
+  readonly metadata: (title: string) => Metadata;
+  readonly header: {
+    readonly type: 'entity';
+    readonly fallback: {
+      readonly title: string;
+      readonly breadcrumbs: ReadonlyArray<{ href: string; label: string }>;
     };
-    build: (data: { id: string; text: string }) => {
-      title: string;
-      breadcrumbs: Array<{ href: string; label: string }>;
-    };
+    readonly build: (data: { id: string; text: string }) => HeaderDescriptor;
   };
 };
+
+/**
+ * Stateful Route Configuration - для маршрутов с несколькими состояниями
+ * Поддерживает client-side навигацию внутри одного URL
+ */
+export type StatefulRouteConfig<T extends Record<string, unknown> = Record<string, unknown>> =
+  BaseRouteConfig & {
+    protected: true;
+    states: Record<
+      string,
+      {
+        key: string;
+        component?: string; // путь к компоненту
+        metadata?: (data?: unknown) => Metadata;
+        header?: HeaderTemplate;
+        navigation?: {
+          label: string;
+          order?: number;
+          hideWhenAuthenticated?: boolean;
+        };
+        urlPattern?: string; // опциональный паттерн для URL синхронизации
+      }
+    >;
+    defaultState: keyof T;
+    syncWithUrl?: boolean; // синхронизировать состояния с URL
+    fallbackState?: keyof T; // состояние для fallback
+  };
 
 /**
  * Generated types from configuration data
@@ -88,7 +113,25 @@ export type DynamicRouteConfig = {
  */
 export type RouteKey = string;
 export type DynamicRouteKey = string;
-export type AllRouteKey = RouteKey | DynamicRouteKey;
+export type StatefulRouteKey = string;
+export type AllRouteKey = RouteKey | DynamicRouteKey | StatefulRouteKey;
+
+/**
+ * Stateful routing types
+ */
+export type RouteState<T = unknown> = {
+  key: string;
+  data?: T;
+  metadata?: Metadata;
+  header?: HeaderDescriptor;
+};
+
+export type StatefulNavigation<T = unknown> = {
+  currentState: string;
+  availableStates: string[];
+  navigateTo: (state: string, data?: T) => void;
+  syncWithUrl?: boolean;
+};
 
 /**
  * App types for convenience

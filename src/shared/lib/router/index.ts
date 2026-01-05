@@ -10,6 +10,8 @@ import { metadataConfig } from './generators';
 import { createBreadcrumbs } from './utils';
 import { validateConfigInDev } from './validation';
 import { type ROUTES } from '../../config/router-config';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { statefulRouteConfigData } from '../../config/router-config';
 
 validateConfigInDev();
 
@@ -17,21 +19,25 @@ validateConfigInDev();
 export {
   routeConfigData as routeConfig,
   dynamicRouteConfigData as dynamicRouteConfig,
+  statefulRouteConfigData,
   ROUTES,
 } from '../../config/router-config';
 
-export { dynamicMetadata, protectedPatterns } from './generators';
+export { dynamicMetadata } from './generators';
 
 export {
   paths,
   routes,
   dynamicPaths,
+  statefulRoutes,
   navigationConfig,
+  statefulNavigationConfig,
   mainNavigation,
   metadataConfig,
+  statefulMetadataConfig,
   headerTemplates,
-  publicPaths,
-  protectedPaths,
+  statefulHeaderTemplates,
+  protectedPatterns,
   protectedPatternsArray,
   isPublicPath,
   isProtectedPath,
@@ -73,6 +79,7 @@ export type {
   HeaderTemplate,
   RouteGuard,
   RouteConfig,
+  StatefulRouteConfig,
 } from './config-types';
 
 export type {
@@ -84,7 +91,7 @@ export type {
   AppRoutePath,
 } from './config-types';
 
-export type { HeaderTemplateKey, MetadataKey, NavConfigKey } from './generators';
+export type { headerTemplateKeys, metadataKeys, navConfigKeys, routeKeys } from './generators';
 
 export type AppRoute = keyof typeof ROUTES;
 

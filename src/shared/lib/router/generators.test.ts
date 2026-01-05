@@ -88,9 +88,13 @@ describe('router generators', () => {
     it('has correct navigation structure', () => {
       Object.values(navigationConfig).forEach((nav) => {
         expect(nav).toHaveProperty('label');
-        expect(nav).toHaveProperty('order');
+        expect(nav).toHaveProperty('href');
         expect(typeof nav.label).toBe('string');
-        expect(typeof nav.order).toBe('number');
+        expect(typeof nav.href).toBe('string');
+        // order может быть undefined для скрытых маршрутов
+        if (nav.order !== undefined) {
+          expect(typeof nav.order).toBe('number');
+        }
       });
     });
 
@@ -102,19 +106,26 @@ describe('router generators', () => {
 
   describe('mainNavigation generator', () => {
     it('sorts navigation by order', () => {
-      const orders = mainNavigation.map((item) => item.order);
+      const orders = mainNavigation.map((item) => item.order ?? 999);
       const sortedOrders = [...orders].sort((a, b) => a - b);
       expect(orders).toEqual(sortedOrders);
     });
 
-    it('includes all navigation items', () => {
-      expect(mainNavigation).toHaveLength(Object.keys(navigationConfig).length);
+    it('filters out hidden routes', () => {
+      const hasHiddenRoutes = mainNavigation.some((item) => item.hideWhenAuthenticated);
+      expect(hasHiddenRoutes).toBe(false);
+    });
+
+    it('includes all visible navigation items', () => {
+      const visibleItems = Object.values(navigationConfig).filter(
+        (item) => !item.hideWhenAuthenticated,
+      );
+      expect(mainNavigation).toHaveLength(visibleItems.length);
     });
 
     it('has correct navigation structure', () => {
       mainNavigation.forEach((item) => {
         expect(item).toHaveProperty('label');
-        expect(item).toHaveProperty('order');
         expect(item).toHaveProperty('href');
         expect(typeof item.href).toBe('string');
       });

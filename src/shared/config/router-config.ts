@@ -1,4 +1,9 @@
-import type { RouteConfig, DynamicRouteConfig } from '../lib/router/config-types';
+import type {
+  RouteConfig,
+  DynamicRouteConfig,
+  StatefulRouteConfig,
+  HeaderDescriptor,
+} from '../lib/router/config-types';
 import type { Metadata } from 'next';
 
 /** Постфикс для всех title страниц */
@@ -13,7 +18,10 @@ export const ROUTES = {
   LOGIN: '/login',
   ABOUT: '/about',
   TODOS: '/todos',
-  WORKSPACES: '/workspaces',
+  WORKSPACE: '/workspace',
+  WORKSPACE_CREATE: '/workspace/create',
+  WORKSPACE_SELECT: '/workspace/select',
+  WORKSPACE_DASHBOARD: (id: string) => `/workspace/${id}`,
   PROFILE: '/profile',
   SETTINGS: '/settings',
   TODO_DETAIL: (id: string) => `/todos/${id}`,
@@ -37,7 +45,10 @@ export const routeConfigData = {
       type: 'static' as const,
       descriptor: {
         title: 'Home',
-        breadcrumbs: [{ href: ROUTES.HOME, label: 'Home' }],
+        breadcrumbs: [{ href: ROUTES.HOME, label: 'Home' }] as Array<{
+          href: string;
+          label: string;
+        }>,
       },
     },
   } satisfies RouteConfig,
@@ -49,17 +60,19 @@ export const routeConfigData = {
       title: 'Login',
       description: 'Sign in to your account',
     } satisfies Metadata,
-    // Не отображается в навигации для аутентифицированных пользователей
     navigation: {
       label: 'Login',
-      order: 0,
-      hideWhenAuthenticated: true,
+      hideWhenAuthenticated: true, // Скрывать для авторизованных
+      // order не нужен для скрытых маршрутов
     },
     header: {
       type: 'static' as const,
       descriptor: {
         title: 'Login',
-        breadcrumbs: [{ href: ROUTES.LOGIN, label: 'Login' }],
+        breadcrumbs: [{ href: ROUTES.LOGIN, label: 'Login' }] as Array<{
+          href: string;
+          label: string;
+        }>,
       },
     },
   } satisfies RouteConfig,
@@ -69,17 +82,20 @@ export const routeConfigData = {
     public: true,
     metadata: {
       title: 'About',
-      description: 'Learn about our application',
+      description: 'Learn more about our application',
     } satisfies Metadata,
     navigation: {
       label: 'About',
-      order: 5,
+      order: 6, // About последним
     },
     header: {
       type: 'static' as const,
       descriptor: {
         title: 'About',
-        breadcrumbs: [{ href: ROUTES.ABOUT, label: 'About' }],
+        breadcrumbs: [
+          { href: ROUTES.HOME, label: 'Home' },
+          { href: ROUTES.ABOUT, label: 'About' },
+        ] as Array<{ href: string; label: string }>,
       },
     },
   } satisfies RouteConfig,
@@ -88,27 +104,30 @@ export const routeConfigData = {
     path: ROUTES.TODOS,
     protected: true,
     metadata: {
-      title: 'My Todos',
-      description: 'Manage your tasks',
+      title: 'Todos',
+      description: 'Manage your todos',
     } satisfies Metadata,
     navigation: {
       label: 'Todos',
-      order: 1,
+      order: 1, // Todos первым после Login
     },
     header: {
       type: 'static' as const,
       descriptor: {
         title: 'Todos',
-        breadcrumbs: [{ href: ROUTES.TODOS, label: 'Todos' }],
+        breadcrumbs: [{ href: ROUTES.TODOS, label: 'Todos' }] as Array<{
+          href: string;
+          label: string;
+        }>,
       },
     },
   } satisfies RouteConfig,
 
-  workspaces: {
-    path: ROUTES.WORKSPACES,
+  workspace: {
+    path: ROUTES.WORKSPACE,
     protected: true,
     metadata: {
-      title: 'Workspaces',
+      title: 'Workspace',
       description: 'Manage your workspaces',
     } satisfies Metadata,
     navigation: {
@@ -118,8 +137,11 @@ export const routeConfigData = {
     header: {
       type: 'static' as const,
       descriptor: {
-        title: 'Todos',
-        breadcrumbs: [{ href: ROUTES.TODOS, label: 'Todos' }],
+        title: 'Workspace',
+        breadcrumbs: [{ href: ROUTES.WORKSPACE, label: 'Workspace' }] as Array<{
+          href: string;
+          label: string;
+        }>,
       },
     },
   } satisfies RouteConfig,
@@ -133,13 +155,16 @@ export const routeConfigData = {
     } satisfies Metadata,
     navigation: {
       label: 'Profile',
-      order: 4,
+      order: 5, // Profile перед About
     },
     header: {
       type: 'static' as const,
       descriptor: {
         title: 'Profile',
-        breadcrumbs: [{ href: ROUTES.PROFILE, label: 'Profile' }],
+        breadcrumbs: [{ href: ROUTES.PROFILE, label: 'Profile' }] as Array<{
+          href: string;
+          label: string;
+        }>,
       },
     },
   } satisfies RouteConfig,
@@ -149,21 +174,127 @@ export const routeConfigData = {
     protected: true,
     metadata: {
       title: 'Settings',
-      description: 'Customize your experience',
+      description: 'Configure your preferences',
     } satisfies Metadata,
     navigation: {
       label: 'Settings',
-      order: 3,
+      order: 3, // Settings после Workspaces
     },
     header: {
       type: 'static' as const,
       descriptor: {
         title: 'Settings',
-        breadcrumbs: [{ href: ROUTES.SETTINGS, label: 'Settings' }],
+        breadcrumbs: [{ href: ROUTES.SETTINGS, label: 'Settings' }] as Array<{
+          href: string;
+          label: string;
+        }>,
       },
     },
   } satisfies RouteConfig,
-} as const;
+} as const satisfies Record<string, RouteConfig>;
+
+/**
+ * Stateful маршруты - для маршрутов с несколькими состояниями
+ * Поддерживают client-side навигацию внутри одного URL
+ */
+export const statefulRouteConfigData = {
+  workspace: {
+    path: ROUTES.WORKSPACE,
+    protected: true,
+    metadata: {
+      title: 'Workspace',
+      description: 'Manage your workspaces',
+    } satisfies Metadata,
+    navigation: {
+      label: 'Workspaces',
+      order: 2,
+    },
+    header: {
+      type: 'static' as const,
+      descriptor: {
+        title: 'Workspace',
+        breadcrumbs: [{ href: ROUTES.WORKSPACE, label: 'Workspace' }],
+      },
+    },
+    states: {
+      loading: {
+        key: 'loading',
+        metadata: () => ({ title: 'Loading...' }) satisfies Metadata,
+        header: {
+          type: 'static' as const,
+          descriptor: {
+            title: 'Loading...',
+            breadcrumbs: [{ href: ROUTES.WORKSPACE, label: 'Workspace' }] as Array<{
+              href: string;
+              label: string;
+            }>,
+          },
+        },
+      },
+      create: {
+        key: 'create',
+        urlPattern: '/workspace/create',
+        metadata: () => ({ title: 'Create Workspace' }) satisfies Metadata,
+        header: {
+          type: 'static' as const,
+          descriptor: {
+            title: 'Create Workspace',
+            breadcrumbs: [
+              { href: ROUTES.WORKSPACE, label: 'Workspaces' },
+              { href: ROUTES.WORKSPACE_CREATE, label: 'Create' },
+            ] as Array<{ href: string; label: string }>,
+          },
+        },
+      },
+      select: {
+        key: 'select',
+        urlPattern: '/workspace/select',
+        metadata: () => ({ title: 'Select Workspace' }) satisfies Metadata,
+        header: {
+          type: 'static' as const,
+          descriptor: {
+            title: 'Select Workspace',
+            breadcrumbs: [
+              { href: ROUTES.WORKSPACE, label: 'Workspaces' },
+              { href: ROUTES.WORKSPACE_SELECT, label: 'Select' },
+            ] as Array<{ href: string; label: string }>,
+          },
+        },
+      },
+      dashboard: {
+        key: 'dashboard',
+        urlPattern: '/workspace/:id',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        metadata: (_data: any) =>
+          ({
+            title: `Workspace Dashboard`,
+          }) satisfies Metadata,
+        header: {
+          type: 'entity' as const,
+          fallback: {
+            title: 'Workspace Dashboard',
+            breadcrumbs: [
+              { href: ROUTES.WORKSPACE, label: 'Workspaces' },
+              { href: '#', label: 'Dashboard' },
+            ] as Array<{ href: string; label: string }>,
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          build: (data: any) =>
+            ({
+              title: data.name,
+              breadcrumbs: [
+                { href: ROUTES.WORKSPACE, label: 'Workspaces' },
+                { href: ROUTES.WORKSPACE_DASHBOARD(data.workspaceId), label: data.name },
+              ] as Array<{ href: string; label: string }>,
+            }) satisfies HeaderDescriptor,
+        },
+      },
+    },
+    defaultState: 'loading' as const,
+    syncWithUrl: true,
+    fallbackState: 'loading' as const,
+  },
+} as const satisfies Record<string, StatefulRouteConfig>;
 
 /**
  * Чистые данные конфигурации динамических маршрутов

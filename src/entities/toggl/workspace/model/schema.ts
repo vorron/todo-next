@@ -40,3 +40,13 @@ export const workspaceUserSchema = z.object({
 });
 
 export type WorkspaceUser = z.infer<typeof workspaceUserSchema>;
+
+export const inviteSchema = z.object({
+  id: z.string(),
+  workspaceId: z.string(),
+  email: z.email().optional(),
+  token: z.string(),
+  role: z.enum(['admin', 'member']),
+  expiresAt: z.iso.datetime(),
+  createdAt: z.iso.datetime(),
+});

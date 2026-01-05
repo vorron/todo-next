@@ -36,12 +36,51 @@ export function validateRouteConfig() {
   }
 
   // Проверка навигационных порядков
-  const navigationOrders = Object.entries(routeConfigData)
-    .filter(([, config]) => 'navigation' in config && config.navigation)
-    .map(([, config]) => (config as { navigation: { order: number } }).navigation.order);
+  const navigationEntries = Object.entries(routeConfigData).filter(
+    ([, config]) => 'navigation' in config && config.navigation,
+  );
 
-  const uniqueOrders = new Set(navigationOrders);
-  if (navigationOrders.length !== uniqueOrders.size) {
+  const visibleNavigationEntries = navigationEntries.filter(
+    ([, config]) =>
+      !(config as { navigation: { hideWhenAuthenticated?: boolean } }).navigation
+        ?.hideWhenAuthenticated,
+  );
+
+  const navigationOrders = visibleNavigationEntries.map(
+    ([, config]) => (config as { navigation: { order?: number } }).navigation.order,
+  );
+
+  // Проверка что у видимых маршрутов есть order
+  const missingOrders = visibleNavigationEntries.filter(
+    ([, config]) => (config as { navigation: { order?: number } }).navigation.order === undefined,
+  );
+
+  if (missingOrders.length > 0) {
+    errors.push(
+      `Missing navigation order for visible routes: ${missingOrders.map(([key]) => key).join(', ')}`,
+    );
+  }
+
+  // Проверка что у скрытых маршрутов нет order
+  const hiddenEntriesWithOrder = navigationEntries.filter(
+    ([, config]) =>
+      (config as { navigation: { hideWhenAuthenticated?: boolean; order?: number } }).navigation
+        ?.hideWhenAuthenticated &&
+      (config as { navigation: { order?: number } }).navigation.order !== undefined,
+  );
+
+  if (hiddenEntriesWithOrder.length > 0) {
+    errors.push(
+      `Unnecessary navigation order for hidden routes: ${hiddenEntriesWithOrder
+        .map(([key]) => key)
+        .join(', ')}`,
+    );
+  }
+
+  // Проверка дубликатов order только для видимых маршрутов
+  const definedOrders = navigationOrders.filter((order): order is number => order !== undefined);
+  const uniqueOrders = new Set(definedOrders);
+  if (definedOrders.length !== uniqueOrders.size) {
     errors.push('Duplicate navigation orders found');
   }
 
