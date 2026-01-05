@@ -1,5 +1,5 @@
 // Используем общие типы из shared/lib/router
-import type { StatefulNavigation } from '@/shared/lib/router/config-types';
+import type { StatefulNavigation, EntityState } from '@/shared/lib/router/config-types';
 
 export interface Workspace {
   id: string;
@@ -32,10 +32,7 @@ export type WorkspaceRouteStates = {
   dashboard: { workspaceId: string };
 };
 
-export type WorkspaceRouteState = {
-  key: keyof WorkspaceRouteStates;
-  data?: WorkspaceRouteStates[keyof WorkspaceRouteStates];
-};
+export type WorkspaceRouteState = EntityState<WorkspaceRouteStates>;
 
 export type WorkspaceNavigation = StatefulNavigation<{ workspaceId?: string }>;
 

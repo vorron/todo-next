@@ -2,99 +2,169 @@
 
 import { useMemo } from 'react';
 
-import { ROUTES, statefulRouteConfigData } from '@/shared/lib/router';
-import { createInitialEntityState } from '@/shared/lib/router/entity-utils';
-import { getStateFromUrl } from '@/shared/lib/router/stateful-utils';
+import { statefulRouteConfigData } from '@/shared/lib/router';
+import { createEntityState } from '@/shared/lib/router/entity-utils';
+import {
+  createStatefulUtilsTyped,
+  createUrlSyncUtils,
+} from '@/shared/lib/router/stateful-generators';
 
 import { useWorkspaceState } from './workspace-state';
 
-import type { WorkspaceRouteStates } from './types';
+import type { WorkspaceRouteStates, Workspace } from './types';
+
+// Утилиты для workspace с улучшенной типизацией
+const workspaceUtils = createStatefulUtilsTyped<WorkspaceRouteStates, keyof WorkspaceRouteStates>(
+  statefulRouteConfigData.workspace,
+  {
+    stateRules: {
+      loading: 'loading',
+      empty: 'create',
+      single: 'dashboard',
+      multiple: 'select',
+    },
+    dataRules: {
+      dashboard: (currentItem: unknown) => ({ workspaceId: (currentItem as Workspace)?.id }),
+    },
+  },
+);
+
+// Утилиты для URL синхронизации (отключены по умолчанию для client-side подхода)
+// Можно включить через { enabled: true } при необходимости
+const urlSyncUtils = createUrlSyncUtils(statefulRouteConfigData.workspace, {
+  enabled: false, // Явный client-side подход
+  syncOnLoad: false,
+  syncOnChange: false,
+});
 
 export function useWorkspaceNavigation() {
   const { workspaces, currentWorkspace, isLoading } = useWorkspaceState();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const workspaceConfig = statefulRouteConfigData.workspace;
 
   return useMemo(() => {
-    if (isLoading) {
-      return {
-        title: 'Loading...',
-        breadcrumbs: [{ href: ROUTES.WORKSPACE, label: 'Workspace' }],
-      };
-    }
+    const stateKey = workspaceUtils.getStateKey({
+      isLoading,
+      items: workspaces,
+      currentItem: currentWorkspace,
+    });
 
-    if (workspaces.length === 0) {
-      return {
-        title: 'Create Workspace',
-        breadcrumbs: [{ href: ROUTES.WORKSPACE, label: 'Workspace' }],
-      };
-    }
+    const title = workspaceUtils.getStateTitle(stateKey, currentWorkspace);
+    const breadcrumbs = workspaceUtils.getStateBreadcrumbs(stateKey, currentWorkspace);
 
-    if (workspaces.length === 1) {
-      return {
-        title: currentWorkspace?.name || 'Workspace',
-        breadcrumbs: [{ href: ROUTES.WORKSPACE, label: 'Workspace' }],
-      };
-    }
-
-    return {
-      title: 'Select Workspace',
-      breadcrumbs: [{ href: ROUTES.WORKSPACE, label: 'Workspace' }],
-    };
+    return { title, breadcrumbs };
   }, [workspaces, currentWorkspace, isLoading]);
 }
 
-export function useWorkspaceType() {
+export function useWorkspaceType(): keyof WorkspaceRouteStates {
   const { workspaces, isLoading } = useWorkspaceState();
 
-  if (isLoading) return 'loading' as const;
-  if (workspaces.length === 0) return 'create' as const;
-  if (workspaces.length === 1) return 'dashboard' as const;
-  return 'select' as const;
+  return useMemo(() => {
+    return workspaceUtils.getStateKey({
+      isLoading,
+      items: workspaces,
+      currentItem: null,
+    });
+  }, [workspaces, isLoading]);
 }
 
-/**
- * Новый хук для работы с stateful routing в workspace
- */
 export function useWorkspaceStateful(currentUrl?: string) {
   const { workspaces, currentWorkspace, isLoading } = useWorkspaceState();
   const workspaceConfig = statefulRouteConfigData.workspace;
 
   return useMemo(() => {
-    // Определяем состояние из URL или из данных
-    let stateKey: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let data: any;
+    let stateKey: keyof WorkspaceRouteStates;
+    let data: WorkspaceRouteStates[keyof WorkspaceRouteStates];
 
-    if (currentUrl && workspaceConfig.syncWithUrl) {
-      const { state, data: urlData } = getStateFromUrl(workspaceConfig, currentUrl);
-      stateKey = state as string;
-      data = urlData;
-    } else {
-      // Fallback на логику基于 данных
-      if (isLoading) {
-        stateKey = 'loading';
-      } else if (workspaces.length === 0) {
-        stateKey = 'create';
-      } else if (workspaces.length === 1) {
-        stateKey = 'dashboard';
-        data = { workspaceId: currentWorkspace?.id };
+    // Используем URL синхронизацию только если включена
+    if (currentUrl && urlSyncUtils.isUrlSyncEnabled) {
+      const urlState = urlSyncUtils.getStateFromUrl(currentUrl);
+      if (urlState) {
+        stateKey = urlState.state as keyof WorkspaceRouteStates;
+        data = urlState.data as WorkspaceRouteStates[keyof WorkspaceRouteStates];
       } else {
-        stateKey = 'select';
+        // Fallback к логике на основе данных
+        stateKey = workspaceUtils.getStateKey({
+          isLoading,
+          items: workspaces,
+          currentItem: currentWorkspace,
+        });
+        data = workspaceUtils.getStateData(stateKey, currentWorkspace);
       }
+    } else {
+      // Client-side подход - состояние на основе данных
+      stateKey = workspaceUtils.getStateKey({
+        isLoading,
+        items: workspaces,
+        currentItem: currentWorkspace,
+      });
+      data = workspaceUtils.getStateData(stateKey, currentWorkspace);
     }
 
-    const state = createInitialEntityState<WorkspaceRouteStates>(stateKey);
-    state.key = stateKey;
-    state.data = data;
+    const state = createEntityState(stateKey, data);
 
     return {
       state,
-      availableStates: Object.keys(workspaceConfig.states),
+      availableStates: Object.keys(workspaceConfig.states) as (keyof WorkspaceRouteStates)[],
       config: workspaceConfig,
+      utils: workspaceUtils,
+      urlSync: urlSyncUtils,
       workspaces,
       currentWorkspace,
       isLoading,
     };
   }, [workspaces, currentWorkspace, isLoading, currentUrl, workspaceConfig]);
+}
+
+/**
+ * Создает навигацию для workspace с явными методами
+ */
+export function useWorkspaceNavigationActions() {
+  const { currentWorkspace, setCurrentWorkspace } = useWorkspaceState();
+  const { state } = useWorkspaceStateful();
+
+  return useMemo(() => {
+    const navigate = (
+      _targetState: keyof WorkspaceRouteStates,
+      _data?: WorkspaceRouteStates[keyof WorkspaceRouteStates],
+    ) => {
+      // Обновляем состояние на основе целевого состояния
+      switch (_targetState) {
+        case 'dashboard':
+          if (_data && 'workspaceId' in _data) {
+            const workspace = currentWorkspace;
+            if (workspace?.id === _data.workspaceId) {
+              // Уже в нужном workspace
+              return;
+            }
+            // Здесь будет логика переключения workspace
+          }
+          break;
+        case 'create':
+          setCurrentWorkspace(null);
+          break;
+        case 'select':
+          setCurrentWorkspace(null);
+          break;
+        case 'loading':
+          // Перегрузка данных
+          break;
+      }
+    };
+
+    return {
+      navigate,
+
+      // Удобные методы
+      navigateToCreate: () => navigate('create'),
+      navigateToSelect: () => navigate('select'),
+      navigateToDashboard: (workspaceId: string) => navigate('dashboard', { workspaceId }),
+      navigateToLoading: () => navigate('loading'),
+
+      // Текущее состояние
+      currentState: state.key,
+      canNavigateTo: (_targetState: keyof WorkspaceRouteStates) => {
+        // Логика валидации переходов
+        return true; // Пока разрешены все переходы
+      },
+    };
+  }, [currentWorkspace, setCurrentWorkspace, state.key]);
 }

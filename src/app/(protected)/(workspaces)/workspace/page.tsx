@@ -1,5 +1,5 @@
-import { WorkspaceStateRouter } from '@/features/workspace';
+import { WorkspacePage } from '@/screens/workspace';
 
 export default function Page() {
-  return <WorkspaceStateRouter />;
+  return <WorkspacePage />;
 }

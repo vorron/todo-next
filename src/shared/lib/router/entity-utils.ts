@@ -3,7 +3,7 @@
  * Переиспользуемые функции для любых entity (workspace, project, etc.)
  */
 
-import type { RouteState, StatefulNavigation } from './config-types';
+import type { RouteState, StatefulNavigation, EntityState } from './config-types';
 
 /**
  * Создает начальное состояние для любой entity
@@ -14,6 +14,19 @@ export function createInitialEntityState<T extends Record<string, unknown>>(
   return {
     key: defaultState as keyof T,
   } as RouteState<T>;
+}
+
+/**
+ * Создает типизированное состояние для entity
+ */
+export function createEntityState<T extends Record<string, unknown>, K extends keyof T>(
+  stateKey: K,
+  data: T[K],
+): EntityState<T> {
+  return {
+    key: stateKey,
+    data,
+  } as EntityState<T>;
 }
 
 /**

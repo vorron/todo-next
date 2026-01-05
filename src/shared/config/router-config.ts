@@ -29,6 +29,28 @@ export const ROUTES = {
 } as const;
 
 /**
+ * Типы навигационных функций - специфичные для приложения
+ * Генерируются на основе ROUTES для данного приложения
+ */
+export type NavigationFunctions = {
+  navigateTo: (path: string) => void;
+  // Статические маршруты
+  navigateToHome: () => void;
+  navigateToLogin: () => void;
+  navigateToAbout: () => void;
+  navigateToTodos: () => void;
+  navigateToWorkspace: () => void;
+  navigateToWorkspaceCreate: () => void;
+  navigateToWorkspaceSelect: () => void;
+  navigateToProfile: () => void;
+  navigateToSettings: () => void;
+  // Динамические маршруты
+  navigateToWorkspaceDashboard: (id: string) => void;
+  navigateToTodoDetail: (id: string) => void;
+  navigateToTodoEdit: (id: string) => void;
+};
+
+/**
  * Чистые данные конфигурации маршрутов приложения
  * Единственный источник правды для всех данных маршрутизации
  * На новых проектах нужно изменять только этот файл
@@ -268,7 +290,7 @@ export const statefulRouteConfigData = {
       },
     },
     defaultState: 'loading' as const,
-    syncWithUrl: true,
+    syncWithUrl: false, // Явный client-side подход без URL синхронизации
     fallbackState: 'loading' as const,
   },
 } as const satisfies Record<string, StatefulRouteConfig>;

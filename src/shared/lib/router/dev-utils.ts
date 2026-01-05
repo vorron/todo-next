@@ -111,24 +111,41 @@ export function debugRouting() {
 
 /**
  * Генератор путей для разработки
+ * Автоматически генерирует все пути из ROUTES
  */
 export function createPathGenerator() {
-  return {
-    // Статические пути
-    static: ROUTES,
+  // Разделяем статические и динамические маршруты
+  const staticRoutes: Record<string, string> = {};
+  const dynamicRoutes: Record<string, (id: string) => string> = {};
+  const statefulRoutes: Record<string, string> = {};
 
-    // Динамические пути с параметрами
-    dynamic: {
-      todoDetail: (id: string) => ROUTES.TODO_DETAIL(id),
-      todoEdit: (id: string) => ROUTES.TODO_EDIT(id),
-      workspaceDashboard: (id: string) => ROUTES.WORKSPACE_DASHBOARD(id),
-    },
+  Object.entries(ROUTES).forEach(([key, route]) => {
+    if (typeof route === 'string') {
+      staticRoutes[key] = route;
+    } else if (typeof route === 'function') {
+      dynamicRoutes[key] = (id: string) => route(id);
+    }
+  });
+
+  // Добавляем stateful маршруты из ROUTES (автоматически)
+  Object.entries(ROUTES).forEach(([key, route]) => {
+    if (
+      typeof route === 'string' &&
+      (key.includes('CREATE') || key.includes('SELECT') || key.includes('DASHBOARD'))
+    ) {
+      statefulRoutes[key] = route;
+    }
+  });
+
+  return {
+    // Все статические пути
+    static: staticRoutes,
+
+    // Все динамические пути
+    dynamic: dynamicRoutes,
 
     // Stateful пути
-    stateful: {
-      workspaceCreate: ROUTES.WORKSPACE_CREATE,
-      workspaceSelect: ROUTES.WORKSPACE_SELECT,
-    },
+    stateful: statefulRoutes,
   };
 }
 
@@ -161,19 +178,26 @@ export function createRouteTester() {
 }
 
 /**
- * Горячие клавиши для разработки (можно использовать в dev tools)
+ * Development shortcuts - только для development режима
+ * Не включается в production сборку
  */
-export const devShortcuts = {
-  // Показать отладочную информацию
-  debug: () => debugRouting(),
+export const devShortcuts =
+  process.env.NODE_ENV === 'development'
+    ? {
+        // Показать отладочную информацию
+        debug: () => debugRouting(),
 
-  // Показать все маршруты
-  routes: () => console.table(Object.entries(ROUTES).map(([key, path]) => ({ key, path }))),
+        // Показать все маршруты
+        routes: () => console.table(Object.entries(ROUTES).map(([key, path]) => ({ key, path }))),
 
-  // Показать навигацию
-  navigation: () =>
-    console.table([...Object.values(navigationConfig), ...Object.values(statefulNavigationConfig)]),
+        // Показать навигацию
+        navigation: () =>
+          console.table([
+            ...Object.values(navigationConfig),
+            ...Object.values(statefulNavigationConfig),
+          ]),
 
-  // Валидация
-  validate: () => validateRouteConfig(),
-};
+        // Валидация
+        validate: () => validateRouteConfig(),
+      }
+    : null;

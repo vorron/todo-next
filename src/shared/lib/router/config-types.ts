@@ -126,6 +126,18 @@ export type RouteState<T = unknown> = {
   header?: HeaderDescriptor;
 };
 
+/**
+ * Конкретное состояние для сущности с discriminated union
+ */
+export type EntityState<T extends Record<string, unknown>> = {
+  [K in keyof T]: {
+    key: K;
+    data: T[K];
+    metadata?: Metadata;
+    header?: HeaderDescriptor;
+  };
+}[keyof T];
+
 export type StatefulNavigation<T = unknown> = {
   currentState: string;
   availableStates: string[];

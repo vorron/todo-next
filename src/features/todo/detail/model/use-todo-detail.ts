@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useNavigation } from '@/shared/lib/navigation';
+import { useNavigation } from '@/shared/lib/router/navigation';
 
 import { useToggleTodo } from '../../model/mutations/use-toggle-todo';
 import { useUndoableDeleteTodo } from '../../model/mutations/use-undoable-delete-todo';

@@ -9,7 +9,7 @@ import {
   useBulkDeleteTodo,
   useClearCompletedTodos,
 } from '@/features/todo/model';
-import { useNavigation } from '@/shared/lib/navigation';
+import { useNavigation } from '@/shared/lib/router/navigation';
 import { useConfirm } from '@/shared/ui/dialog/confirm-dialog-provider';
 
 import { filterTodos } from './model/filter-todos';
