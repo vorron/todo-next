@@ -7,7 +7,7 @@ import { XCircle } from 'lucide-react';
 import { TodoForm } from '@/features/todo/form';
 import { useTodoById } from '@/features/todo/model';
 import { ROUTES } from '@/shared/lib/router';
-import { BackButton, ErrorStateCard, PageLoader, useHeaderFromTemplate } from '@/shared/ui';
+import { BackButton, DataLoadingState, ErrorStateCard, useHeaderFromTemplate } from '@/shared/ui';
 
 export function TodoEditPage({ todoId }: { todoId: string }) {
   const router = useRouter();
@@ -16,7 +16,7 @@ export function TodoEditPage({ todoId }: { todoId: string }) {
   useHeaderFromTemplate(todo, 'todoEdit');
 
   if (isLoading) {
-    return <PageLoader message="Loading todo..." />;
+    return <DataLoadingState message="Loading todo..." />;
   }
 
   if (error || !todo) {

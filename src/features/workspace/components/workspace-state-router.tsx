@@ -1,29 +1,38 @@
-/**
- * Workspace State Router - использует универсальный StateRouter
- * Конфигурация состояний остается в feature
- */
-
 'use client';
 
-import { useWorkspaceNavigation, useWorkspaceType } from '@/entities/workspace';
+import { statefulRouteConfigData } from '@/shared/lib/router';
 import { StateRouter } from '@/shared/lib/router/state-router';
+import { DataErrorState, DataLoadingState } from '@/shared/ui';
 
-import { workspaceStatesConfig, type WorkspaceStateKey } from '../config/workspace-states';
+import { workspaceComponents } from './workspace-components';
+import { useWorkspaceState } from '../model/hooks/use-workspace-state';
+import { WorkspaceProvider } from '../model/workspace-context';
 
 /**
  * Workspace-специфичный роутер состояний
  */
 export function WorkspaceStateRouter() {
-  const workspaceType = useWorkspaceType();
-  const { title, breadcrumbs } = useWorkspaceNavigation();
+  const workspaceState = useWorkspaceState();
+
+  if (workspaceState.isLoading) {
+    return <DataLoadingState message="Loading workspace..." />;
+  }
+
+  if (workspaceState.error) {
+    return (
+      <DataErrorState description="Failed to load workspaces" onRetry={workspaceState.refetch} />
+    );
+  }
 
   return (
-    <StateRouter
-      currentState={workspaceType as WorkspaceStateKey}
-      configs={workspaceStatesConfig}
-      title={title}
-      breadcrumbs={breadcrumbs}
-      fallbackComponent={workspaceStatesConfig.loading.component}
-    />
+    <WorkspaceProvider value={workspaceState}>
+      <StateRouter
+        currentState={workspaceState.workspaceType}
+        componentMap={workspaceComponents}
+        statefulConfig={statefulRouteConfigData.workspace}
+        currentItem={workspaceState.currentWorkspace}
+        suspenseFallback={<div>Loading workspace...</div>}
+      />
+    </WorkspaceProvider>
   );
 }

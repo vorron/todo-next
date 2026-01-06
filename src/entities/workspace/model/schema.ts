@@ -21,6 +21,16 @@ export const workspaceSсhema = z.object({
 
 export type Workspace = z.infer<typeof workspaceSсhema>;
 
+// Схема для создания workspace
+export const createWorkspaceSchema = workspaceSсhema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// Схема для обновления workspace
+export const updateWorkspaceSchema = workspaceSсhema.partial().required({ id: true });
+
 export const workspaceUserSchema = z.object({
   id: z.string().min(1),
   workspaceId: z.string().min(1),

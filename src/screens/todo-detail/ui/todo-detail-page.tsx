@@ -4,7 +4,7 @@ import { XCircle } from 'lucide-react';
 
 import { TodoDetailContent, useTodoDetail } from '@/features/todo/detail';
 import { ROUTES } from '@/shared/lib/router';
-import { PageLoader, ErrorStateCard, useHeaderFromTemplate } from '@/shared/ui';
+import { DataLoadingState, ErrorStateCard, useHeaderFromTemplate } from '@/shared/ui';
 
 export function TodoDetailPage({ todoId }: { todoId: string }) {
   const {
@@ -21,7 +21,7 @@ export function TodoDetailPage({ todoId }: { todoId: string }) {
   useHeaderFromTemplate(todo, 'todoDetail');
 
   if (isLoading) {
-    return <PageLoader message="Loading todo details..." />;
+    return <DataLoadingState message="Loading todo details..." />;
   }
 
   if (error || !todo) {

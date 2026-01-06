@@ -1,15 +1,20 @@
 'use client';
 
-import { useWorkspaceState, useWorkspaceNavigation } from '@/entities/workspace';
-import { Card, CardContent, CardHeader, CardTitle, Button, Badge } from '@/shared/ui';
+import { useMemo } from 'react';
+
+import { Card, CardContent, CardHeader, CardTitle, Button } from '@/shared/ui';
+
+import { useWorkspaceContext } from '../model/workspace-context';
 
 export function WorkspaceDashboardPage() {
-  const { currentWorkspace, workspaces, setCurrentWorkspace } = useWorkspaceState();
-  const { title } = useWorkspaceNavigation();
+  const { workspaces, currentWorkspace, actions } = useWorkspaceContext();
+
+  const title = useMemo(() => currentWorkspace?.name || 'Dashboard', [currentWorkspace]);
 
   const handleSwitchWorkspace = () => {
-    // В реальном приложении здесь был бы переход к выбору воркспейса
-    setCurrentWorkspace(null);
+    // Возвращаемся к выбору воркспейса, сбрасывая текущий выбор
+    // Это приведет к переходу на select состояние в WorkspaceStateRouter
+    actions.setCurrentWorkspace(null);
   };
 
   if (!currentWorkspace) {
@@ -56,14 +61,50 @@ export function WorkspaceDashboardPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Team Members</CardTitle>
+              <CardTitle className="text-lg">Owner</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold mb-2">{currentWorkspace.members.length}</div>
-              <p className="text-sm text-muted-foreground">Total members</p>
+              <div className="text-2xl font-bold mb-2">{currentWorkspace.ownerId}</div>
+              <p className="text-sm text-muted-foreground">Workspace owner</p>
             </CardContent>
           </Card>
         </div>
+
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Owner</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold mb-2">{currentWorkspace.ownerId}</div>
+            <p className="text-sm text-muted-foreground">Workspace owner</p>
+          </CardContent>
+        </Card>
+
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Workspace Info</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm font-medium">ID:</span>
+                <span className="text-sm text-muted-foreground">{currentWorkspace.id}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm font-medium">Created:</span>
+                <span className="text-sm text-muted-foreground">
+                  {new Date(currentWorkspace.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm font-medium">Updated:</span>
+                <span className="text-sm text-muted-foreground">
+                  {new Date(currentWorkspace.updatedAt).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <Card className="mt-6">
           <CardHeader>
@@ -79,23 +120,12 @@ export function WorkspaceDashboardPage() {
 
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle>Team Members</CardTitle>
+            <CardTitle>Recent Activity</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {currentWorkspace.members.map((member) => (
-                <div key={member.id} className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">User {member.userId}</div>
-                    <div className="text-sm text-muted-foreground">
-                      Joined {new Date(member.joinedAt).toLocaleDateString()}
-                    </div>
-                  </div>
-                  <Badge variant={member.role === 'owner' ? 'default' : 'secondary'}>
-                    {member.role}
-                  </Badge>
-                </div>
-              ))}
+            <div className="text-center py-8 text-muted-foreground">
+              <p>No recent activity</p>
+              <p className="text-sm mt-2">Start by creating your first task or project</p>
             </div>
           </CardContent>
         </Card>

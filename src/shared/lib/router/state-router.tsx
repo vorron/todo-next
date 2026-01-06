@@ -6,10 +6,13 @@
 
 'use client';
 
-import React, { useEffect, useState, Suspense, useRef } from 'react';
+import React, { useEffect, useState, Suspense, useRef, useMemo } from 'react';
 
 import { useHeader } from '@/shared/ui';
 
+import { getStatefulNavigation } from './stateful-utils';
+
+import type { StatefulRouteConfig } from './config-types';
 import type { ComponentType } from 'react';
 
 export interface StateConfig<_T extends string> {
@@ -19,16 +22,30 @@ export interface StateConfig<_T extends string> {
   transition?: 'fade' | 'slide' | 'scale' | 'none';
 }
 
+export interface ComponentConfig<T extends string> {
+  pattern: (state: T) => string;
+  states: readonly T[];
+}
+
 export interface StateRouterProps<T extends string> {
   currentState: T;
-  configs: Record<T, StateConfig<T>>;
+  configs?: Record<T, StateConfig<T>>;
+  componentMap?: Record<T, ComponentType>;
+  _componentFactory?: (state: T) => ComponentType | null;
+  _componentConfig?: ComponentConfig<T>;
   title?: string;
   breadcrumbs?: Array<{ href: string; label: string }>;
+  // Новые параметры для автоматической генерации навигации
+  statefulConfig?: StatefulRouteConfig<Record<string, unknown>>;
+  currentItem?: Record<string, unknown> | null;
   fallbackComponent?: ComponentType;
   errorComponent?: ComponentType<{ error: Error; state: T }>;
   loadingComponent?: ComponentType;
   transitions?: boolean;
   transitionDuration?: number;
+  // Suspense настройки
+  suspense?: boolean;
+  suspenseFallback?: React.ReactNode;
 }
 
 /**
@@ -140,19 +157,51 @@ function StateTransition({
 export function StateRouter<T extends string>({
   currentState,
   configs,
+  componentMap,
+  _componentFactory,
+  _componentConfig,
   title,
   breadcrumbs,
+  statefulConfig,
+  currentItem,
   fallbackComponent,
   errorComponent,
   loadingComponent,
   transitions = true,
   transitionDuration = 300,
+  suspense = true,
+  suspenseFallback = <div>Loading...</div>,
 }: StateRouterProps<T>) {
   const { setHeader } = useHeader();
   const [isLoading, setIsLoading] = useState(false);
   const [previousState, setPreviousState] = useState<T | null>(null);
   // Используем useRef для отслеживания mounted состояния
   const isMountedRef = useRef(true);
+
+  // Автоматическая генерация навигации из конфигурации
+  const navigationData = useMemo(() => {
+    if (statefulConfig && (!title || !breadcrumbs)) {
+      return getStatefulNavigation(
+        statefulConfig,
+        currentState as keyof typeof statefulConfig.states,
+        currentItem,
+      );
+    }
+    return { title: title || '', breadcrumbs: breadcrumbs || [] };
+  }, [statefulConfig, currentState, currentItem, title, breadcrumbs]);
+
+  const finalTitle = title || navigationData.title;
+  const finalBreadcrumbs = breadcrumbs || navigationData.breadcrumbs;
+
+  // Получаем компонент из конфигурации или мапы
+  const stateConfig = configs?.[currentState];
+  let ComponentToRender = stateConfig?.component || componentMap?.[currentState];
+  const transition = stateConfig?.transition || 'fade';
+
+  // Если нет компонента, используем fallback
+  if (!ComponentToRender) {
+    ComponentToRender = fallbackComponent;
+  }
 
   useEffect(() => {
     return () => {
@@ -162,13 +211,13 @@ export function StateRouter<T extends string>({
 
   // Динамическое обновление заголовка
   useEffect(() => {
-    if (title || breadcrumbs) {
+    if (finalTitle || finalBreadcrumbs) {
       setHeader({
-        title: title || '',
-        breadcrumbs: breadcrumbs || [],
+        title: finalTitle || '',
+        breadcrumbs: finalBreadcrumbs || [],
       });
     }
-  }, [title, breadcrumbs, setHeader]);
+  }, [finalTitle, finalBreadcrumbs, setHeader]);
 
   // Обработка переходов между состояниями
   useEffect(() => {
@@ -201,11 +250,6 @@ export function StateRouter<T extends string>({
     }
     return undefined;
   }, [currentState, previousState, transitions, transitionDuration]);
-
-  // Получаем компонент из конфигурации
-  const stateConfig = configs[currentState];
-  const ComponentToRender = stateConfig?.component || fallbackComponent;
-  const transition = stateConfig?.transition || 'fade';
 
   if (isLoading && loadingComponent) {
     const LoadingComponent = loadingComponent;
@@ -247,14 +291,21 @@ export function StateRouter<T extends string>({
     content
   );
 
+  // Suspense wrapper
+  const suspenseContent = suspense ? (
+    <Suspense fallback={suspenseFallback}>{wrappedContent}</Suspense>
+  ) : (
+    wrappedContent
+  );
+
   // Transition wrapper
   if (transitions && previousState) {
     return (
       <StateTransition transition={transition} duration={transitionDuration}>
-        {wrappedContent}
+        {suspenseContent}
       </StateTransition>
     );
   }
 
-  return wrappedContent;
+  return suspenseContent;
 }

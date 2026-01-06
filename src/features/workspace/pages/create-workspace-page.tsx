@@ -2,42 +2,39 @@
 
 import { useState } from 'react';
 
-import { useWorkspaceState } from '@/entities/workspace';
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Label } from '@/shared/ui';
+
+import { useWorkspaceContext } from '../model/workspace-context';
 
 export function CreateWorkspacePage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [isCreating, setIsCreating] = useState(false);
-  const { addWorkspace } = useWorkspaceState();
+  const { actions, refetch, isCreating } = useWorkspaceContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
 
-    setIsCreating(true);
-
-    // Имитация создания воркспейса
-    setTimeout(() => {
-      const newWorkspace = {
-        id: `ws-${Date.now()}`,
+    try {
+      await actions.createWorkspace({
         name: name.trim(),
         description: description.trim() || undefined,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        members: [
-          {
-            id: 'member-1',
-            userId: 'user-1',
-            role: 'owner' as const,
-            joinedAt: new Date().toISOString(),
-          },
-        ],
-      };
+        ownerId: '4', // Временно захардкожен, потом взять из auth
+      });
 
-      addWorkspace(newWorkspace);
-      setIsCreating(false);
-    }, 1000);
+      // Очистка формы после успешного создания
+      setName('');
+      setDescription('');
+
+      // Возвращаемся к выбору воркспейса
+      actions.setCurrentWorkspace(null);
+
+      // Обновляем список воркспейсов
+      refetch();
+    } catch (error) {
+      // Ошибка уже обработана в хуке
+      console.error('Create workspace failed:', error);
+    }
   };
 
   return (

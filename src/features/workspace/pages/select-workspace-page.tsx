@@ -1,24 +1,25 @@
 'use client';
 
-import { useWorkspaceState, useWorkspaceNavigation } from '@/entities/workspace';
 import { Card, CardContent, CardHeader, CardTitle, Button } from '@/shared/ui';
 
+import { useWorkspaceContext } from '../model/workspace-context';
+
 export function SelectWorkspacePage() {
-  const { workspaces, setCurrentWorkspace, currentWorkspace } = useWorkspaceState();
-  const { title } = useWorkspaceNavigation();
+  const { workspaces, currentWorkspace, actions } = useWorkspaceContext();
 
   const handleSelectWorkspace = (workspaceId: string) => {
-    const workspace = workspaces.find((ws) => ws.id === workspaceId);
-    if (workspace) {
-      setCurrentWorkspace(workspace);
-    }
+    actions.setCurrentWorkspace(workspaceId);
+  };
+
+  const handleCreateWorkspace = () => {
+    actions.goToCreateWorkspace();
   };
 
   return (
     <div className="container mx-auto py-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">{title}</h1>
+          <h1 className="text-3xl font-bold mb-2">Select Workspace</h1>
           <p className="text-muted-foreground">
             Choose a workspace to continue working on your tasks and projects.
           </p>
@@ -41,9 +42,7 @@ export function SelectWorkspacePage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <div className="text-sm text-muted-foreground">
-                    {workspace.members.length} member{workspace.members.length !== 1 ? 's' : ''}
-                  </div>
+                  <div className="text-sm text-muted-foreground">Owner workspace</div>
                   <Button
                     size="sm"
                     variant={currentWorkspace?.id === workspace.id ? 'secondary' : 'default'}
@@ -61,7 +60,9 @@ export function SelectWorkspacePage() {
         </div>
 
         <div className="mt-8 text-center">
-          <Button variant="outline">Create New Workspace</Button>
+          <Button variant="outline" onClick={handleCreateWorkspace}>
+            Create New Workspace
+          </Button>
         </div>
       </div>
     </div>

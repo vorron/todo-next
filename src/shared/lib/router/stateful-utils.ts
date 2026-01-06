@@ -186,6 +186,63 @@ export function isStatefulRouteConfig(
 // === Debug Utilities ===
 
 /**
+ * Получает навигационные данные для stateful маршрута на основе конфигурации
+ * Устраняет дублирование логики между компонентами
+ */
+export function getStatefulNavigation<T extends Record<string, unknown> = Record<string, unknown>>(
+  config: StatefulRouteConfig<T>,
+  currentState: keyof T,
+  currentItem?: Record<string, unknown> | null,
+): { title: string; breadcrumbs: Array<{ href: string; label: string }> } {
+  const stateConfig = config.states[currentState as string];
+
+  // Получаем title
+  let title = (config.metadata?.title as string) || 'Unknown';
+  if (stateConfig?.metadata) {
+    const metadata = stateConfig.metadata();
+    title = (metadata.title as string) || title;
+  }
+
+  // Для entity типа заголовка с данными
+  if (currentItem && stateConfig?.header?.type === 'entity' && stateConfig.header.build) {
+    const entityData = {
+      id: currentItem.id,
+      name: currentItem.name,
+      workspaceId: currentItem.id,
+      ...currentItem,
+    };
+    const header = stateConfig.header.build(entityData);
+    title = (header.title as string) || title;
+  }
+
+  // Получаем breadcrumbs
+  let breadcrumbs = [{ href: config.path, label: (config.metadata?.title as string) || 'Unknown' }];
+
+  if (stateConfig?.header) {
+    if (currentItem && stateConfig.header.type === 'entity' && stateConfig.header.build) {
+      const entityData = {
+        id: currentItem.id,
+        name: currentItem.name,
+        workspaceId: currentItem.id,
+        ...currentItem,
+      };
+      const header = stateConfig.header.build(entityData);
+      breadcrumbs = header.breadcrumbs.map((b) => ({
+        href: b.href,
+        label: b.label as string,
+      }));
+    } else if (stateConfig.header.descriptor?.breadcrumbs) {
+      breadcrumbs = stateConfig.header.descriptor.breadcrumbs.map((b) => ({
+        href: b.href,
+        label: b.label as string,
+      }));
+    }
+  }
+
+  return { title, breadcrumbs };
+}
+
+/**
  * Логирует состояние stateful маршрута (только в development)
  */
 export function debugStatefulRoute<T extends Record<string, unknown> = Record<string, unknown>>(
