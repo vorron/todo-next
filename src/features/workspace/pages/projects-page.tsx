@@ -19,6 +19,8 @@ import {
 } from '@/shared/ui';
 import { Button } from '@/shared/ui/button';
 
+import { CreateWorkspaceDialog } from '../components';
+
 import type { Workspace } from '@/entities/workspace/model/schema';
 
 /**
@@ -37,8 +39,6 @@ export function ProjectsPage({ workspace: _workspace }: { workspace: Workspace }
   } | null>(null);
   const [deletingProject, setDeletingProject] = useState<{ id: string; name: string } | null>(null);
   const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState(false);
-  const [workspaceName, setWorkspaceName] = useState('');
-  const [workspaceDescription, setWorkspaceDescription] = useState('');
 
   const handleCreateProject = () => {
     if (!newProjectName.trim()) return;
@@ -78,18 +78,6 @@ export function ProjectsPage({ workspace: _workspace }: { workspace: Workspace }
 
     // Закрываем диалог
     setDeletingProject(null);
-  };
-
-  const handleCreateWorkspace = () => {
-    if (!workspaceName.trim()) return;
-
-    // TODO: Здесь будет API вызов для создания workspace
-    console.log('Creating workspace:', { name: workspaceName, description: workspaceDescription });
-
-    // Закрываем диалог и сбрасываем форму
-    setIsCreateWorkspaceOpen(false);
-    setWorkspaceName('');
-    setWorkspaceDescription('');
   };
 
   return (
@@ -413,42 +401,14 @@ export function ProjectsPage({ workspace: _workspace }: { workspace: Workspace }
       </Dialog>
 
       {/* Create Workspace Dialog */}
-      <Dialog open={isCreateWorkspaceOpen} onOpenChange={setIsCreateWorkspaceOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create New Workspace</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="workspace-name">Workspace Name *</Label>
-              <Input
-                id="workspace-name"
-                placeholder="Enter workspace name"
-                value={workspaceName}
-                onChange={(e) => setWorkspaceName(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="workspace-description">Description</Label>
-              <textarea
-                id="workspace-description"
-                placeholder="Enter workspace description (optional)"
-                value={workspaceDescription}
-                onChange={(e) => setWorkspaceDescription(e.target.value)}
-                className="w-full min-h-[80px] px-3 py-2 border border-input bg-background text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
-              />
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsCreateWorkspaceOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleCreateWorkspace} disabled={!workspaceName.trim()}>
-                Create Workspace
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <CreateWorkspaceDialog
+        open={isCreateWorkspaceOpen}
+        onOpenChange={setIsCreateWorkspaceOpen}
+        onSuccess={() => {
+          // Можно добавить обновление списка workspace или другие действия после создания
+          console.log('Workspace created successfully');
+        }}
+      />
     </div>
   );
 }

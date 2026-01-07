@@ -3,11 +3,7 @@
  * Декларативный роутер по паттерну todos
  */
 
-import {
-  WorkspaceTimeEntryPage,
-  WorkspaceDashboardPage,
-  CreateWorkspacePage,
-} from '@/features/workspace/pages';
+import { WorkspaceTimeEntryPage, WorkspaceDashboardPage } from '@/features/workspace/pages';
 
 import type { WorkspaceViewState } from '../model/use-workspace-state';
 
@@ -30,14 +26,10 @@ export function WorkspaceRouter({ workspaceState }: WorkspaceRouterProps) {
     case 'dashboard':
       return <WorkspaceDashboardPage workspace={currentWorkspace} />;
 
-    case 'create':
-      return <CreateWorkspacePage />;
-
     case 'select':
       return <div>Select workspace functionality coming soon</div>;
 
     default:
-      // Fallback к time-entry
-      return <WorkspaceTimeEntryPage workspace={currentWorkspace} />;
+      return <div>Unknown workspace view</div>;
   }
 }

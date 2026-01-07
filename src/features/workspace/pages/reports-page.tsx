@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
+import { ROUTES } from '@/shared/lib/router';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 import { Button } from '@/shared/ui/button';
 
@@ -11,14 +12,14 @@ import type { Workspace } from '@/entities/workspace/model/schema';
  * Reports Page
  * Аналитика и отчеты по workspace
  */
-export function ReportsPage({ workspace: _workspace }: { workspace: Workspace }) {
+export function ReportsPage({ workspace }: { workspace: Workspace }) {
   const router = useRouter();
 
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Reports</h1>
-        <p className="text-muted-foreground">Analytics and insights for your workspace</p>
+        <h1 className="text-3xl font-bold mb-2">{workspace.name} - Reports</h1>
+        <p className="text-muted-foreground">Analytics and insights for {workspace.name}</p>
       </div>
 
       {/* Quick Actions */}
@@ -26,8 +27,10 @@ export function ReportsPage({ workspace: _workspace }: { workspace: Workspace })
         <Button variant="outline" onClick={() => router.back()}>
           ← Back
         </Button>
-        <Button onClick={() => router.push('/workspace/manage')}>Switch Workspace</Button>
-        <Button onClick={() => router.push('/workspace/[id]/time-entry')}>Time Entry</Button>
+        <Button onClick={() => router.push(ROUTES.WORKSPACE_MANAGE)}>Switch Workspace</Button>
+        <Button onClick={() => router.push(ROUTES.WORKSPACE_TIME_ENTRY(workspace.id))}>
+          Time Entry
+        </Button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

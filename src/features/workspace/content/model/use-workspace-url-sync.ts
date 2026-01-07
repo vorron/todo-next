@@ -33,7 +33,7 @@ export function useWorkspaceUrlSync(workspaceState: WorkspaceViewState) {
     // Case 1: No workspaces → create
     if (workspaces.length === 0) {
       isRedirecting.current = true;
-      router.push(ROUTES.WORKSPACE_CREATE);
+      router.push(ROUTES.WORKSPACE_SELECT);
       setTimeout(() => setIsRedirectingState(true), 0);
       return;
     }
@@ -44,7 +44,7 @@ export function useWorkspaceUrlSync(workspaceState: WorkspaceViewState) {
       if (defaultWorkspace) {
         isRedirecting.current = true;
         setTimeout(() => setIsRedirectingState(true), 0);
-        window.location.href = `/workspace/${defaultWorkspace.id}/time-entry`;
+        router.push(`/tracker/${defaultWorkspace.id}/time-entry`);
         return;
       } else {
         isRedirecting.current = true;

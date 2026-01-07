@@ -9,6 +9,9 @@ import { ROUTES } from '@/shared/config/router-config';
 import { slugify } from '@/shared/lib/utils/slugify';
 import { Card, CardContent, CardHeader, CardTitle, Button } from '@/shared/ui';
 
+import { CreateWorkspaceDialog } from '../components';
+import { useCreateWorkspaceDialog } from '../hooks';
+
 import type { Workspace } from '@/entities/workspace/model/schema';
 
 /**
@@ -18,14 +21,15 @@ import type { Workspace } from '@/entities/workspace/model/schema';
 export function WorkspaceHubContent() {
   const router = useRouter();
   const { workspaces, isLoading, error, refetch: _refetch } = useWorkspaces();
+  const createWorkspaceDialog = useCreateWorkspaceDialog();
 
   // Smart redirect logic - prioritize default workspace
   useEffect(() => {
     if (isLoading || error) return;
 
     if (workspaces.length === 0) {
-      // No workspaces → create
-      router.push('/workspace/create');
+      // No workspaces → show create dialog
+      createWorkspaceDialog.openDialog();
       return;
     }
 
@@ -38,7 +42,7 @@ export function WorkspaceHubContent() {
       // Always redirect to default/first workspace
       router.push(`/tracker/${slugify(targetWorkspace.name)}-${targetWorkspace.id}/time-entry`);
     }
-  }, [workspaces, isLoading, error, router]);
+  }, [workspaces, isLoading, error, router, createWorkspaceDialog]);
 
   if (isLoading) {
     return (
@@ -140,7 +144,7 @@ export function WorkspaceHubContent() {
         {/* Create new workspace card */}
         <Card
           className="cursor-pointer hover:shadow-md transition-shadow border-dashed"
-          onClick={() => router.push('/workspace/create')}
+          onClick={createWorkspaceDialog.openDialog}
         >
           <CardHeader>
             <CardTitle className="text-center text-muted-foreground">
@@ -161,6 +165,16 @@ export function WorkspaceHubContent() {
           Manage Workspaces
         </Button>
       </div>
+
+      {/* Create Workspace Dialog */}
+      <CreateWorkspaceDialog
+        open={createWorkspaceDialog.isOpen}
+        onOpenChange={createWorkspaceDialog.setIsOpen}
+        onSuccess={() => {
+          // После создания workspace обновим данные без перезагрузки страницы
+          _refetch();
+        }}
+      />
     </div>
   );
 }

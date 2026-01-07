@@ -1,50 +1,14 @@
-import { ProjectsPage } from '@/features/workspace/pages';
+import { WorkspaceProjectsPage } from '@/screens/workspace-projects';
 import { getRouteMetadata } from '@/shared/lib/router';
-import { parseSlugId } from '@/shared/lib/utils/slug-id';
 
-import type { Workspace } from '@/entities/workspace/model/schema';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = getRouteMetadata('workspace.projects');
+type WorkspaceProjectsParams = { id: string };
 
-/**
- * Tracker Projects Page
- * URL: /tracker/[id]/projects
- */
-export default function WorkspaceProjectsPage({ params }: { params: { id: string } }) {
-  const { workspaceId } = parseSlugId(params.id);
+export const metadata: Metadata = getRouteMetadata('workspaceProjects');
 
-  // Временный хардкод до API
-  const workspaceData: Record<string, Workspace> = {
-    w2: {
-      id: 'w2',
-      name: 'Team Workspace',
-      description: 'Projects workspace',
-      ownerId: '1',
-      isDefault: true,
-      createdAt: '2026-01-01T08:00:00.000Z',
-      updatedAt: '2026-01-01T08:00:00.000Z',
-    },
-    '63e6': {
-      id: '63e6',
-      name: 'Тестовое пространстово',
-      description: 'Тестовое пространстово для тестирования',
-      ownerId: '4',
-      isDefault: false,
-      createdAt: '2026-01-06T07:44:08.012Z',
-      updatedAt: '2026-01-06T07:44:08.012Z',
-    },
-  };
+export default async function Page({ params }: { params: Promise<WorkspaceProjectsParams> }) {
+  const { id } = await params;
 
-  const workspace = workspaceData[workspaceId] || {
-    id: workspaceId || 'unknown',
-    name: `Workspace ${workspaceId}`,
-    description: 'Projects workspace',
-    ownerId: 'temp',
-    isDefault: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-
-  return <ProjectsPage workspace={workspace} />;
+  return <WorkspaceProjectsPage params={{ id }} />;
 }

@@ -20,8 +20,7 @@ export const ROUTES = {
   TODOS: '/todos',
   TRACKER: '/tracker', // Tracker section implemented as workspace functionality
   WORKSPACE: '/tracker',
-  WORKSPACE_CREATE: '/workspace/create',
-  WORKSPACE_SELECT: '/workspace/select',
+  WORKSPACE_SELECT: '/tracker/select',
   WORKSPACE_MANAGE: '/tracker/manage',
   WORKSPACE_DASHBOARD: (id: string) => `/tracker/${id}`,
   WORKSPACE_TIME_ENTRY: (id: string) => `/tracker/${id}/time-entry`, // Direct time entry URL
@@ -248,24 +247,9 @@ export const statefulRouteConfigData = {
           },
         },
       },
-      create: {
-        key: 'create',
-        urlPattern: '/workspace/create',
-        metadata: () => ({ title: 'Create Workspace' }) satisfies Metadata,
-        header: {
-          type: 'static' as const,
-          descriptor: {
-            title: 'Create Workspace',
-            breadcrumbs: [
-              { href: ROUTES.WORKSPACE, label: 'Workspaces' },
-              { href: ROUTES.WORKSPACE_CREATE, label: 'Create' },
-            ] as Array<{ href: string; label: string }>,
-          },
-        },
-      },
       select: {
         key: 'select',
-        urlPattern: '/workspace/select',
+        urlPattern: '/tracker/select',
         metadata: () => ({ title: 'Select Workspace' }) satisfies Metadata,
         header: {
           type: 'static' as const,
@@ -388,6 +372,106 @@ export const dynamicRouteConfigData = {
           { href: ROUTES.TODOS, label: 'Todos' },
           { href: ROUTES.TODO_DETAIL(todo.id), label: todo.text },
           { href: ROUTES.TODO_EDIT(todo.id), label: 'Edit' },
+        ],
+      }),
+    },
+  },
+  workspaceReports: {
+    path: '/tracker/:id/reports',
+    protected: true,
+    metadata: (title: string): Metadata => ({
+      title: `${title} - Reports`,
+      description: `Analytics and insights for ${title}`,
+    }),
+    header: {
+      type: 'entity',
+      fallback: {
+        title: 'Workspace Reports',
+        breadcrumbs: [
+          { href: ROUTES.WORKSPACE, label: 'Tracker' },
+          { href: '#', label: 'Reports' },
+        ],
+      },
+      build: (data: { id: string; text: string }) => ({
+        title: `${data.text} - Reports`,
+        breadcrumbs: [
+          { href: ROUTES.WORKSPACE, label: 'Tracker' },
+          { href: ROUTES.WORKSPACE_REPORTS(data.id), label: `${data.text} - Reports` },
+        ],
+      }),
+    },
+  },
+  workspaceDashboard: {
+    path: '/tracker/:id',
+    protected: true,
+    metadata: (title: string): Metadata => ({
+      title: `${title} - Dashboard`,
+      description: `Workspace dashboard for ${title}`,
+    }),
+    header: {
+      type: 'entity',
+      fallback: {
+        title: 'Workspace Dashboard',
+        breadcrumbs: [
+          { href: ROUTES.WORKSPACE, label: 'Tracker' },
+          { href: '#', label: 'Dashboard' },
+        ],
+      },
+      build: (data: { id: string; text: string }) => ({
+        title: data.text,
+        breadcrumbs: [
+          { href: ROUTES.WORKSPACE, label: 'Tracker' },
+          { href: ROUTES.WORKSPACE_DASHBOARD(data.id), label: data.text },
+        ],
+      }),
+    },
+  },
+  workspaceProjects: {
+    path: '/tracker/:id/projects',
+    protected: true,
+    metadata: (title: string): Metadata => ({
+      title: `${title} - Projects`,
+      description: `Projects for ${title}`,
+    }),
+    header: {
+      type: 'entity',
+      fallback: {
+        title: 'Workspace Projects',
+        breadcrumbs: [
+          { href: ROUTES.WORKSPACE, label: 'Tracker' },
+          { href: '#', label: 'Projects' },
+        ],
+      },
+      build: (data: { id: string; text: string }) => ({
+        title: `${data.text} - Projects`,
+        breadcrumbs: [
+          { href: ROUTES.WORKSPACE, label: 'Tracker' },
+          { href: ROUTES.WORKSPACE_PROJECTS(data.id), label: `${data.text} - Projects` },
+        ],
+      }),
+    },
+  },
+  workspaceTimeEntry: {
+    path: '/tracker/:id/time-entry',
+    protected: true,
+    metadata: (title: string): Metadata => ({
+      title: `${title} - Time Entry`,
+      description: `Time tracking for ${title}`,
+    }),
+    header: {
+      type: 'entity',
+      fallback: {
+        title: 'Time Entry',
+        breadcrumbs: [
+          { href: ROUTES.WORKSPACE, label: 'Tracker' },
+          { href: '#', label: 'Time Entry' },
+        ],
+      },
+      build: (data: { id: string; text: string }) => ({
+        title: `${data.text} - Time Entry`,
+        breadcrumbs: [
+          { href: ROUTES.WORKSPACE, label: 'Tracker' },
+          { href: ROUTES.WORKSPACE_TIME_ENTRY(data.id), label: `${data.text} - Time Entry` },
         ],
       }),
     },

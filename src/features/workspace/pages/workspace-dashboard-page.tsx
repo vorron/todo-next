@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
@@ -16,8 +16,11 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  ConfirmationDialog,
 } from '@/shared/ui';
 
+import { CreateWorkspaceDialog } from '../components';
+import { useCreateWorkspaceDialog } from '../hooks';
 import { useDeleteWorkspace } from '../model/mutations';
 
 import type { Workspace } from '@/entities/workspace/model/schema';
@@ -29,21 +32,25 @@ export interface WorkspaceDashboardPageProps {
 export function WorkspaceDashboardPage({ workspace }: WorkspaceDashboardPageProps) {
   const router = useRouter();
   const { deleteWorkspace, isDeleting } = useDeleteWorkspace();
+  const createWorkspaceDialog = useCreateWorkspaceDialog();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const _title = useMemo(() => workspace?.name || 'Dashboard', [workspace]);
 
   const handleDeleteWorkspace = async () => {
     if (!workspace) return;
 
-    if (
-      confirm(`Are you sure you want to delete "${workspace.name}"? This action cannot be undone.`)
-    ) {
-      try {
-        await deleteWorkspace(workspace.id);
-        // После успешного удаления редирект на /workspace/manage
-        router.push('/workspace/manage');
-      } catch (error) {
-        console.error('Failed to delete workspace:', error);
-      }
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!workspace) return;
+
+    try {
+      await deleteWorkspace(workspace.id);
+      // После успешного удаления редирект на /tracker/manage
+      router.push('/tracker/manage');
+    } catch (error) {
+      console.error('Failed to delete workspace:', error);
     }
   };
 
@@ -226,23 +233,30 @@ export function WorkspaceDashboardPage({ workspace }: WorkspaceDashboardPageProp
                   Create a new workspace for your team
                 </p>
               </div>
-              <Button onClick={() => router.push('/workspace/create')}>Create</Button>
+              <Button onClick={createWorkspaceDialog.openDialog}>Create</Button>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
-            <p>No recent activity</p>
-            <p className="text-sm mt-2">Start by creating your first task or project</p>
-          </div>
-        </CardContent>
-      </Card>
+      <CreateWorkspaceDialog
+        open={createWorkspaceDialog.isOpen}
+        onOpenChange={createWorkspaceDialog.setIsOpen}
+        onSuccess={() => {
+          router.push('/tracker/manage'); // Перейти к управлению workspace после создания
+        }}
+      />
+
+      <ConfirmationDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        title="Delete Workspace"
+        description={`Are you sure you want to delete "${workspace.name}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleConfirmDelete}
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

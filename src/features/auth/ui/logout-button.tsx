@@ -62,14 +62,13 @@ export function LogoutButton({
 
       {withConfirmation && (
         <ConfirmationDialog
-          isOpen={showDialog}
-          onClose={() => setShowDialog(false)}
+          open={showDialog}
+          onOpenChange={setShowDialog}
           onConfirm={handleConfirm}
           title="Ready to leave?"
           description="Are you sure you want to sign out? You'll need to sign in again to access your todos."
-          confirmLabel="Sign out"
-          cancelLabel="Stay logged in"
-          variant="warning"
+          confirmText="Sign out"
+          cancelText="Stay logged in"
           isLoading={isLoading}
         />
       )}

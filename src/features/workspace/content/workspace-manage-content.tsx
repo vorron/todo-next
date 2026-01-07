@@ -1,11 +1,12 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { useWorkspaces } from '@/features/workspace/model/queries';
 import { Card, CardContent, CardHeader, CardTitle, Button } from '@/shared/ui';
 
-import type { Workspace } from '@/entities/workspace/model/schema';
+import { CreateWorkspaceDialog } from '../components';
+import { useCreateWorkspaceDialog } from '../hooks';
 
 /**
  * Workspace Manage Content
@@ -13,10 +14,8 @@ import type { Workspace } from '@/entities/workspace/model/schema';
  */
 export function WorkspaceManageContent() {
   const router = useRouter();
-  const pathname = usePathname();
   const { workspaces, isLoading, error, refetch } = useWorkspaces();
-
-  const isTrackerPath = pathname.includes('/tracker');
+  const createWorkspaceDialog = useCreateWorkspaceDialog();
 
   if (isLoading) {
     return (
@@ -32,22 +31,21 @@ export function WorkspaceManageContent() {
     return (
       <div className="container mx-auto py-8">
         <div className="text-center">
-          <p className="text-red-500">Failed to load workspaces</p>
-          <Button onClick={refetch} className="mt-4">
-            Retry
-          </Button>
+          <h1 className="text-3xl font-bold mb-2">Error</h1>
+          <p className="text-muted-foreground mb-4">Failed to load workspaces</p>
+          <Button onClick={() => refetch()}>Retry</Button>
         </div>
       </div>
     );
   }
 
-  if (workspaces.length === 0) {
+  if (!workspaces || workspaces.length === 0) {
     return (
       <div className="container mx-auto py-8">
         <div className="text-center">
           <h1 className="text-3xl font-bold mb-2">No Workspaces</h1>
           <p className="text-muted-foreground mb-4">Create your first workspace to get started</p>
-          <Button onClick={() => router.push('/workspace/create')}>Create Workspace</Button>
+          <Button onClick={createWorkspaceDialog.openDialog}>Create Workspace</Button>
         </div>
       </div>
     );
@@ -56,49 +54,32 @@ export function WorkspaceManageContent() {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">{isTrackerPath ? 'Tracker' : 'Workspaces'}</h1>
-        <p className="text-muted-foreground">
-          {isTrackerPath
-            ? 'Choose a tracker workspace to work with or create a new one'
-            : 'Choose a workspace to work with or create a new one'}
-        </p>
+        <h1 className="text-3xl font-bold mb-2">Manage Workspaces</h1>
+        <p className="text-muted-foreground">Select a workspace to work with or create a new one</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Workspace cards */}
-        {workspaces.map((workspace: Workspace) => (
+        {workspaces.map((workspace) => (
           <Card
             key={workspace.id}
             className="cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() =>
-              router.push(`${isTrackerPath ? '/tracker' : '/workspace'}/${workspace.id}/time-entry`)
-            }
+            onClick={() => router.push(`/tracker/${workspace.id}/time-entry`)}
           >
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                {workspace.name}
-                {workspace.isDefault && (
-                  <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                    Default
-                  </span>
-                )}
-              </CardTitle>
+              <CardTitle className="text-center">{workspace.name}</CardTitle>
             </CardHeader>
             <CardContent>
-              {workspace.description && (
-                <p className="text-sm text-muted-foreground mb-4">{workspace.description}</p>
-              )}
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-muted-foreground">
-                  Created: {new Date(workspace.createdAt).toLocaleDateString()}
-                </span>
-                <div className="flex gap-2">
+              <div className="text-center space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  {workspace.description || 'No description'}
+                </p>
+                <div className="flex gap-2 justify-center">
                   <Button
-                    size="sm"
                     variant="outline"
+                    size="sm"
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/workspace/${workspace.id}`);
+                      router.push(`/tracker/${workspace.id}`);
                     }}
                   >
                     Dashboard
@@ -107,7 +88,7 @@ export function WorkspaceManageContent() {
                     size="sm"
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/workspace/${workspace.id}/time-entry`);
+                      router.push(`/tracker/${workspace.id}/time-entry`);
                     }}
                   >
                     Open
@@ -121,28 +102,35 @@ export function WorkspaceManageContent() {
         {/* Create new workspace card */}
         <Card
           className="cursor-pointer hover:shadow-md transition-shadow border-dashed"
-          onClick={() => router.push('/workspace/create')}
+          onClick={createWorkspaceDialog.openDialog}
         >
           <CardHeader>
-            <CardTitle className="text-center text-muted-foreground">
-              + Create New Workspace
-            </CardTitle>
+            <CardTitle className="text-center text-muted-foreground">+ Create Workspace</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground text-center">
-              Create a new workspace for your team
-            </p>
+            <div className="text-center">
+              <p className="text-muted-foreground">Create a new workspace to organize your work</p>
+            </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Quick actions */}
-      <div className="mt-8 flex justify-center gap-4">
+      <div className="mt-8 flex justify-center">
         <Button variant="outline" onClick={() => router.back()}>
           Back
         </Button>
-        <Button onClick={() => router.push('/workspace')}>Go to Default Workspace</Button>
+        <Button onClick={() => router.push('/tracker')}>Go to Default Workspace</Button>
       </div>
+
+      {/* Create Workspace Dialog */}
+      <CreateWorkspaceDialog
+        open={createWorkspaceDialog.isOpen}
+        onOpenChange={createWorkspaceDialog.setIsOpen}
+        onSuccess={() => {
+          refetch(); // Обновить список workspace после создания
+        }}
+      />
     </div>
   );
 }

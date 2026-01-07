@@ -1,22 +1,14 @@
-import { WorkspaceTimeEntryPage } from '@/features/workspace/pages';
+import { WorkspaceTimeEntryPage } from '@/screens/workspace-time-entry';
+import { getRouteMetadata } from '@/shared/lib/router';
 
-import type { Workspace } from '@/entities/workspace/model/schema';
+import type { Metadata } from 'next';
 
 type WorkspaceTimeParams = { id: string };
+
+export const metadata: Metadata = getRouteMetadata('workspaceTimeEntry');
 
 export default async function Page({ params }: { params: Promise<WorkspaceTimeParams> }) {
   const { id } = await params;
 
-  // Для time entry нужно получить workspace данные
-  // В реальном приложении здесь будет запрос к API
-  const workspace: Workspace = {
-    id,
-    name: 'Workspace',
-    isDefault: false,
-    ownerId: 'temp',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  }; // Временное решение
-
-  return <WorkspaceTimeEntryPage workspace={workspace} />;
+  return <WorkspaceTimeEntryPage params={{ id }} />;
 }

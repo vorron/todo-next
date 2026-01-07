@@ -1,5 +1,7 @@
 'use client';
 
+import { useMemo } from 'react';
+
 import { useRouter } from 'next/navigation';
 
 import { XCircle } from 'lucide-react';
@@ -13,13 +15,17 @@ export function TodoEditPage({ todoId }: { todoId: string }) {
   const router = useRouter();
 
   const { todo, isLoading, error } = useTodoById(todoId);
-  useHeaderFromTemplate(todo, 'todoEdit');
+
+  // Memoize todo data to prevent infinite re-renders
+  const memoizedTodo = useMemo(() => todo, [todo]);
+
+  useHeaderFromTemplate(memoizedTodo, 'todoEdit');
 
   if (isLoading) {
     return <DataLoadingState message="Loading todo..." />;
   }
 
-  if (error || !todo) {
+  if (error || !memoizedTodo) {
     return (
       <ErrorStateCard
         icon={<XCircle className="w-8 h-8 text-red-600" />}
@@ -35,7 +41,7 @@ export function TodoEditPage({ todoId }: { todoId: string }) {
     <div className="container mx-auto py-8 px-4 max-w-4xl space-y-6">
       <div>
         <BackButton
-          href={ROUTES.TODO_DETAIL?.(todo.id) || '#'}
+          href={ROUTES.TODO_DETAIL?.(memoizedTodo.id) || '#'}
           label="Back to Todo"
           className="mb-4"
         />

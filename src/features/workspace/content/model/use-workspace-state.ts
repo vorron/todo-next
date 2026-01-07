@@ -23,14 +23,13 @@ export interface WorkspaceViewState {
 
   // URL state
   workspaceId: string | null;
-  viewMode: 'dashboard' | 'time-entry' | 'create' | 'select';
+  viewMode: 'dashboard' | 'time-entry' | 'select';
 
   // Actions
   actions: {
     // Navigation
     goToDashboard: (id: string) => void;
     goToTimeEntry: (id: string) => void;
-    goToCreate: () => void;
     goToSelect: () => void;
 
     // Workspace management
@@ -78,21 +77,18 @@ export function useWorkspaceState(): WorkspaceViewState {
     () => ({
       // Navigation actions
       goToDashboard: (id: string) => {
-        router.push(`/workspace/${id}`);
+        router.push(`/tracker/${id}`);
       },
       goToTimeEntry: (id: string) => {
-        router.push(`/workspace/${id}/time`);
-      },
-      goToCreate: () => {
-        router.push('/workspace/create');
+        router.push(`/tracker/${id}/time`);
       },
       goToSelect: () => {
-        router.push('/workspace/select');
+        router.push('/tracker/select');
       },
 
       // Workspace management
       setCurrentWorkspace: (id: string) => {
-        router.push(`/workspace/${id}/time`);
+        router.push(`/tracker/${id}/time`);
       },
       createWorkspace,
     }),
@@ -131,10 +127,9 @@ export function useWorkspaceState(): WorkspaceViewState {
  */
 function getViewModeFromParams(
   params: Record<string, unknown>,
-): 'dashboard' | 'time-entry' | 'create' | 'select' {
+): 'dashboard' | 'time-entry' | 'select' {
   const pathname = (params.pathname as string) || '';
 
-  if (pathname.includes('/create')) return 'create';
   if (pathname.includes('/select')) return 'select';
   if (pathname.includes('/time')) return 'time-entry';
 
