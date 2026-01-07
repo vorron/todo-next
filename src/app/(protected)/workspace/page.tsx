@@ -1,5 +1,15 @@
-import { WorkspacePage } from '@/screens/workspace';
+import { WorkspaceHubScreen } from '@/screens/workspace';
+import { getRouteMetadata } from '@/shared/lib/router';
 
-export default function Page() {
-  return <WorkspacePage />;
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = getRouteMetadata('workspace');
+
+/**
+ * Workspace Hub Page
+ * URL: /workspace
+ * Overview всех workspace + smart actions
+ */
+export default function WorkspacePage() {
+  return <WorkspaceHubScreen />;
 }

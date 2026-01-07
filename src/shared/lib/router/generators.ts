@@ -6,16 +6,17 @@ import {
   TITLE_POSTFIX,
 } from '../../config/router-config';
 
-import type { RouteConfig, DynamicRouteConfig, StatefulRouteConfig } from './config-types';
+import type {
+  NavigationConfig,
+  RouteConfig,
+  DynamicRouteConfig,
+  StatefulRouteConfig,
+} from './config-types';
 import type { Metadata } from 'next';
 
 // === Type Guards для безопасной типизации ===
 function hasNavigation(config: unknown): config is {
-  navigation: {
-    label: string;
-    order?: number;
-    hideWhenAuthenticated?: boolean;
-  };
+  navigation: NavigationConfig;
 } {
   return typeof config === 'object' && config !== null && 'navigation' in config;
 }
@@ -92,12 +93,16 @@ export const statefulRoutes = Object.fromEntries(
 export const routes = { ...paths, ...dynamicPaths, ...statefulRoutes } as const;
 
 // === Navigation ===
-type NavigationItem = {
+export type NavigationItem = {
   label: string;
   href: string;
   requiresAuth: boolean;
   hideWhenAuthenticated?: boolean;
+  hideFromMainMenu?: boolean;
+  level?: 'section' | 'page';
+  parent?: string;
   order?: number;
+  icon?: string;
 };
 
 export const navigationConfig = Object.fromEntries(
@@ -106,18 +111,23 @@ export const navigationConfig = Object.fromEntries(
     .map(([key, config]) => [
       key,
       {
-        label: (config as { navigation: { label: string } }).navigation.label,
+        label: (config as RouteConfig & { navigation: NavigationConfig }).navigation.label,
         href: config.path,
         requiresAuth: isProtectedRoute(config),
-        hideWhenAuthenticated: (config as { navigation: { hideWhenAuthenticated?: boolean } })
-          .navigation.hideWhenAuthenticated,
-        order: (config as { navigation: { order?: number } }).navigation.order,
+        hideWhenAuthenticated: (config as RouteConfig & { navigation: NavigationConfig }).navigation
+          ?.hideWhenAuthenticated,
+        hideFromMainMenu: (config as RouteConfig & { navigation: NavigationConfig }).navigation
+          ?.hideFromMainMenu,
+        level: (config as RouteConfig & { navigation: NavigationConfig }).navigation?.level,
+        parent: (config as RouteConfig & { navigation: NavigationConfig }).navigation?.parent,
+        order: (config as RouteConfig & { navigation: NavigationConfig }).navigation?.order,
+        icon: (config as RouteConfig & { navigation: NavigationConfig }).navigation?.icon,
       } as NavigationItem,
     ]),
 ) as Record<keyof typeof routeConfigData, NavigationItem>;
 
 // === Stateful Navigation ===
-type StatefulNavigationItem = NavigationItem & {
+export type StatefulNavigationItem = NavigationItem & {
   isStateful: true;
   states: Record<
     string,
@@ -125,6 +135,8 @@ type StatefulNavigationItem = NavigationItem & {
       label: string;
       href: string;
       order?: number;
+      level?: 'section' | 'page';
+      parent?: string;
     }
   >;
 };
@@ -134,22 +146,35 @@ export const statefulNavigationConfig = Object.fromEntries(
     key,
     {
       label: hasNavigation(config)
-        ? (config as { navigation: { label: string } }).navigation.label
+        ? (config as StatefulRouteConfig & { navigation: NavigationConfig }).navigation.label
         : key,
       href: config.path,
       requiresAuth: isProtectedRoute(config),
       order: hasNavigation(config)
-        ? (config as { navigation: { order?: number } }).navigation.order
+        ? (config as StatefulRouteConfig & { navigation: NavigationConfig }).navigation.order
         : undefined,
       hideWhenAuthenticated: hasNavigation(config)
-        ? (config as { navigation: { hideWhenAuthenticated?: boolean } }).navigation
+        ? (config as StatefulRouteConfig & { navigation: NavigationConfig }).navigation
             .hideWhenAuthenticated
+        : undefined,
+      hideFromMainMenu: hasNavigation(config)
+        ? (config as StatefulRouteConfig & { navigation: NavigationConfig }).navigation
+            .hideFromMainMenu
+        : undefined,
+      level: hasNavigation(config)
+        ? (config as StatefulRouteConfig & { navigation: NavigationConfig }).navigation.level
+        : undefined,
+      parent: hasNavigation(config)
+        ? (config as StatefulRouteConfig & { navigation: NavigationConfig }).navigation.parent
+        : undefined,
+      icon: hasNavigation(config)
+        ? (config as StatefulRouteConfig & { navigation: NavigationConfig }).navigation.icon
         : undefined,
       isStateful: true,
       states: Object.fromEntries(
         Object.entries(config.states).map(([stateKey, stateConfig]) => {
           const navConfig = hasNavigation(stateConfig)
-            ? (stateConfig as { navigation: { label: string; order?: number } }).navigation
+            ? (stateConfig as { navigation: NavigationConfig }).navigation
             : undefined;
           return [
             stateKey,
@@ -159,6 +184,8 @@ export const statefulNavigationConfig = Object.fromEntries(
                 ? (stateConfig as { urlPattern: string }).urlPattern
                 : config.path,
               order: navConfig?.order,
+              level: navConfig?.level,
+              parent: navConfig?.parent,
             },
           ];
         }),
@@ -169,9 +196,31 @@ export const statefulNavigationConfig = Object.fromEntries(
 
 // === Main Navigation ===
 export const mainNavigation = [
-  ...Object.values(navigationConfig).filter((item) => !item.hideWhenAuthenticated),
+  ...Object.values(navigationConfig)
+    .filter((item) => !item.hideWhenAuthenticated)
+    .filter((item) => !item.hideFromMainMenu)
+    .filter((item) => item.level !== 'page'), // Только разделы в главном меню
   ...Object.values(statefulNavigationConfig)
     .filter((item) => !item.hideWhenAuthenticated)
+    .filter((item) => !item.hideFromMainMenu)
+    .filter((item) => item.level !== 'page') // Только разделы в главном меню
+    .filter(
+      (statefulItem) =>
+        !Object.values(navigationConfig).some(
+          (staticItem) => staticItem.href === statefulItem.href,
+        ),
+    )
+    .map(({ states: _states, ...item }) => item),
+].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+
+// === Section Navigation (включая страницы) ===
+export const sectionNavigation = [
+  ...Object.values(navigationConfig)
+    .filter((item) => !item.hideWhenAuthenticated)
+    .filter((item) => !item.hideFromMainMenu),
+  ...Object.values(statefulNavigationConfig)
+    .filter((item) => !item.hideWhenAuthenticated)
+    .filter((item) => !item.hideFromMainMenu)
     .filter(
       (statefulItem) =>
         !Object.values(navigationConfig).some(

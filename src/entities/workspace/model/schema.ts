@@ -8,6 +8,7 @@ export const workspaceSсhema = z.object({
     .max(500, 'Todo text must be at most 500 characters')
     .trim(),
   description: z.string().optional(),
+  isDefault: z.boolean().default(false),
   ownerId: z.string().min(1, 'Owner ID is required'),
   createdAt: z
     .string()
@@ -22,11 +23,15 @@ export const workspaceSсhema = z.object({
 export type Workspace = z.infer<typeof workspaceSсhema>;
 
 // Схема для создания workspace
-export const createWorkspaceSchema = workspaceSсhema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
+export const createWorkspaceSchema = workspaceSсhema
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+  })
+  .partial({
+    isDefault: true, // isDefault опционален при создании
+  });
 
 // Схема для обновления workspace
 export const updateWorkspaceSchema = workspaceSсhema.partial().required({ id: true });

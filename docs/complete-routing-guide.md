@@ -28,8 +28,11 @@
 - **Static Routes** - традиционные Next.js маршруты
 - **Dynamic Routes** - маршруты с параметрами (`/todos/:id`)
 - **Stateful Routes** - client-side навигация с URL синхронизацией
-- **Type Safety** - строгая типизация на всех уровнях
-- **Auto-generation** - автоматическая генерация утилит из конфигурации
+- **Hierarchical Navigation** - поддержка sections/pages иерархии
+- **Automatic Generation** - типы и функции из конфигурации
+- **Composable Hooks** - разделение ответственности через композицию
+- **Type Safety** - строгая типизация без `any`
+- **Tracker/Workspace Integration** - UI концепция через workspace реализацию
 - **Validation** - runtime валидация с кешированием
 - **Developer Experience** - интуитивный API и утилиты
 - **Error Boundaries** - graceful error handling

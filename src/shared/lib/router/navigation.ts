@@ -2,54 +2,32 @@
 
 import { useRouter } from 'next/navigation';
 
-import { ROUTES, type NavigationFunctions } from '../../config/router-config';
+import { useGeneratedNavigation } from './use-generated-navigation';
+import { useHierarchicalNavigation } from './use-hierarchical-navigation';
+import { type NavigationFunctions } from '../../config/router-config';
+
+/**
+ * Расширенные навигационные функции с поддержкой иерархии
+ * Композиция двух хуков для разделения ответственности
+ */
+export type ExtendedNavigationFunctions = NavigationFunctions &
+  ReturnType<typeof useHierarchicalNavigation>;
 
 /**
  * Навигационный hook для приложения
- * Специфичная реализация для данного приложения
+ * Специфичная реализация для данного приложения с поддержкой иерархии
  */
-export function useNavigation(): NavigationFunctions {
+export function useNavigation(): ExtendedNavigationFunctions {
   const router = useRouter();
 
-  // Разделяем статические и динамические маршруты
-  const staticRoutes = Object.entries(ROUTES).filter(([_, route]) => typeof route === 'string');
-  const dynamicRoutes = Object.entries(ROUTES).filter(([_, route]) => typeof route === 'function');
+  // Базовые навигационные функции из ROUTES
+  const baseNavigation = useGeneratedNavigation(router);
 
-  // Генерируем статические функции
-  const staticFunctions = staticRoutes.reduce(
-    (acc, [key, route]) => {
-      const functionName = `navigateTo${key
-        .split('_')
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
-        .join('')}`;
-      acc[functionName] = () => router.push(route as string);
-      return acc;
-    },
-    {} as Record<string, () => void>,
-  );
-
-  // Генерируем динамические функции
-  const dynamicFunctions = dynamicRoutes.reduce(
-    (acc, [key, route]) => {
-      const functionName = `navigateTo${key
-        .split('_')
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
-        .join('')}`;
-      acc[functionName] = (id: string) => router.push((route as (id: string) => string)(id));
-      return acc;
-    },
-    {} as Record<string, (id: string) => void>,
-  );
+  // Утилиты иерархической навигации
+  const hierarchicalNavigation = useHierarchicalNavigation();
 
   return {
-    // Базовая функция
-    navigateTo: (path: string) => router.push(path),
-
-    // Все сгенерированные функции
-    ...staticFunctions,
-    ...dynamicFunctions,
-  } as NavigationFunctions;
+    ...baseNavigation,
+    ...hierarchicalNavigation,
+  } as ExtendedNavigationFunctions;
 }
-
-// Экспортируем типы для удобного использования
-export type { NavigationFunctions };

@@ -2,38 +2,49 @@
 
 import { useState } from 'react';
 
+import { useRouter } from 'next/navigation';
+
 import { Card, CardContent, CardHeader, CardTitle, Button, Input, Label } from '@/shared/ui';
 
-import { useWorkspaceContext } from '../model/workspace-context';
+import { useCreateWorkspace } from '../model/mutations';
 
 export function CreateWorkspacePage() {
+  const router = useRouter();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const { actions, refetch, isCreating } = useWorkspaceContext();
+  const { createWorkspace, isCreating } = useCreateWorkspace();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
 
     try {
-      await actions.createWorkspace({
+      await createWorkspace({
         name: name.trim(),
         description: description.trim() || undefined,
-        ownerId: '4', // Временно захардкожен, потом взять из auth
+        ownerId: 'user-1', // Временно, потом взять из auth
       });
 
       // Очистка формы после успешного создания
       setName('');
       setDescription('');
 
-      // Возвращаемся к выбору воркспейса
-      actions.setCurrentWorkspace(null);
-
-      // Обновляем список воркспейсов
-      refetch();
+      // Перенаправляем на select workspace
+      router.push('/workspace/select');
     } catch (error) {
-      // Ошибка уже обработана в хуке
-      console.error('Create workspace failed:', error);
+      console.error('Failed to create workspace:', error);
+    }
+  };
+
+  const handleCancel = () => {
+    // Если есть введенные данные, спросим подтверждение
+    if (name.trim() || description.trim()) {
+      if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
+        router.back();
+      }
+    } else {
+      // Если форма пуста, просто возвращаемся назад
+      router.back();
     }
   };
 
@@ -72,9 +83,20 @@ export function CreateWorkspacePage() {
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={!name.trim() || isCreating}>
-                {isCreating ? 'Creating...' : 'Create Workspace'}
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={handleCancel}
+                  disabled={isCreating}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1" disabled={!name.trim() || isCreating}>
+                  {isCreating ? 'Creating...' : 'Create Workspace'}
+                </Button>
+              </div>
             </form>
           </CardContent>
         </Card>

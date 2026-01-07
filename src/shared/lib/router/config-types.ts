@@ -10,12 +10,33 @@ export type RoutePath = StaticPath | DynamicPath;
 
 export type RouteParams = Record<string, string | number>;
 
+/**
+ * Уровни навигации для иерархической структуры
+ */
+export type NavigationLevel = 'section' | 'page';
+
+/**
+ * Расширенная конфигурация навигации с поддержкой иерархии
+ */
+export type NavigationConfig = {
+  readonly label: string;
+  readonly order?: number;
+  readonly hideWhenAuthenticated?: boolean;
+  readonly hideFromMainMenu?: boolean;
+  readonly level?: NavigationLevel;
+  readonly parent?: string;
+  readonly icon?: string;
+};
+
 export type NavItem<T extends RoutePath = RoutePath> = {
   readonly label: string;
   readonly href: T;
   readonly icon?: string;
   readonly requiresAuth?: boolean;
   readonly hideWhenAuthenticated?: boolean;
+  readonly hideFromMainMenu?: boolean;
+  readonly level?: NavigationLevel;
+  readonly parent?: string;
   readonly order?: number;
 };
 
@@ -49,11 +70,7 @@ export type RouteGuard = {
 type BaseRouteConfig = {
   path: string;
   metadata: Metadata;
-  navigation?: {
-    label: string;
-    order?: number;
-    hideWhenAuthenticated?: boolean;
-  };
+  navigation?: NavigationConfig;
   header?: HeaderTemplate;
   layout?: 'default' | 'auth' | 'dashboard';
 };
@@ -94,11 +111,7 @@ export type StatefulRouteConfig<T extends Record<string, unknown> = Record<strin
         component?: string; // путь к компоненту
         metadata?: (data?: unknown) => Metadata;
         header?: HeaderTemplate;
-        navigation?: {
-          label: string;
-          order?: number;
-          hideWhenAuthenticated?: boolean;
-        };
+        navigation?: NavigationConfig;
         urlPattern?: string; // опциональный паттерн для URL синхронизации
       }
     >;

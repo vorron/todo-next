@@ -3,9 +3,15 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { getBreadcrumbs, mainNavigation, ROUTES } from '@/shared/lib/router';
+import { getBreadcrumbs } from '@/shared/lib/router';
 import { cn } from '@/shared/lib/utils';
 import { useHeader } from '@/shared/ui';
+
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+  current?: boolean;
+}
 
 const SEGMENT_LABELS: Record<string, string> = {
   todos: 'Todos',
@@ -13,24 +19,18 @@ const SEGMENT_LABELS: Record<string, string> = {
   settings: 'Settings',
   about: 'About',
   edit: 'Edit',
+  workspace: 'Tracker',
+  manage: 'Manage',
+  select: 'Select',
+  create: 'Create',
+  reports: 'Reports',
+  projects: 'Projects',
+  'time-entry': 'Time Entry',
 };
 
-function formatCrumbLabel(label: string) {
-  if (/^\d+$/.test(label)) return 'Todo';
+function formatCrumbLabel(label: string): string {
+  if (/^\d+$/.test(label)) return label; // Keep workspace ID as is for now
   return SEGMENT_LABELS[label] ?? label;
-}
-
-function getPageTitle(pathname: string) {
-  if (pathname.endsWith('/edit')) return 'Edit';
-  if (pathname.startsWith(ROUTES.TODOS + '/')) return 'Todo';
-
-  const match = mainNavigation.find((item) => item.href === pathname);
-  if (match) return match.label;
-
-  const last = pathname.split('/').filter(Boolean).at(-1);
-  if (!last) return '';
-
-  return formatCrumbLabel(last);
 }
 
 export function HeaderBreadcrumbs({ className }: { className?: string }) {
@@ -42,7 +42,17 @@ export function HeaderBreadcrumbs({ className }: { className?: string }) {
   const overrideTitle = isOverrideForCurrentPath ? state.title : undefined;
   const overrideCrumbs = isOverrideForCurrentPath ? state.breadcrumbs : undefined;
 
-  const title = overrideTitle ?? getPageTitle(pathname);
+  const title =
+    overrideTitle ??
+    (pathname === '/'
+      ? 'Home'
+      : pathname
+          .split('/')
+          .filter(Boolean)
+          .pop()
+          ?.split('-')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' '));
 
   const allCrumbs = (overrideCrumbs ?? getBreadcrumbs(pathname)).map((crumb) => ({
     ...crumb,
@@ -57,16 +67,24 @@ export function HeaderBreadcrumbs({ className }: { className?: string }) {
     <div className={cn('hidden md:flex flex-col items-end justify-center', className)}>
       {crumbs.length > 0 && (
         <nav aria-label="Breadcrumbs" className="text-xs text-gray-500">
-          <ol className="flex items-center gap-1">
-            {crumbs.map((crumb, index) => (
-              <li key={crumb.href} className="flex items-center gap-1">
-                <Link
-                  href={crumb.href}
-                  title={crumb.label}
-                  className="max-w-40 truncate hover:text-gray-700 transition-colors"
-                >
-                  {crumb.label}
-                </Link>
+          <ol className="flex items-center space-x-1">
+            {crumbs.map((crumb: BreadcrumbItem, index: number) => (
+              <li key={index} className="flex items-center">
+                {crumb.href ? (
+                  <Link
+                    href={crumb.href}
+                    className={cn(
+                      'hover:text-gray-700 transition-colors',
+                      crumb.current && 'text-gray-900 font-medium',
+                    )}
+                  >
+                    {crumb.label}
+                  </Link>
+                ) : (
+                  <span className={cn(crumb.current && 'text-gray-900 font-medium')}>
+                    {crumb.label}
+                  </span>
+                )}
                 {index !== crumbs.length - 1 && <span className="text-gray-400">/</span>}
               </li>
             ))}

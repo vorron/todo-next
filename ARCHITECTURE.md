@@ -56,6 +56,57 @@ export default function Page() {
 
 Весь HTML/BODY — только в `src/app/layout.tsx`.
 
+### shared/lib/router/ — система роутинга
+
+Ответственность:
+
+единая конфигурация маршрутов приложения;
+генерация навигационных функций и утилит;
+поддержка иерархической навигации (sections/pages);
+типобезопасная работа с маршрутами.
+
+Структура:
+
+```
+src/shared/lib/router/
+├── config-types.ts          # Типы для конфигурации маршрутов
+├── router-config.ts         # Конфигурация маршрутов приложения
+├── generators.ts             # Генераторы навигации и утилит
+├── hierarchical-navigation.ts # Утилиты иерархической навигации
+├── use-generated-navigation.ts  # Хук генерации базовых функций
+├── use-hierarchical-navigation.ts # Хук утилит иерархии
+├── navigation.ts             # Композиционный хук навигации
+└── index.ts                  # Единая точка экспорта
+```
+
+Принципы работы:
+
+Единый источник правды - `router-config.ts`
+Автоматическая генерация типов и функций
+Поддержка иерархии (section → page)
+Разделение ответственности через композицию хуков
+
+Использование:
+
+```typescript
+// Базовая навигация
+const { navigateToTodos, navigateToTracker } = useNavigation();
+
+// Иерархическая навигация
+const { getMainNavigation, getSectionChildren, getBreadcrumbs } = useNavigation();
+
+// Навигация по разделам
+navigateToSection('tracker'); // → /workspace
+navigateToDefaultState('/workspace'); // → default state
+```
+
+Особенности архитектуры:
+
+Tracker UI концепция реализуется через workspace функциональность
+Поддержка breadcrumbs и иерархического меню
+Автоматическая генерация функций из ROUTES констант
+Строгая типизация без использования any
+
 ### screens/ — слой страниц (page‑level)
 
 Ответственность:

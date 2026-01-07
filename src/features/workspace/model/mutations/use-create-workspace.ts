@@ -16,9 +16,14 @@ export function useCreateWorkspace() {
     workspaceApi.endpoints.createWorkspace.useMutation();
 
   const createWorkspace = useCallback(
-    async (data: Omit<Workspace, 'id' | 'createdAt' | 'updatedAt'>) => {
+    async (data: Omit<Workspace, 'id' | 'createdAt' | 'updatedAt' | 'isDefault'>) => {
       try {
-        const result = await createMutation(data).unwrap();
+        // Добавляем isDefault со значением false по умолчанию
+        const workspaceData = {
+          ...data,
+          isDefault: false,
+        };
+        const result = await createMutation(workspaceData).unwrap();
 
         handleApiSuccess('Workspace created successfully');
         return result;

@@ -18,14 +18,27 @@ export const ROUTES = {
   LOGIN: '/login',
   ABOUT: '/about',
   TODOS: '/todos',
-  WORKSPACE: '/workspace',
+  TRACKER: '/tracker', // Tracker section implemented as workspace functionality
+  WORKSPACE: '/tracker',
   WORKSPACE_CREATE: '/workspace/create',
   WORKSPACE_SELECT: '/workspace/select',
-  WORKSPACE_DASHBOARD: (id: string) => `/workspace/${id}`,
+  WORKSPACE_MANAGE: '/tracker/manage',
+  WORKSPACE_DASHBOARD: (id: string) => `/tracker/${id}`,
+  WORKSPACE_TIME_ENTRY: (id: string) => `/tracker/${id}/time-entry`, // Direct time entry URL
+  WORKSPACE_REPORTS: (id: string) => `/tracker/${id}/reports`,
+  WORKSPACE_PROJECTS: (id: string) => `/tracker/${id}/projects`,
   PROFILE: '/profile',
   SETTINGS: '/settings',
   TODO_DETAIL: (id: string) => `/todos/${id}`,
   TODO_EDIT: (id: string) => `/todos/${id}/edit`,
+} as const;
+
+/**
+ * Явные алиасы для понимания связей между концепциями
+ */
+export const ROUTE_ALIASES = {
+  // Tracker UI concept maps to workspace implementation
+  TRACKER_TO_WORKSPACE: '/tracker',
 } as const;
 
 /**
@@ -39,13 +52,16 @@ export type NavigationFunctions = {
   navigateToLogin: () => void;
   navigateToAbout: () => void;
   navigateToTodos: () => void;
+  navigateToTracker: () => void;
   navigateToWorkspace: () => void;
   navigateToWorkspaceCreate: () => void;
   navigateToWorkspaceSelect: () => void;
   navigateToProfile: () => void;
+  navigateToTimeEntry: () => void;
   navigateToSettings: () => void;
   // Динамические маршруты
   navigateToWorkspaceDashboard: (id: string) => void;
+  navigateToWorkspaceTimeEntry: (id: string) => void;
   navigateToTodoDetail: (id: string) => void;
   navigateToTodoEdit: (id: string) => void;
 };
@@ -132,6 +148,7 @@ export const routeConfigData = {
     navigation: {
       label: 'Todos',
       order: 1, // Todos первым после Login
+      level: 'section', // Это раздел верхнего уровня
     },
     header: {
       type: 'static' as const,
@@ -177,7 +194,7 @@ export const routeConfigData = {
     } satisfies Metadata,
     navigation: {
       label: 'Settings',
-      order: 3, // Settings после Workspaces
+      order: 3, // Settings после Tracker
     },
     header: {
       type: 'static' as const,
@@ -205,8 +222,9 @@ export const statefulRouteConfigData = {
       description: 'Manage your workspaces',
     } satisfies Metadata,
     navigation: {
-      label: 'Workspaces',
-      order: 2,
+      label: 'Tracker', // UI shows "Tracker" but implements workspace functionality
+      order: 2, // После Todos
+      level: 'section', // Это раздел верхнего уровня
     },
     header: {
       type: 'static' as const,
@@ -258,6 +276,30 @@ export const statefulRouteConfigData = {
               { href: ROUTES.WORKSPACE_SELECT, label: 'Select' },
             ] as Array<{ href: string; label: string }>,
           },
+        },
+      },
+      'time-entry': {
+        key: 'time-entry',
+        urlPattern: '/workspace/[id]/time-entry',
+        metadata: () => ({ title: 'Time Entry' }) satisfies Metadata,
+        header: {
+          type: 'entity' as const,
+          fallback: {
+            title: 'Time Entry',
+            breadcrumbs: [
+              { href: ROUTES.WORKSPACE, label: 'Workspaces' },
+              { href: '#', label: 'Time Entry' },
+            ] as Array<{ href: string; label: string }>,
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          build: (data: any) =>
+            ({
+              title: `Time Entry - ${data.name}`,
+              breadcrumbs: [
+                { href: ROUTES.WORKSPACE, label: 'Workspaces' },
+                { href: `/workspace/${data.id}/time-entry`, label: `Time Entry - ${data.name}` },
+              ] as Array<{ href: string; label: string }>,
+            }) satisfies HeaderDescriptor,
         },
       },
       dashboard: {

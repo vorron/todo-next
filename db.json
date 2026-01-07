@@ -65,7 +65,7 @@
         "isPinned": true
       },
       "isActive": true,
-      "workspaceId": "w1",
+      "workspaceId": null,
       "createdAt": "2026-01-01T10:00:00.000Z",
       "updatedAt": "2026-01-01T10:00:00.000Z"
     },
@@ -80,7 +80,7 @@
         "isPinned": false
       },
       "isActive": true,
-      "workspaceId": "w1",
+      "workspaceId": null,
       "createdAt": "2026-01-01T11:00:00.000Z",
       "updatedAt": "2026-01-01T11:00:00.000Z"
     },
@@ -95,19 +95,12 @@
         "isPinned": false
       },
       "isActive": true,
-      "workspaceId": "w1",
+      "workspaceId": null,
       "createdAt": "2026-01-02T09:00:00.000Z",
       "updatedAt": "2026-01-02T09:00:00.000Z"
     }
   ],
   "workspaces": [
-    {
-      "id": "w1",
-      "name": "Personal Workspace",
-      "ownerId": "4",
-      "createdAt": "2026-01-01T09:00:00.000Z",
-      "updatedAt": "2026-01-01T09:00:00.000Z"
-    },
     {
       "id": "w2",
       "name": "Team Workspace",
@@ -127,7 +120,7 @@
   "workspaceUsers": [
     {
       "id": "wm1",
-      "workspaceId": "w1",
+      "workspaceId": null,
       "userId": "4",
       "role": "admin",
       "joinedAt": "2026-01-01T09:00:00.000Z",
