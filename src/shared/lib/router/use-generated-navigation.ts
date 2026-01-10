@@ -1,12 +1,37 @@
 import { type useRouter } from 'next/navigation';
 
-import { ROUTES } from '../../config/router-config';
+import { ROUTES } from './index';
+
+/**
+ * Типы для генерируемых навигационных функций
+ */
+export type GeneratedNavigationFunctions = {
+  navigateTo: (path: string) => void;
+  navigateToHome: () => void;
+  navigateToLogin: () => void;
+  navigateToAbout: () => void;
+  navigateToTodos: () => void;
+  navigateToTracker: () => void;
+  navigateToWorkspace: () => void;
+  navigateToWorkspaceSelect: () => void;
+  navigateToWorkspaceManage: () => void;
+  navigateToProfile: () => void;
+  navigateToSettings: () => void;
+  navigateToTodoDetail: (id: string) => void;
+  navigateToTodoEdit: (id: string) => void;
+  navigateToWorkspaceDashboard: (id: string) => void;
+  navigateToWorkspaceTimeEntry: (id: string) => void;
+  navigateToWorkspaceReports: (id: string) => void;
+  navigateToWorkspaceProjects: (id: string) => void;
+};
 
 /**
  * Хук для генерации навигационных функций на основе ROUTES
  * Устраняет дублирование логики из navigation.ts
  */
-export function useGeneratedNavigation(router: ReturnType<typeof useRouter>) {
+export function useGeneratedNavigation(
+  router: ReturnType<typeof useRouter>,
+): GeneratedNavigationFunctions {
   // Разделяем статические и динамические маршруты
   const staticRoutes = Object.entries(ROUTES).filter(([_, route]) => typeof route === 'string');
   const dynamicRoutes = Object.entries(ROUTES).filter(([_, route]) => typeof route === 'function');
@@ -44,5 +69,5 @@ export function useGeneratedNavigation(router: ReturnType<typeof useRouter>) {
     // Все сгенерированные функции
     ...staticFunctions,
     ...dynamicFunctions,
-  };
+  } as GeneratedNavigationFunctions;
 }

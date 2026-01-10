@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useWorkspaces } from '@/features/workspace/model/queries';
-import { ROUTES } from '@/shared/config/router-config';
+import { ROUTES } from '@/shared/lib/router';
 import { slugify } from '@/shared/lib/utils/slugify';
 import { Card, CardContent, CardHeader, CardTitle, Button } from '@/shared/ui';
 

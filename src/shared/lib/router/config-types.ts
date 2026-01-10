@@ -98,65 +98,12 @@ export type DynamicRouteConfig = {
 };
 
 /**
- * Stateful Route Configuration - для маршрутов с несколькими состояниями
- * Поддерживает client-side навигацию внутри одного URL
- */
-export type StatefulRouteConfig<T extends Record<string, unknown> = Record<string, unknown>> =
-  BaseRouteConfig & {
-    protected: true;
-    states: Record<
-      string,
-      {
-        key: string;
-        component?: string; // путь к компоненту
-        metadata?: (data?: unknown) => Metadata;
-        header?: HeaderTemplate;
-        navigation?: NavigationConfig;
-        urlPattern?: string; // опциональный паттерн для URL синхронизации
-      }
-    >;
-    defaultState: keyof T;
-    syncWithUrl?: boolean; // синхронизировать состояния с URL
-    fallbackState?: keyof T; // состояние для fallback
-  };
-
-/**
  * Generated types from configuration data
  * Эти типы будут переопределены в generators.ts после импорта данных
  */
 export type RouteKey = string;
 export type DynamicRouteKey = string;
-export type StatefulRouteKey = string;
-export type AllRouteKey = RouteKey | DynamicRouteKey | StatefulRouteKey;
-
-/**
- * Stateful routing types
- */
-export type RouteState<T = unknown> = {
-  key: string;
-  data?: T;
-  metadata?: Metadata;
-  header?: HeaderDescriptor;
-};
-
-/**
- * Конкретное состояние для сущности с discriminated union
- */
-export type EntityState<T extends Record<string, unknown>> = {
-  [K in keyof T]: {
-    key: K;
-    data: T[K];
-    metadata?: Metadata;
-    header?: HeaderDescriptor;
-  };
-}[keyof T];
-
-export type StatefulNavigation<T = unknown> = {
-  currentState: string;
-  availableStates: string[];
-  navigateTo: (state: string, data?: T) => void;
-  syncWithUrl?: boolean;
-};
+export type AllRouteKey = RouteKey | DynamicRouteKey;
 
 /**
  * App types for convenience

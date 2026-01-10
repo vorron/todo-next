@@ -5,7 +5,6 @@ import {
   dynamicPaths,
   routes,
   navigationConfig,
-  statefulNavigationConfig,
   mainNavigation,
   metadataConfig,
   headerTemplates,
@@ -16,9 +15,80 @@ import {
   isPublicPath,
   isProtectedPath,
   requiresAuth,
+  ROUTES,
 } from './generators';
 
 describe('router generators', () => {
+  describe('ROUTES generator', () => {
+    it('generates static routes with SNAKE_CASE keys', () => {
+      expect(ROUTES).toHaveProperty('HOME', '/');
+      expect(ROUTES).toHaveProperty('LOGIN', '/login');
+      expect(ROUTES).toHaveProperty('ABOUT', '/about');
+      expect(ROUTES).toHaveProperty('TODOS', '/todos');
+      expect(ROUTES).toHaveProperty('PROFILE', '/profile');
+      expect(ROUTES).toHaveProperty('SETTINGS', '/settings');
+    });
+
+    it('generates dynamic routes with functions', () => {
+      expect(typeof ROUTES.TODO_DETAIL).toBe('function');
+      expect(typeof ROUTES.TODO_EDIT).toBe('function');
+      expect(typeof ROUTES.WORKSPACE_DASHBOARD).toBe('function');
+      expect(typeof ROUTES.WORKSPACE_TIME_ENTRY).toBe('function');
+      expect(typeof ROUTES.WORKSPACE_REPORTS).toBe('function');
+      expect(typeof ROUTES.WORKSPACE_PROJECTS).toBe('function');
+
+      // Проверяем, что функции работают корректно
+      const todoDetailFn = ROUTES.TODO_DETAIL as (id: string) => string;
+      const todoEditFn = ROUTES.TODO_EDIT as (id: string) => string;
+
+      expect(todoDetailFn('123')).toBe('/todos/123');
+      expect(todoEditFn('456')).toBe('/todos/456/edit');
+    });
+
+    it('creates correct dynamic route paths', () => {
+      expect((ROUTES.TODO_DETAIL as (id: string) => string)('123')).toBe('/todos/123');
+      expect((ROUTES.TODO_EDIT as (id: string) => string)('456')).toBe('/todos/456/edit');
+      expect((ROUTES.WORKSPACE_DASHBOARD as (id: string) => string)('workspace-1')).toBe(
+        '/tracker/workspace-1',
+      );
+      expect((ROUTES.WORKSPACE_TIME_ENTRY as (id: string) => string)('workspace-1')).toBe(
+        '/tracker/workspace-1/time-entry',
+      );
+      expect((ROUTES.WORKSPACE_REPORTS as (id: string) => string)('workspace-1')).toBe(
+        '/tracker/workspace-1/reports',
+      );
+      expect((ROUTES.WORKSPACE_PROJECTS as (id: string) => string)('workspace-1')).toBe(
+        '/tracker/workspace-1/projects',
+      );
+    });
+
+    it('maintains API compatibility with original ROUTES', () => {
+      // Проверяем, что все ожидаемые ключи присутствуют
+      const expectedKeys = [
+        'HOME',
+        'LOGIN',
+        'ABOUT',
+        'TODOS',
+        'TRACKER',
+        'WORKSPACE',
+        'WORKSPACE_SELECT',
+        'WORKSPACE_MANAGE',
+        'PROFILE',
+        'SETTINGS',
+        'TODO_DETAIL',
+        'TODO_EDIT',
+        'WORKSPACE_DASHBOARD',
+        'WORKSPACE_TIME_ENTRY',
+        'WORKSPACE_REPORTS',
+        'WORKSPACE_PROJECTS',
+      ];
+
+      expectedKeys.forEach((key) => {
+        expect(ROUTES).toHaveProperty(key);
+      });
+    });
+  });
+
   describe('paths generator', () => {
     it('generates static paths from config', () => {
       expect(paths).toHaveProperty('home', '/');
@@ -109,6 +179,7 @@ describe('router generators', () => {
   describe('mainNavigation generator', () => {
     it('sorts navigation by order', () => {
       const orders = mainNavigation.map((item: { order?: number }) => item.order ?? 999);
+
       // Теперь все маршруты сортируются вместе, включая stateful
       // Ожидаемый порядок: [1, 2, 3, 5, 6] (Todos, Workspaces, Settings, Profile, About)
       expect(orders).toEqual([1, 2, 3, 5, 6]);
@@ -127,13 +198,7 @@ describe('router generators', () => {
       const visibleStaticItems = Object.values(navigationConfig).filter(
         (item: unknown) => !(item as { hideWhenAuthenticated?: boolean }).hideWhenAuthenticated,
       );
-      const visibleStatefulItems = Object.values(statefulNavigationConfig).filter(
-        (item: unknown) => !(item as { hideWhenAuthenticated?: boolean }).hideWhenAuthenticated,
-      );
-      // Учитываем что stateful маршруты фильтруются чтобы избежать дублирования
-      const expectedCount = visibleStaticItems.length + visibleStatefulItems.length;
       expect(mainNavigation.length).toBeGreaterThanOrEqual(visibleStaticItems.length);
-      expect(mainNavigation.length).toBeLessThanOrEqual(expectedCount);
     });
 
     it('has correct navigation structure', () => {

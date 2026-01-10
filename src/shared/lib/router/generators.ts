@@ -1,53 +1,62 @@
-import { createDynamicPath } from './utils';
 import {
+  BASE_PATHS,
+  DYNAMIC_PATH_TEMPLATES,
   routeConfigData,
   dynamicRouteConfigData,
-  statefulRouteConfigData,
   TITLE_POSTFIX,
-} from '../../config/router-config';
+} from '@/shared/config/router-config';
 
-import type {
-  NavigationConfig,
-  RouteConfig,
-  DynamicRouteConfig,
-  StatefulRouteConfig,
-} from './config-types';
+import { mainNavigationFilter, sectionNavigationFilter } from './navigation-filters';
+import { hasNavigation, isProtectedRoute } from './type-guards';
+import { createDynamicPath } from './utils';
+
+import type { NavigationConfig, RouteConfig } from './config-types';
 import type { Metadata } from 'next';
 
-// === Type Guards для безопасной типизации ===
-function hasNavigation(config: unknown): config is {
-  navigation: NavigationConfig;
-} {
-  return typeof config === 'object' && config !== null && 'navigation' in config;
-}
+// === Type Guards импортированы из type-guards.ts ===
 
-function hasMetadata(config: unknown): config is {
-  metadata: (data?: unknown) => Metadata;
-} {
-  return (
-    typeof config === 'object' &&
-    config !== null &&
-    'metadata' in config &&
-    typeof (config as { metadata?: unknown }).metadata === 'function'
-  );
-}
+// === Generated ROUTES Object ===
 
-function hasUrlPattern(config: unknown): config is {
-  urlPattern: string;
-} {
-  return (
-    typeof config === 'object' &&
-    config !== null &&
-    'urlPattern' in config &&
-    typeof (config as { urlPattern?: unknown }).urlPattern === 'string'
-  );
-}
+/**
+ * Сгенерированный объект ROUTES - основной API для работы с маршрутами
+ * Автоматически создается из конфигурации без циклических зависимостей
+ */
+export const ROUTES = {
+  // Статические маршруты из BASE_PATHS (исключая TRACKER - он только stateful)
+  HOME: BASE_PATHS.HOME,
+  LOGIN: BASE_PATHS.LOGIN,
+  ABOUT: BASE_PATHS.ABOUT,
+  TODOS: BASE_PATHS.TODOS,
+  TRACKER_SELECT: BASE_PATHS.TRACKER_SELECT,
+  TRACKER_MANAGE: BASE_PATHS.TRACKER_MANAGE,
+  PROFILE: BASE_PATHS.PROFILE,
+  SETTINGS: BASE_PATHS.SETTINGS,
 
-function isProtectedRoute(
-  config: RouteConfig | DynamicRouteConfig | StatefulRouteConfig,
-): config is (RouteConfig & { protected: true }) | DynamicRouteConfig | StatefulRouteConfig {
-  return 'protected' in config && config.protected === true;
-}
+  // Алиасы для обратной совместимости
+  WORKSPACE: BASE_PATHS.TRACKER,
+  TRACKER: BASE_PATHS.TRACKER, // Для обратной совместимости
+  WORKSPACE_SELECT: BASE_PATHS.TRACKER_SELECT,
+  WORKSPACE_MANAGE: BASE_PATHS.TRACKER_MANAGE,
+
+  // Динамические маршруты со строгой типизацией
+  TODO_DETAIL: (id: string) =>
+    DYNAMIC_PATH_TEMPLATES.TODO_DETAIL.replace(':id', id) as `/todos/${string}`,
+  TODO_EDIT: (id: string) =>
+    DYNAMIC_PATH_TEMPLATES.TODO_EDIT.replace(':id', id) as `/todos/${string}/edit`,
+  WORKSPACE_DASHBOARD: (id: string) =>
+    DYNAMIC_PATH_TEMPLATES.TRACKER_DASHBOARD.replace(':id', id) as `/tracker/${string}`,
+  WORKSPACE_TIME_ENTRY: (id: string) =>
+    DYNAMIC_PATH_TEMPLATES.TRACKER_TIME_ENTRY.replace(':id', id) as `/tracker/${string}/time-entry`,
+  WORKSPACE_REPORTS: (id: string) =>
+    DYNAMIC_PATH_TEMPLATES.TRACKER_REPORTS.replace(':id', id) as `/tracker/${string}/reports`,
+  WORKSPACE_PROJECTS: (id: string) =>
+    DYNAMIC_PATH_TEMPLATES.TRACKER_PROJECTS.replace(':id', id) as `/tracker/${string}/projects`,
+} as const;
+
+/**
+ * Типы для сгенерированного ROUTES
+ */
+export type RoutesType = typeof ROUTES;
 
 // === Static Paths ===
 export const paths = Object.fromEntries(
@@ -62,35 +71,8 @@ export const dynamicPaths = Object.fromEntries(
   ]),
 ) as Record<keyof typeof dynamicRouteConfigData, (id: string) => string>;
 
-// === Stateful Routes ===
-export const statefulRoutes = Object.fromEntries(
-  Object.entries(statefulRouteConfigData).map(([key, config]) => [
-    key,
-    {
-      basePath: config.path,
-      defaultState: config.defaultState,
-      syncWithUrl: config.syncWithUrl,
-      getStatePath: (state: string, data?: Record<string, string>) => {
-        const stateConfig = config.states[state as keyof typeof config.states];
-        const pattern = (stateConfig as { urlPattern?: string }).urlPattern || config.path;
-
-        if (data && pattern.includes(':')) {
-          return pattern.replace(
-            /:([^/]+)/g,
-            (_match: string, param: string) => data[param] || `:${param}`,
-          );
-        }
-
-        return pattern;
-      },
-      getAvailableStates: () => Object.keys(config.states),
-      isStateAvailable: (state: string) => state in config.states,
-    },
-  ]),
-);
-
 // === Combined Routes ===
-export const routes = { ...paths, ...dynamicPaths, ...statefulRoutes } as const;
+export const routes = { ...paths, ...dynamicPaths } as const;
 
 // === Navigation ===
 export type NavigationItem = {
@@ -141,148 +123,20 @@ export type StatefulNavigationItem = NavigationItem & {
   >;
 };
 
-export const statefulNavigationConfig = Object.fromEntries(
-  Object.entries(statefulRouteConfigData).map(([key, config]) => [
-    key,
-    {
-      label: hasNavigation(config)
-        ? (config as StatefulRouteConfig & { navigation: NavigationConfig }).navigation.label
-        : key,
-      href: config.path,
-      requiresAuth: isProtectedRoute(config),
-      order: hasNavigation(config)
-        ? (config as StatefulRouteConfig & { navigation: NavigationConfig }).navigation.order
-        : undefined,
-      hideWhenAuthenticated: hasNavigation(config)
-        ? (config as StatefulRouteConfig & { navigation: NavigationConfig }).navigation
-            .hideWhenAuthenticated
-        : undefined,
-      hideFromMainMenu: hasNavigation(config)
-        ? (config as StatefulRouteConfig & { navigation: NavigationConfig }).navigation
-            .hideFromMainMenu
-        : undefined,
-      level: hasNavigation(config)
-        ? (config as StatefulRouteConfig & { navigation: NavigationConfig }).navigation.level
-        : undefined,
-      parent: hasNavigation(config)
-        ? (config as StatefulRouteConfig & { navigation: NavigationConfig }).navigation.parent
-        : undefined,
-      icon: hasNavigation(config)
-        ? (config as StatefulRouteConfig & { navigation: NavigationConfig }).navigation.icon
-        : undefined,
-      isStateful: true,
-      states: Object.fromEntries(
-        Object.entries(config.states).map(([stateKey, stateConfig]) => {
-          const navConfig = hasNavigation(stateConfig)
-            ? (stateConfig as { navigation: NavigationConfig }).navigation
-            : undefined;
-          return [
-            stateKey,
-            {
-              label: navConfig?.label ?? stateKey,
-              href: hasUrlPattern(stateConfig)
-                ? (stateConfig as { urlPattern: string }).urlPattern
-                : config.path,
-              order: navConfig?.order,
-              level: navConfig?.level,
-              parent: navConfig?.parent,
-            },
-          ];
-        }),
-      ),
-    } satisfies StatefulNavigationItem,
-  ]),
-) as Record<keyof typeof statefulRouteConfigData, StatefulNavigationItem>;
-
 // === Main Navigation ===
-export const mainNavigation = [
-  ...Object.values(navigationConfig)
-    .filter((item) => !item.hideWhenAuthenticated)
-    .filter((item) => !item.hideFromMainMenu)
-    .filter((item) => item.level !== 'page'), // Только разделы в главном меню
-  ...Object.values(statefulNavigationConfig)
-    .filter((item) => !item.hideWhenAuthenticated)
-    .filter((item) => !item.hideFromMainMenu)
-    .filter((item) => item.level !== 'page') // Только разделы в главном меню
-    .filter(
-      (statefulItem) =>
-        !Object.values(navigationConfig).some(
-          (staticItem) => staticItem.href === statefulItem.href,
-        ),
-    )
-    .map(({ states: _states, ...item }) => item),
-].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+export const mainNavigation = [...mainNavigationFilter(Object.values(navigationConfig))].sort(
+  (a, b) => (a.order ?? 999) - (b.order ?? 999),
+);
 
 // === Section Navigation (включая страницы) ===
-export const sectionNavigation = [
-  ...Object.values(navigationConfig)
-    .filter((item) => !item.hideWhenAuthenticated)
-    .filter((item) => !item.hideFromMainMenu),
-  ...Object.values(statefulNavigationConfig)
-    .filter((item) => !item.hideWhenAuthenticated)
-    .filter((item) => !item.hideFromMainMenu)
-    .filter(
-      (statefulItem) =>
-        !Object.values(navigationConfig).some(
-          (staticItem) => staticItem.href === statefulItem.href,
-        ),
-    )
-    .map(({ states: _states, ...item }) => item),
-].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+export const sectionNavigation = [...sectionNavigationFilter(Object.values(navigationConfig))].sort(
+  (a, b) => (a.order ?? 999) - (b.order ?? 999),
+);
 
 // === Metadata ===
-type StatefulMetadataItem = {
-  base: { title: string };
-  states: Record<string, (data?: unknown) => Metadata>;
-};
-
-export const statefulMetadataConfig = Object.fromEntries(
-  Object.entries(statefulRouteConfigData).map(([key, config]) => [
-    key,
-    {
-      base: {
-        ...config.metadata,
-        title: `${config.metadata.title}${TITLE_POSTFIX}`,
-      },
-      states: Object.fromEntries(
-        Object.entries(config.states).map(([stateKey, stateConfig]) => {
-          if (hasMetadata(stateConfig)) {
-            return [
-              stateKey,
-              (data?: unknown) => {
-                const metadata = stateConfig.metadata(data);
-                return {
-                  ...metadata,
-                  title: `${metadata.title}${TITLE_POSTFIX}`,
-                };
-              },
-            ];
-          }
-          return [
-            stateKey,
-            () => ({
-              ...config.metadata,
-              title: `${config.metadata.title}${TITLE_POSTFIX}`,
-            }),
-          ];
-        }),
-      ),
-    } satisfies StatefulMetadataItem,
-  ]),
-) as unknown as Record<keyof typeof statefulRouteConfigData, StatefulMetadataItem>;
-
 export const metadataConfig = {
   ...Object.fromEntries(
     Object.entries(routeConfigData).map(([, config]) => [
-      config.path,
-      {
-        ...config.metadata,
-        title: `${config.metadata.title}${TITLE_POSTFIX}`,
-      },
-    ]),
-  ),
-  ...Object.fromEntries(
-    Object.entries(statefulRouteConfigData).map(([, config]) => [
       config.path,
       {
         ...config.metadata,
@@ -312,7 +166,6 @@ const staticProtectedPaths = Object.entries(routeConfigData)
 export const protectedPatterns = [
   ...staticProtectedPaths,
   ...Object.values(dynamicRouteConfigData).map((config) => config.path),
-  ...Object.values(statefulRouteConfigData).map((config) => config.path),
 ];
 
 export const protectedPatternsArray = protectedPatterns.map(
@@ -342,20 +195,7 @@ export const isProtectedPath = (path: string): boolean =>
 export const requiresAuth = (path: string): boolean => isProtectedPath(path);
 
 // === Types ===
-export type { RouteKey, DynamicRouteKey, AllRouteKey, StatefulRouteKey } from './config-types';
-
-// Переопределяем типы с реальными данными для строгой типизации
-type RouteConfigData = typeof routeConfigData;
-type DynamicRouteConfigData = typeof dynamicRouteConfigData;
-type StatefulRouteConfigData = typeof statefulRouteConfigData;
-
-export type StrictRouteKey = keyof RouteConfigData;
-export type StrictDynamicRouteKey = keyof DynamicRouteConfigData;
-export type StrictStatefulRouteKey = keyof StatefulRouteConfigData;
-
-export type StrictAppRoutePath = RouteConfigData[StrictRouteKey]['path'];
-export type StrictAppDynamicPath = DynamicRouteConfigData[StrictDynamicRouteKey]['path'];
-export type StrictAppStatefulPath = StatefulRouteConfigData[StrictStatefulRouteKey]['path'];
+export type { RouteKey, DynamicRouteKey, AllRouteKey } from './config-types';
 
 // === Header Templates ===
 export const headerTemplates = {
@@ -367,37 +207,6 @@ export const headerTemplates = {
   ),
 } as Record<
   keyof typeof routeConfigData | keyof typeof dynamicRouteConfigData,
-  | RouteConfigData[keyof typeof routeConfigData]['header']
-  | DynamicRouteConfigData[keyof typeof dynamicRouteConfigData]['header']
+  | (typeof routeConfigData)[keyof typeof routeConfigData]['header']
+  | (typeof dynamicRouteConfigData)[keyof typeof dynamicRouteConfigData]['header']
 >;
-
-export const statefulHeaderTemplates = Object.fromEntries(
-  Object.entries(statefulRouteConfigData).map(([key, config]) => [key, config.header]),
-) as Record<
-  keyof typeof statefulRouteConfigData,
-  StatefulRouteConfigData[keyof typeof statefulRouteConfigData]['header']
->;
-
-export const headerTemplateKeys = {
-  ...(Object.keys(headerTemplates) as Array<keyof typeof headerTemplates>),
-  ...(Object.keys(statefulHeaderTemplates) as Array<keyof typeof statefulHeaderTemplates>),
-} as const;
-
-// === Metadata Keys ===
-export const metadataKeys = {
-  ...(Object.keys(metadataConfig) as (keyof typeof metadataConfig)[]),
-  ...(Object.keys(statefulMetadataConfig) as (keyof typeof statefulMetadataConfig)[]),
-} as const;
-
-// === Navigation Keys ===
-export const navConfigKeys = {
-  ...(Object.keys(navigationConfig) as (keyof typeof navigationConfig)[]),
-  ...(Object.keys(statefulNavigationConfig) as (keyof typeof statefulNavigationConfig)[]),
-} as const;
-
-// === Route Keys ===
-export const routeKeys = {
-  ...(Object.keys(routeConfigData) as (keyof typeof routeConfigData)[]),
-  ...(Object.keys(dynamicRouteConfigData) as (keyof typeof dynamicRouteConfigData)[]),
-  ...(Object.keys(statefulRouteConfigData) as (keyof typeof statefulRouteConfigData)[]),
-} as const;

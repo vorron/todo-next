@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useRouter, usePathname } from 'next/navigation';
 
-import { ROUTES } from '@/shared/config/router-config';
+import { ROUTES } from '@/shared/lib/router';
 
 import type { WorkspaceViewState } from './use-workspace-state';
 

@@ -1,6 +1,6 @@
-import { navigationConfig, statefulNavigationConfig } from './generators';
+import { navigationConfig } from './generators';
+import { ROUTES } from './index';
 import { validateRouteConfig } from './validation';
-import { ROUTES } from '../../config/router-config';
 
 /**
  * Developer utilities для роутинга
@@ -13,14 +13,12 @@ import { ROUTES } from '../../config/router-config';
 export function getRouteInfo(routeKey: keyof typeof ROUTES) {
   const route = ROUTES[routeKey];
   const navConfig = navigationConfig[routeKey as keyof typeof navigationConfig];
-  const statefulNavConfig =
-    statefulNavigationConfig[routeKey as keyof typeof statefulNavigationConfig];
 
   return {
     path: route,
     key: routeKey,
-    navigation: navConfig || statefulNavConfig,
-    isStateful: !!statefulNavConfig,
+    navigation: navConfig,
+    isStateful: false,
   };
 }
 
@@ -94,15 +92,6 @@ export function debugRouting() {
   );
   console.log(`- Protected routes: ${getProtectedRoutes().length}`);
   console.log(`- Public routes: ${getPublicRoutes().length}`);
-
-  // Stateful маршруты
-  const statefulCount = Object.keys(statefulNavigationConfig).length;
-  if (statefulCount > 0) {
-    console.log(`- Stateful routes: ${statefulCount}`);
-    Object.entries(statefulNavigationConfig).forEach(([key, config]) => {
-      console.log(`  - ${key}: ${Object.keys(config.states).length} states`);
-    });
-  }
 
   console.groupEnd();
 
@@ -191,11 +180,7 @@ export const devShortcuts =
         routes: () => console.table(Object.entries(ROUTES).map(([key, path]) => ({ key, path }))),
 
         // Показать навигацию
-        navigation: () =>
-          console.table([
-            ...Object.values(navigationConfig),
-            ...Object.values(statefulNavigationConfig),
-          ]),
+        navigation: () => console.table(Object.values(navigationConfig)),
 
         // Валидация
         validate: () => validateRouteConfig(),

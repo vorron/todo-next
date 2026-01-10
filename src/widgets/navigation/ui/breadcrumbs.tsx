@@ -54,10 +54,12 @@ export function HeaderBreadcrumbs({ className }: { className?: string }) {
           .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
           .join(' '));
 
-  const allCrumbs = (overrideCrumbs ?? getBreadcrumbs(pathname)).map((crumb) => ({
-    ...crumb,
-    label: formatCrumbLabel(crumb.label),
-  }));
+  const allCrumbs = (overrideCrumbs ?? getBreadcrumbs(pathname)).map(
+    (crumb: { href: string; label: string }) => ({
+      ...crumb,
+      label: formatCrumbLabel(crumb.label),
+    }),
+  );
 
   const crumbs = allCrumbs.at(-1)?.href === pathname ? allCrumbs.slice(0, -1) : allCrumbs;
 

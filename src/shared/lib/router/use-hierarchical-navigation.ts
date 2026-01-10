@@ -4,11 +4,12 @@ import { useRouter } from 'next/navigation';
 
 import { mainNavigation } from './generators';
 import {
-  getDefaultStateUrl,
   getSectionWithChildren,
   getNavigationPath,
   isTopLevelSection,
 } from './hierarchical-navigation';
+
+import type { NavigationItem } from './generators';
 
 /**
  * Хук для утилит иерархической навигации
@@ -29,15 +30,14 @@ export function useHierarchicalNavigation() {
       return getNavigationPath(currentPath);
     }, []),
 
-    isSection: useCallback((key: string) => {
-      return isTopLevelSection(key);
+    isSection: useCallback((item: NavigationItem) => {
+      return isTopLevelSection(item);
     }, []),
 
     // Иерархическая навигация с Next.js router
     navigateToSection: useCallback(
       (sectionKey: string) => {
-        const defaultUrl = getDefaultStateUrl(sectionKey);
-        router.push(defaultUrl);
+        router.push(sectionKey);
       },
       [router],
     ),
@@ -45,14 +45,6 @@ export function useHierarchicalNavigation() {
     navigateToPage: useCallback(
       (pageKey: string) => {
         router.push(pageKey);
-      },
-      [router],
-    ),
-
-    navigateToDefaultState: useCallback(
-      (basePath: string) => {
-        const defaultUrl = getDefaultStateUrl(basePath);
-        router.push(defaultUrl);
       },
       [router],
     ),

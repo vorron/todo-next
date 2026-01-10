@@ -2,29 +2,32 @@
 
 ## 📚 Complete Documentation
 
-Для полной информации о системе роутинга см. [**Complete Routing Guide**](../../../../../docs/complete-routing-guide.md)
+Для полной информации о системе роутинга см. [**ROUTING_GUIDE**](../../../../docs/ROUTING_GUIDE.md)
 
 ## 🚀 Quick Start
 
 ```typescript
-import { ROUTES, paths, dynamicPaths } from '@/shared/lib/router';
+import { ROUTES, useNavigation } from '@/shared/lib/router';
 
 // Базовое использование
-paths.home; // '/'
-dynamicPaths.todoDetail('123'); // '/todos/123'
-ROUTES.TODOS; // '/todos'
+ROUTES.HOME;           // '/'
+ROUTES.TODOS;          // '/todos'
+ROUTES.TODO_DETAIL('123'); // '/todos/123'
+
+// Навигационные функции
+function MyComponent() {
+  const { navigateToTodos, navigateToTodoDetail } = useNavigation();
+
+  return (
+    <nav>
+      <button onClick={navigateToTodos}>Todos</button>
+      <button onClick={() => navigateToTodoDetail('123')}>Detail</button>
+    </nav>
+  );
+}
 ```
 
-## 🔄 Stateful Routing
-
-```typescript
-import { useWorkspaceStateful, useWorkspaceNavigationActions } from '@/entities/workspace';
-
-const { state } = useWorkspaceStateful();
-const { navigateToDashboard } = useWorkspaceNavigationActions();
-```
-
-## 🔍 Development Tools
+## 🔧 Development Tools
 
 ```typescript
 import { debugRouting, createRouteTester } from '@/shared/lib/router';
@@ -35,4 +38,4 @@ const tester = createRouteTester(); // Тестирование маршруто
 
 ---
 
-_Для подробной документации см. [Complete Routing Guide](../../../../../docs/complete-routing-guide.md)_
+_Для подробной документации см. [ROUTING_GUIDE](../../../../docs/ROUTING_GUIDE.md)_

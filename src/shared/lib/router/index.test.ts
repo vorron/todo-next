@@ -68,7 +68,7 @@ describe('router index barrel exports', () => {
       expect(dynamicPaths).toBeDefined();
       expect(routes).toBeDefined();
 
-      expect(paths.home).toBe('/');
+      expect(paths.paths.home).toBe('/');
       expect(typeof dynamicPaths.todoDetail).toBe('function');
       expect(routes.home).toBe('/');
     });
@@ -166,9 +166,9 @@ describe('router index barrel exports', () => {
 
   describe('integration tests', () => {
     it('ROUTES constant matches paths', () => {
-      expect(ROUTES.HOME).toBe(paths.home);
-      expect(ROUTES.LOGIN).toBe(paths.login);
-      expect(ROUTES.TODOS).toBe(paths.todos);
+      expect(ROUTES.HOME).toBe(paths.paths.home);
+      expect(ROUTES.LOGIN).toBe(paths.paths.login);
+      expect(ROUTES.TODOS).toBe(paths.paths.todos);
     });
 
     it('dynamic paths work with ROUTES', () => {

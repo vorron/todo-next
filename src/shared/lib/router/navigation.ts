@@ -4,13 +4,12 @@ import { useRouter } from 'next/navigation';
 
 import { useGeneratedNavigation } from './use-generated-navigation';
 import { useHierarchicalNavigation } from './use-hierarchical-navigation';
-import { type NavigationFunctions } from '../../config/router-config';
 
 /**
  * Расширенные навигационные функции с поддержкой иерархии
  * Композиция двух хуков для разделения ответственности
  */
-export type ExtendedNavigationFunctions = NavigationFunctions &
+export type ExtendedNavigationFunctions = ReturnType<typeof useGeneratedNavigation> &
   ReturnType<typeof useHierarchicalNavigation>;
 
 /**
