@@ -43,7 +43,6 @@ export function LogoutButton({
         variant={variant}
         size={size}
         onClick={handleLogout}
-        isLoading={isLoading}
         disabled={isLoading}
         className={className}
       >

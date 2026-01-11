@@ -19,7 +19,7 @@ import { useAuth } from '../model/use-auth';
 export function UserMenu() {
   const { session, logout } = useAuth();
 
-  if (!session) return null;
+  if (!session?.user) return null;
 
   return (
     <DropdownMenu>
@@ -31,17 +31,17 @@ export function UserMenu() {
           <div
             className={cn(
               'h-9 w-9 rounded-full flex items-center justify-center text-white font-semibold border border-white shadow-sm',
-              getAvatarColor(session.name),
+              getAvatarColor(session.user.name),
             )}
           >
             {getUserInitials({
-              id: session.userId,
-              username: session.username,
-              name: session.name,
+              id: session.user.id,
+              username: session.user.username,
+              name: session.user.name,
             })}
           </div>
           <span className="hidden sm:inline-flex max-w-40 truncate text-sm font-medium text-gray-900">
-            {session.name}
+            {session.user.name}
           </span>
           <svg
             className="hidden sm:block h-4 w-4 text-gray-400"
@@ -57,8 +57,8 @@ export function UserMenu() {
       <DropdownMenuContent align="end" className="w-64">
         <DropdownMenuLabel>
           <div className="space-y-0.5">
-            <p className="text-sm font-medium text-gray-900 truncate">{session.name}</p>
-            <p className="text-xs text-gray-500 truncate">@{session.username}</p>
+            <p className="text-sm font-medium text-gray-900 truncate">{session.user.name}</p>
+            <p className="text-xs text-gray-500 truncate">@{session.user.username}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

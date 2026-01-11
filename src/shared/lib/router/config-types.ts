@@ -58,6 +58,14 @@ export type HeaderTemplate<T = unknown> = {
   readonly build?: (data: T) => HeaderDescriptor;
 };
 
+export type ServerRedirectConfig = {
+  readonly enabled: boolean;
+  readonly strategy: 'static' | 'dynamic';
+  readonly target?: string;
+  readonly resolver?: string;
+  readonly fallback?: string;
+};
+
 export type RouteGuard = {
   readonly test: (path: string) => boolean;
   readonly action: 'allow' | 'deny' | 'redirect';
@@ -73,6 +81,7 @@ type BaseRouteConfig = {
   navigation?: NavigationConfig;
   header?: HeaderTemplate;
   layout?: 'default' | 'auth' | 'dashboard';
+  serverRedirect?: ServerRedirectConfig;
 };
 
 type PublicRouteConfig = BaseRouteConfig & { public: true; protected?: never };

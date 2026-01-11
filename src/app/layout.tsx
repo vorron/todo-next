@@ -1,8 +1,11 @@
 import { Inter } from 'next/font/google';
 
 import './globals.css';
-import { Providers } from '@/app/providers';
+import { NetworkProvider } from '@/app/providers/network-provider';
+import { ServerAuthProvider } from '@/app/providers/server-auth-provider';
+import { StoreProvider } from '@/app/providers/store-provider';
 import { Toaster, AppErrorBoundary } from '@/shared/ui';
+import { ConfirmDialogProvider } from '@/shared/ui/dialog/confirm-dialog-provider';
 
 import type { Metadata, Viewport } from 'next';
 
@@ -16,7 +19,6 @@ export const metadata: Metadata = {
   description: 'A modern todo app with Next.js 16 and best practices',
   keywords: ['todo', 'productivity', 'tasks', 'management'],
   authors: [{ name: 'Your Name' }],
-  // viewport: 'width=device-width, initial-scale=1, user-scalable=no',
   robots: 'index, follow',
   icons: {
     icon: '/favicon.ico',
@@ -35,10 +37,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className="h-full">
       <body className={`${inter.className} h-full antialiased`}>
         <AppErrorBoundary>
-          <Providers>
-            <div className="min-h-full">{children}</div>
-            <Toaster />
-          </Providers>
+          <StoreProvider>
+            <ServerAuthProvider>
+              <NetworkProvider>
+                <ConfirmDialogProvider>
+                  <div className="min-h-full">{children}</div>
+                  <Toaster />
+                </ConfirmDialogProvider>
+              </NetworkProvider>
+            </ServerAuthProvider>
+          </StoreProvider>
         </AppErrorBoundary>
       </body>
     </html>

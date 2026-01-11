@@ -22,6 +22,7 @@ export function LoginForm() {
     resolver: zodResolver(loginSchema),
     defaultValues: {
       username: '',
+      password: '',
     },
   });
 
@@ -62,6 +63,26 @@ export function LoginForm() {
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Enter your password"
+                      autoComplete="current-password"
+                      disabled={isLoading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             {serverError && (
               <div
                 className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600"
@@ -74,10 +95,6 @@ export function LoginForm() {
             <Button type="submit" className="w-full" isLoading={isLoading} disabled={isLoading}>
               {isLoading ? 'Logging in...' : 'Login'}
             </Button>
-
-            <p className="text-sm text-gray-500 text-center">
-              Mock auth: use any username from the users list
-            </p>
           </form>
         </Form>
       </CardContent>

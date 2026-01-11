@@ -7,7 +7,7 @@ export const workspaceSсhema = z.object({
     .min(1, 'Workspace name is required')
     .max(500, 'Todo text must be at most 500 characters')
     .trim(),
-  description: z.string().optional(),
+  description: z.string().nullable().optional(),
   isDefault: z.boolean().default(false),
   ownerId: z.string().min(1, 'Owner ID is required'),
   createdAt: z

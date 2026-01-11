@@ -14,7 +14,10 @@ export const todoSchema = z.object({
   userId: z.string().min(1, 'User ID is required'),
   priority: z.enum(['low', 'medium', 'high']).optional().default('medium'),
   dueDate: z.string().optional(),
-  tags: z.array(z.string()).optional().default([]),
+  tags: z
+    .union([z.array(z.string()), z.string().transform((val) => val.split(',').filter(Boolean))])
+    .optional()
+    .default([]),
   createdAt: z
     .string()
     .optional()

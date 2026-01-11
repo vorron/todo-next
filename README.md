@@ -57,8 +57,6 @@ npm install
 # 2. Настройка окружения
 cp .env.example .env
 
-# 3. Запуск mock API (в отдельном терминале)
-npm run json-server
 
 # 4. Запуск dev-сервера
 npm run dev
@@ -89,10 +87,10 @@ npm run dev
 
 ### Порты по умолчанию
 
-| Сервис                 | Порт   |
-| ---------------------- | ------ |
-| Next.js dev server     | `3002` |
-| json-server (mock API) | `3001` |
+| Сервис             | Порт   |
+| ------------------ | ------ |
+| Next.js dev server | `3002` |
+| бэк                | `3001` |
 
 ## Scripts
 
@@ -110,10 +108,10 @@ npm run dev
 | `npm run test`         | Unit tests (Vitest)                        |
 | `npm run test:watch`   | Unit tests watch mode                      |
 | `npm run check`        | Quality gate (format+lint+typecheck+tests) |
-| `npm run json-server`  | Запуск mock API                            |
-| `npm run e2e:install`  | Установка браузеров Playwright             |
-| `npm run e2e`          | E2E тесты (Playwright)                     |
-| `npm run e2e:ui`       | E2E тесты (Playwright UI)                  |
+
+| `npm run e2e:install` | Установка браузеров Playwright |
+| `npm run e2e` | E2E тесты (Playwright) |
+| `npm run e2e:ui` | E2E тесты (Playwright UI) |
 
 ### Quality Gate
 

@@ -194,6 +194,11 @@ export const isProtectedPath = (path: string): boolean =>
 
 export const requiresAuth = (path: string): boolean => isProtectedPath(path);
 
+// === Server-side Redirect Resolvers ===
+// Временно отключены из-за boundary violations
+// TODO: Перенести в entities или использовать dependency injection
+// export const serverRedirectResolvers = generateServerRedirectResolvers();
+
 // === Types ===
 export type { RouteKey, DynamicRouteKey, AllRouteKey } from './config-types';
 

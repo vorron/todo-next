@@ -11,6 +11,7 @@ const envSchema = z.object({
 
   // Server-only env vars
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  NESTJS_API_URL: z.string().url('NESTJS_API_URL must be a valid URL').optional(),
 });
 
 /**
@@ -22,6 +23,7 @@ function parseEnv() {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_IMAGE_HOSTNAMES: process.env.NEXT_PUBLIC_IMAGE_HOSTNAMES,
     NODE_ENV: process.env.NODE_ENV,
+    NESTJS_API_URL: process.env.NESTJS_API_URL,
   });
 
   if (!parsed.success) {
@@ -42,6 +44,7 @@ const parsedEnv = parseEnv();
  */
 export const env = {
   API_URL: parsedEnv.NEXT_PUBLIC_API_URL,
+  NESTJS_API_URL: parsedEnv.NESTJS_API_URL || parsedEnv.NEXT_PUBLIC_API_URL,
   IMAGE_HOSTNAMES: parsedEnv.NEXT_PUBLIC_IMAGE_HOSTNAMES.split(',')
     .map((v) => v.trim())
     .filter(Boolean),

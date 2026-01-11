@@ -9,8 +9,8 @@ export function slugify(text: string): string {
     .trim()
     .replace(/\s+/g, '-') // пробелы в дефисы
     .replace(/[^\w\s\-]/g, '') // удаляем спецсимволы кроме пробелов
-    .replace(/[\u0400-\u044f\u0430-\u044f\u0430-\u044f\u044f]/g, (match) => {
-      const cyrillicMap = {
+    .replace(/[\u0400-\u044f]/g, (match) => {
+      const cyrillicMap: Record<string, string> = {
         а: 'a',
         б: 'b',
         в: 'v',
@@ -24,7 +24,7 @@ export function slugify(text: string): string {
         й: 'y',
         к: 'k',
         л: 'l',
-        м: 'м',
+        м: 'm',
         н: 'n',
         о: 'o',
         п: 'p',
@@ -45,14 +45,10 @@ export function slugify(text: string): string {
         ю: 'yu',
         я: 'ya',
       };
-      return match
-        .toLowerCase()
-        .split('')
-        .map((char) => cyrillicMap[char as keyof typeof cyrillicMap] || char)
-        .join('');
+      return cyrillicMap[match] || match;
     })
-    .replace(/[^\w\-]+/g, '') // удаляем спецсимволы в начале
-    .replace(/[^\-]+/g, '') // удаляем дефисы в начале
+    .replace(/[^\w\-]+/g, '') // удаляем оставшиеся спецсимволы
+    .replace(/^[\-]+/g, '') // удаляем дефисы в начале
     .replace(/[\-]+$/g, '') // удаляем дефисы в конце
     .replace(/\-+/g, '-'); // множественные дефисы в один
 }

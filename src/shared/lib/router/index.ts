@@ -97,6 +97,15 @@ export * as metadata from './generators';
  */
 export * as guards from './generators';
 
+/**
+ * Server-side редиректы
+ * @example
+ * ```typescript
+ * serverRedirect.serverRedirectResolvers.resolveTrackerRedirect()
+ * ```
+ */
+export * as serverRedirect from './generators';
+
 // === Legacy exports for backward compatibility ===
 export {
   routes,

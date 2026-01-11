@@ -1,13 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import { authReducer } from '@/features/auth';
 import settingsReducer from '@/features/settings/model/settings-slice';
 import { baseApi } from '@/shared/api';
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
-      auth: authReducer,
+      // auth: authReducer, // Удален - теперь используем Auth.js
       settings: settingsReducer,
       [baseApi.reducerPath]: baseApi.reducer,
     },

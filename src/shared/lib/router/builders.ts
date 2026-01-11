@@ -6,7 +6,15 @@ import type { Metadata } from 'next';
  * Reduces boilerplate and provides smart defaults
  */
 
-// === Static Route Builder ===
+// === Server-side Redirect Configuration ===
+
+interface ServerRedirectConfig {
+  enabled: boolean;
+  strategy: 'static' | 'dynamic';
+  target?: string; // For static redirects
+  resolver?: string; // Function name for dynamic redirects
+  fallback?: string; // Fallback route when no data
+}
 
 interface StaticRouteOptions {
   path: string;
@@ -14,12 +22,25 @@ interface StaticRouteOptions {
   protected?: boolean;
   title: string;
   description: string;
-  nav?: NavigationConfig & {
-    order?: number;
-    level?: 'section' | 'page';
-  };
-  parent?: string; // For automatic breadcrumbs
+  nav?: NavigationConfig & { order?: number; level?: 'section' | 'page' };
+  parent?: string;
+  serverRedirect?: ServerRedirectConfig;
 }
+
+// Helper для безопасного добавления serverRedirect
+function addServerRedirect<T extends Record<string, unknown>>(
+  config: T,
+  serverRedirect?: ServerRedirectConfig,
+): T & { serverRedirect?: ServerRedirectConfig } {
+  if (!serverRedirect?.enabled) return config;
+
+  return {
+    ...config,
+    serverRedirect,
+  } as T & { serverRedirect?: ServerRedirectConfig };
+}
+
+// === Static Route Builder ===
 
 /**
  * Builder function for static routes with smart defaults
@@ -31,21 +52,28 @@ export function route(options: StaticRouteOptions): RouteConfig {
   // Generate breadcrumbs automatically
   const breadcrumbs = [{ href: options.path, label: options.title }];
 
+  const baseConfig = {
+    path: options.path,
+    metadata: {
+      title: options.title,
+      description: options.description,
+    } satisfies Metadata,
+    header: {
+      type: 'static' as const,
+      descriptor: {
+        title: options.title,
+        breadcrumbs,
+      },
+    },
+  };
+
+  // Безопасно добавляем serverRedirect
+  const configWithRedirect = addServerRedirect(baseConfig, options.serverRedirect);
+
   if (isPublic) {
     const config: RouteConfig = {
-      path: options.path,
+      ...configWithRedirect,
       public: true,
-      metadata: {
-        title: options.title,
-        description: options.description,
-      } satisfies Metadata,
-      header: {
-        type: 'static' as const,
-        descriptor: {
-          title: options.title,
-          breadcrumbs,
-        },
-      },
     };
 
     if (options.nav) {
@@ -55,19 +83,8 @@ export function route(options: StaticRouteOptions): RouteConfig {
     return config;
   } else {
     const config: RouteConfig = {
-      path: options.path,
+      ...configWithRedirect,
       protected: true,
-      metadata: {
-        title: options.title,
-        description: options.description,
-      } satisfies Metadata,
-      header: {
-        type: 'static' as const,
-        descriptor: {
-          title: options.title,
-          breadcrumbs,
-        },
-      },
     };
 
     if (options.nav) {

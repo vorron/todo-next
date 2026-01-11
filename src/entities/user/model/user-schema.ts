@@ -5,7 +5,7 @@ import { z } from 'zod';
  * Автоматически генерирует TypeScript типы
  */
 export const userSchema = z.object({
-  id: z.string().uuid('Invalid user ID format'),
+  id: z.string().min(1, 'User ID is required'),
   username: z
     .string()
     .min(3, 'Username must be at least 3 characters')

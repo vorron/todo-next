@@ -25,5 +25,4 @@ export function WorkspaceContent() {
 }
 
 // Экспорты для разных контентов
-export { WorkspaceHubContent } from './workspace-hub-content';
 export { WorkspaceManageContent } from './workspace-manage-content';

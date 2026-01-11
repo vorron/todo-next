@@ -7,7 +7,7 @@ export function ProfilePage() {
   const { session } = useAuth();
   useHeaderFromTemplate(undefined, 'profile');
 
-  if (!session) return null;
+  if (!session?.user) return null;
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-2xl">
@@ -25,20 +25,22 @@ export function ProfilePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-gray-700">Name</label>
-                <p className="text-lg text-gray-900 mt-1">{session.name}</p>
+                <p className="text-lg text-gray-900 mt-1">{session.user.name}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700">Username</label>
-                <p className="text-lg text-gray-900 mt-1">@{session.username}</p>
+                <p className="text-lg text-gray-900 mt-1">@{session.user.username}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700">User ID</label>
-                <p className="text-sm text-gray-500 font-mono mt-1">{session.userId}</p>
+                <p className="text-sm text-gray-500 font-mono mt-1">{session.user.id}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700">Session expires</label>
                 <p className="text-sm text-gray-500 mt-1">
-                  {new Date(session.expiresAt).toLocaleString()}
+                  {session.expires
+                    ? new Date(Number(session.expires) * 1000).toLocaleString()
+                    : 'Never'}
                 </p>
               </div>
             </div>
