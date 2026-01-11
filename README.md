@@ -97,7 +97,7 @@ npm run dev
 | Команда                | Описание                                   |
 | ---------------------- | ------------------------------------------ |
 | `npm run dev`          | Запуск dev-сервера                         |
-| `npm run dev:e2e`      | Запуск json-server + dev-сервер (для E2E)  |
+| `npm run dev:e2e`      | Запуск dev-сервера (для E2E)               |
 | `npm run build`        | Production сборка                          |
 | `npm run start`        | Запуск production сервера                  |
 | `npm run lint`         | ESLint проверка                            |

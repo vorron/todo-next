@@ -28,8 +28,6 @@ ARCHITECTURE.md
 *.md
 
 # Development files
-db.json
-json-server.json
 routes.json
 info.todo.md
 
