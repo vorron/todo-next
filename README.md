@@ -34,7 +34,7 @@ export const ROUTES = {
 } as const;
 
 // Использование в компонентах
-const { navigateToTodos, navigateToTracker } = useNavigation();
+const { navigateToTodos, toTracker } = useNavigation();
 
 // Иерархическая навигация
 const { getMainNavigation, getBreadcrumbs } = useNavigation();

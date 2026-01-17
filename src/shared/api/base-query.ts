@@ -12,6 +12,8 @@ export const baseQuery = retry(
     baseUrl: env.API_URL,
     timeout: 10000,
     prepareHeaders: (headers) => {
+      // Устанавливаем Content-Type по умолчанию
+      // Для GET запросов он не вызовет лишних CORS preflight
       headers.set('Content-Type', 'application/json');
       return headers;
     },

@@ -9,16 +9,8 @@ import { ROUTES } from '@/shared/lib/router';
 import { DataLoadingState, ErrorStateCard, useHeaderFromTemplate } from '@/shared/ui';
 
 export function TodoDetailPage({ todoId }: { todoId: string }) {
-  const {
-    todo,
-    isLoading,
-    error,
-    handleDelete,
-    handleToggle,
-    isToggling,
-    isDeleting,
-    navigateToTodos,
-  } = useTodoDetail(todoId);
+  const { todo, isLoading, error, handleDelete, handleToggle, isToggling, isDeleting, toTodos } =
+    useTodoDetail(todoId);
 
   // Memoize todo data to prevent infinite re-renders
   const memoizedTodo = useMemo(() => todo, [todo]);
@@ -36,7 +28,7 @@ export function TodoDetailPage({ todoId }: { todoId: string }) {
         title="Todo Not Found"
         description="The todo you're looking for doesn't exist or has been deleted."
         actionLabel="Back to Todos"
-        onAction={navigateToTodos}
+        onAction={toTodos}
       />
     );
   }

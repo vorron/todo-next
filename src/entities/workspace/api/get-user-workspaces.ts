@@ -1,3 +1,5 @@
+import { env } from '@/shared/config/env';
+
 import type { Workspace } from '../model/schema';
 
 /**
@@ -18,10 +20,8 @@ interface ApiWorkspace {
 
 export async function getUserWorkspaces(userId: string): Promise<Workspace[]> {
   try {
-    // Используем NestJS API endpoint - baseUrl уже включает /api
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-
-    const response = await fetch(`${baseUrl}/workspaces/owner/${userId}`, {
+    // Используем унифицированную конфигурацию URL
+    const response = await fetch(`${env.NESTJS_API_URL}/workspaces/owner/${userId}`, {
       cache: 'no-store', // Всегда свежие данные для layout
       headers: {
         'Content-Type': 'application/json',

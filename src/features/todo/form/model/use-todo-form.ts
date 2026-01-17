@@ -69,7 +69,7 @@ export const useTodoForm = ({ mode, todoId }: UseTodoFormProps) => {
       // Действия после успешного сабмита
       if (mode === 'create') {
         form.reset();
-        handleApiSuccess('Todo created successfully');
+        // Success toast уже показан в useCreateTodo, дублировать не нужно
       } else {
         handleApiSuccess('Todo updated successfully');
         if (ROUTES.TODO_DETAIL) {

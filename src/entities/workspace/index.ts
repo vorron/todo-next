@@ -15,3 +15,6 @@ export {
   workspaceApiReducer,
   workspaceApiMiddleware,
 } from './api/workspace-api';
+
+// Server-side functions
+export { getUserWorkspaces, getDefaultWorkspace, getWorkspaceById } from './lib/server-workspace';

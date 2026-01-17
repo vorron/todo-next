@@ -90,7 +90,7 @@ src/shared/lib/router/
 
 ```typescript
 // Базовая навигация
-const { navigateToTodos, navigateToTracker } = useNavigation();
+const { navigateToTodos, toTracker } = useNavigation();
 
 // Иерархическая навигация
 const { getMainNavigation, getSectionChildren, getBreadcrumbs } = useNavigation();

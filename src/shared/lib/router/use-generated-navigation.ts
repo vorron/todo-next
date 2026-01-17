@@ -6,23 +6,24 @@ import { ROUTES } from './index';
  * Типы для генерируемых навигационных функций
  */
 export type GeneratedNavigationFunctions = {
-  navigateTo: (path: string) => void;
-  navigateToHome: () => void;
-  navigateToLogin: () => void;
-  navigateToAbout: () => void;
-  navigateToTodos: () => void;
-  navigateToTracker: () => void;
-  navigateToWorkspace: () => void;
-  navigateToWorkspaceSelect: () => void;
-  navigateToWorkspaceManage: () => void;
-  navigateToProfile: () => void;
-  navigateToSettings: () => void;
-  navigateToTodoDetail: (id: string) => void;
-  navigateToTodoEdit: (id: string) => void;
-  navigateToWorkspaceDashboard: (id: string) => void;
-  navigateToWorkspaceTimeEntry: (id: string) => void;
-  navigateToWorkspaceReports: (id: string) => void;
-  navigateToWorkspaceProjects: (id: string) => void;
+  to: (path: string) => void;
+  toHome: () => void;
+  toLogin: () => void;
+  toAbout: () => void;
+  toTodos: () => void;
+  toTracker: () => void;
+  toWorkspace: () => void;
+  toWorkspaceSelect: () => void;
+  toWorkspaceManage: () => void;
+  toTrackerOnboarding: () => void;
+  toProfile: () => void;
+  toSettings: () => void;
+  toTodoDetail: (id: string) => void;
+  toTodoEdit: (id: string) => void;
+  toWorkspaceDashboard: (id: string) => void;
+  toWorkspaceTimeEntry: (id: string) => void;
+  toWorkspaceReports: (id: string) => void;
+  toWorkspaceProjects: (id: string) => void;
 };
 
 /**
@@ -39,7 +40,7 @@ export function useGeneratedNavigation(
   // Генерируем статические функции
   const staticFunctions = staticRoutes.reduce(
     (acc, [key, route]) => {
-      const functionName = `navigateTo${key
+      const functionName = `to${key
         .split('_')
         .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
         .join('')}`;
@@ -52,7 +53,7 @@ export function useGeneratedNavigation(
   // Генерируем динамические функции
   const dynamicFunctions = dynamicRoutes.reduce(
     (acc, [key, route]) => {
-      const functionName = `navigateTo${key
+      const functionName = `to${key
         .split('_')
         .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
         .join('')}`;
@@ -64,7 +65,7 @@ export function useGeneratedNavigation(
 
   return {
     // Базовая функция
-    navigateTo: (path: string) => router.push(path),
+    to: (path: string) => router.push(path),
 
     // Все сгенерированные функции
     ...staticFunctions,

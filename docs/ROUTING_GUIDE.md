@@ -191,7 +191,7 @@ ROUTES.WORKSPACE_REPORTS('ws-1'); // '/tracker/ws-1/reports'
 ```typescript
 // Все функции генерируются автоматически
 const {
-  navigateToHome,
+  toHome,
   navigateToTodos,
   navigateToTodoDetail,
   navigateToWorkspaceDashboard,
@@ -233,7 +233,7 @@ function TodoList() {
 ```typescript
 function WorkspaceNavigation() {
   const {
-    navigateToTracker,
+    toTracker,
     navigateToWorkspaceSelect,
     navigateToWorkspaceManage,
     navigateToWorkspaceDashboard
@@ -241,7 +241,7 @@ function WorkspaceNavigation() {
 
   return (
     <nav>
-      <button onClick={navigateToTracker}>Workspaces</button>
+      <button onClick={toTracker}>Workspaces</button>
       <button onClick={navigateToWorkspaceSelect}>Select Workspace</button>
       <button onClick={navigateToWorkspaceManage}>Manage Workspaces</button>
       <button onClick={() => navigateToWorkspaceDashboard('workspace-1')}>

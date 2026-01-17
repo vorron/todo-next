@@ -44,7 +44,6 @@ export function ProjectsPage({ workspace: _workspace }: { workspace: Workspace }
     if (!newProjectName.trim()) return;
 
     // TODO: Здесь будет API вызов для создания проекта
-    console.log('Creating project:', { name: newProjectName, description: newProjectDescription });
 
     // Закрываем диалог и сбрасываем форму
     setIsCreateDialogOpen(false);
@@ -60,7 +59,6 @@ export function ProjectsPage({ workspace: _workspace }: { workspace: Workspace }
     if (!editingProject || !editingProject.name.trim()) return;
 
     // TODO: Здесь будет API вызов для редактирования проекта
-    console.log('Editing project:', editingProject);
 
     // Закрываем диалог
     setEditingProject(null);
@@ -74,7 +72,6 @@ export function ProjectsPage({ workspace: _workspace }: { workspace: Workspace }
     if (!deletingProject) return;
 
     // TODO: Здесь будет API вызов для удаления проекта
-    console.log('Deleting project:', deletingProject);
 
     // Закрываем диалог
     setDeletingProject(null);

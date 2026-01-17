@@ -1,41 +1,31 @@
 import { redirect } from 'next/navigation';
 
-import { getUserWorkspaces, getDefaultWorkspace } from '@/entities/workspace/lib/server-workspace';
+import { getUserWorkspaces, getDefaultWorkspace } from '@/entities/workspace';
 import { getCurrentUserId } from '@/lib/auth-server';
+import { WorkspaceTimeEntryPage } from '@/screens/workspace-time-entry';
+import { ROUTES } from '@/shared/lib/router';
 
 /**
  * Tracker page - server-side редирект на default workspace
  * Использует Auth.js для получения userId из сессии
  */
 export default async function TrackerPage() {
-  // Получаем userId из сессии через Auth.js
   const userId = await getCurrentUserId();
 
-  // Если пользователь не авторизован - редирект на логин
   if (!userId) {
-    redirect('/login');
+    redirect(ROUTES.LOGIN);
   }
 
-  try {
-    const workspaces = await getUserWorkspaces(userId);
+  const workspaces = await getUserWorkspaces(userId);
 
-    if (workspaces.length === 0) {
-      redirect('/tracker/onboarding');
-    }
-
-    const defaultWorkspace = getDefaultWorkspace(workspaces);
-    if (!defaultWorkspace) {
-      redirect('/tracker/onboarding');
-    }
-
-    redirect(`/tracker/${defaultWorkspace.id}/time-entry`);
-  } catch (error) {
-    // NEXT_REDIRECT - ожидаемое поведение Next.js
-    if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
-      throw error;
-    }
-
-    console.error('Tracker redirect error:', error);
-    redirect('/tracker/onboarding');
+  if (workspaces.length === 0) {
+    redirect(ROUTES.TRACKER_ONBOARDING);
   }
+
+  const defaultWorkspace = getDefaultWorkspace(workspaces);
+  if (!defaultWorkspace) {
+    redirect(ROUTES.TRACKER_ONBOARDING);
+  }
+
+  return <WorkspaceTimeEntryPage workspace={defaultWorkspace} />;
 }

@@ -102,7 +102,7 @@ describe('router generators', () => {
     it('has correct path types', () => {
       Object.values(paths).forEach((path) => {
         expect(typeof path).toBe('string');
-        expect(path).toMatch(/^\/[a-z-]*$/);
+        expect(path).toMatch(/^\/[a-z-\/]*$/);
       });
     });
   });

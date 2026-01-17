@@ -40,6 +40,12 @@ export { ErrorStateCard } from './error-state-card/error-state-card';
 export { HeaderProvider, useHeader } from './header-context';
 export { useHeaderFromTemplate } from './hooks/use-header-from-template';
 export { ActionBar, type ActionBarItem, type ActionBarProps } from './action-bar';
+export {
+  UniversalActionBar,
+  type UniversalActionItem,
+  type UniversalActionBarProps,
+  type SwitcherConfig,
+} from './universal-action-bar';
 export { FilterButtons } from './filter-buttons';
 export { ConfirmationDialog } from './confirmation-dialog';
 export { AppErrorBoundary } from './error-boundary/app-error-boundary';

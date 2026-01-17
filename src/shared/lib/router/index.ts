@@ -4,7 +4,7 @@
  *
  * @example
  * ```typescript
- * import { ROUTES, paths, navigation } from '@/shared/lib/router';
+ * import { ROUTES, paths, navigation, useGeneratedNavigation } from '@/shared/lib/router';
  *
  * // Использование маршрутов
  * const todoPath = ROUTES.TODO_DETAIL('123');
@@ -12,6 +12,7 @@
  *
  * // Использование навигации
  * const mainNav = navigation.mainNavigation;
+ * const { navigateToWorkspaceReports } = useGeneratedNavigation(router);
  * ```
  */
 
@@ -34,6 +35,24 @@ validateConfigInDev();
  * ```
  */
 export { ROUTES } from './generators';
+
+/**
+ * Хук для генерации навигационных функций на основе ROUTES
+ * @example
+ * ```typescript
+ * const { navigateToWorkspaceReports } = useGeneratedNavigation(router);
+ * ```
+ */
+export { useGeneratedNavigation } from './use-generated-navigation';
+
+/**
+ * Расширенный навигационный хук с поддержкой иерархии
+ * @example
+ * ```typescript
+ * const { navigateToWorkspaceReports, navigateUp } = useNavigation();
+ * ```
+ */
+export { useNavigation } from './navigation';
 
 /**
  * Динамические метаданные для маршрутов с параметрами

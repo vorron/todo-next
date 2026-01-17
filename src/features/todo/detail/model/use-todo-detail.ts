@@ -17,19 +17,19 @@ interface UseTodoDetailResult {
   handleToggle: () => Promise<void>;
   isToggling: boolean;
   isDeleting: boolean;
-  navigateToTodos: () => void;
+  toTodos: () => void;
 }
 
 export function useTodoDetail(todoId: string): UseTodoDetailResult {
   const { todo, isLoading, error } = useTodoById(todoId);
   const { toggleTodo, isToggling } = useToggleTodo();
   const { deleteTodo, isDeleting } = useUndoableDeleteTodo();
-  const { navigateToTodos } = useNavigation();
+  const { toTodos } = useNavigation();
 
   const handleDelete = useCallback(async () => {
     await deleteTodo(todo);
-    navigateToTodos();
-  }, [todo, deleteTodo, navigateToTodos]);
+    toTodos();
+  }, [todo, deleteTodo, toTodos]);
 
   return {
     todo,
@@ -39,6 +39,6 @@ export function useTodoDetail(todoId: string): UseTodoDetailResult {
     handleToggle: () => toggleTodo(todo),
     isToggling,
     isDeleting,
-    navigateToTodos,
+    toTodos,
   };
 }

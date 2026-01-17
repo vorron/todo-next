@@ -39,7 +39,7 @@ export function TodoList({ filter, search, sortBy }: TodoListProps) {
   const { clearCompletedAll } = useClearCompletedTodos();
 
   // Navigation
-  const { navigateToTodoDetail, navigateToTodoEdit } = useNavigation();
+  const { toTodoDetail, toTodoEdit } = useNavigation();
 
   // UI helpers
   const confirm = useConfirm();
@@ -53,8 +53,8 @@ export function TodoList({ filter, search, sortBy }: TodoListProps) {
     useTodoSelectionState();
 
   // Action handlers
-  const handleTodoClick = (todo: Todo) => navigateToTodoDetail(todo.id);
-  const handleTodoEdit = (todo: Todo) => navigateToTodoEdit(todo.id);
+  const handleTodoClick = (todo: Todo) => toTodoDetail(todo.id);
+  const handleTodoEdit = (todo: Todo) => toTodoEdit(todo.id);
   const handleTodoToggle = (todo: Todo) => toggleTodo(todo);
   const handleTodoDelete = (todo: Todo) => deleteTodo(todo);
   const handleSelectionToggle = (todoId: string) => toggleSelection(todoId);

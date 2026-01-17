@@ -49,11 +49,7 @@ export function buildTodoCrudEndpoints(builder: BaseApiEndpointBuilder) {
         return {
           url: 'todos',
           method: 'POST',
-          body: {
-            ...validatedData,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          },
+          body: validatedData,
         };
       },
       invalidatesTags: todoTags.invalidateListTags,
@@ -68,10 +64,7 @@ export function buildTodoCrudEndpoints(builder: BaseApiEndpointBuilder) {
         return {
           url: `todos/${id}`,
           method: 'PATCH',
-          body: {
-            ...validatedData,
-            updatedAt: new Date().toISOString(),
-          },
+          body: validatedData,
         };
       },
       invalidatesTags: (result, error, { id }) => [
@@ -109,7 +102,6 @@ export function buildTodoCrudEndpoints(builder: BaseApiEndpointBuilder) {
           method: 'PATCH',
           body: {
             completed: !currentTodo.completed,
-            updatedAt: new Date().toISOString(),
           },
         });
 

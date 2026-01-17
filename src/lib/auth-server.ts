@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 
 import { auth } from '@/lib/auth';
+import { ROUTES } from '@/shared/lib/router';
 
 /**
  * 🎯 Server-side auth utilities - 4 функции для 99% кейсов
@@ -13,7 +14,7 @@ import { auth } from '@/lib/auth';
  * ```tsx
  * export default async function ProfilePage() {
  *   const userId = await getCurrentUserId();
- *   if (!userId) redirect('/login');
+ *   if (!userId) redirect(ROUTES.LOGIN);
  *
  *   const profile = await getProfile(userId);
  *   return <Profile profile={profile} />;
@@ -32,7 +33,7 @@ export async function getCurrentUserId(): Promise<string | null> {
  * ```tsx
  * export default async function Dashboard() {
  *   const session = await getSession();
- *   if (!session) redirect('/login');
+ *   if (!session) redirect(ROUTES.LOGIN);
  *
  *   return <h1>Welcome, {session.user.name}!</h1>;
  * }
@@ -57,7 +58,7 @@ export async function getSession() {
 export async function requireAuth(): Promise<string> {
   const userId = await getCurrentUserId();
   if (!userId) {
-    redirect('/login');
+    redirect(ROUTES.LOGIN);
   }
   return userId;
 }

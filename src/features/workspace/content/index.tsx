@@ -26,3 +26,4 @@ export function WorkspaceContent() {
 
 // Экспорты для разных контентов
 export { WorkspaceManageContent } from './workspace-manage-content';
+export { WorkspaceSelectContent } from './workspace-select-content';

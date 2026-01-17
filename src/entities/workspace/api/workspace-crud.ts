@@ -42,11 +42,7 @@ export function buildWorkspaceCrudEndpoints(builder: BaseApiEndpointBuilder) {
           return {
             url: 'workspaces',
             method: 'POST',
-            body: {
-              ...validatedData,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            },
+            body: validatedData,
           };
         },
         invalidatesTags: workspaceTags.invalidateListTags,
@@ -62,10 +58,7 @@ export function buildWorkspaceCrudEndpoints(builder: BaseApiEndpointBuilder) {
         return {
           url: `workspaces/${id}`,
           method: 'PATCH',
-          body: {
-            ...validatedData,
-            updatedAt: new Date().toISOString(),
-          },
+          body: validatedData,
         };
       },
       invalidatesTags: (result, error, { id }) => [

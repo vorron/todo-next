@@ -71,30 +71,7 @@ export function getPublicRoutes() {
  * Валидация роутинга с детальной информацией
  */
 export function debugRouting() {
-  console.group('🔍 Router Debug Information');
-
-  // Валидация конфигурации
   const validation = validateRouteConfig();
-  if (validation.isValid) {
-    console.log('✅ Route configuration is valid');
-  } else {
-    console.error('❌ Route configuration errors:', validation.errors);
-  }
-
-  // Статистика маршрутов
-  console.log('📊 Route Statistics:');
-  console.log(`- Total routes: ${Object.keys(ROUTES).length}`);
-  console.log(
-    `- Static routes: ${Object.entries(ROUTES).filter(([_, path]) => typeof path === 'string').length}`,
-  );
-  console.log(
-    `- Dynamic routes: ${Object.entries(ROUTES).filter(([_, path]) => typeof path === 'function').length}`,
-  );
-  console.log(`- Protected routes: ${getProtectedRoutes().length}`);
-  console.log(`- Public routes: ${getPublicRoutes().length}`);
-
-  console.groupEnd();
-
   return validation;
 }
 
@@ -173,16 +150,7 @@ export function createRouteTester() {
 export const devShortcuts =
   process.env.NODE_ENV === 'development'
     ? {
-        // Показать отладочную информацию
         debug: () => debugRouting(),
-
-        // Показать все маршруты
-        routes: () => console.table(Object.entries(ROUTES).map(([key, path]) => ({ key, path }))),
-
-        // Показать навигацию
-        navigation: () => console.table(Object.values(navigationConfig)),
-
-        // Валидация
         validate: () => validateRouteConfig(),
       }
     : null;

@@ -12,6 +12,8 @@ const envSchema = z.object({
   // Server-only env vars
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   NESTJS_API_URL: z.string().url('NESTJS_API_URL must be a valid URL').optional(),
+  NEXTAUTH_URL: z.string().url('NEXTAUTH_URL must be a valid URL').optional(),
+  NEXTAUTH_SECRET: z.string().min(1, 'NEXTAUTH_SECRET is required').optional(),
 });
 
 /**
@@ -24,6 +26,8 @@ function parseEnv() {
     NEXT_PUBLIC_IMAGE_HOSTNAMES: process.env.NEXT_PUBLIC_IMAGE_HOSTNAMES,
     NODE_ENV: process.env.NODE_ENV,
     NESTJS_API_URL: process.env.NESTJS_API_URL,
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   });
 
   if (!parsed.success) {
@@ -52,6 +56,8 @@ export const env = {
   IS_PRODUCTION: parsedEnv.NODE_ENV === 'production',
   IS_DEVELOPMENT: parsedEnv.NODE_ENV === 'development',
   IS_TEST: parsedEnv.NODE_ENV === 'test',
+  NEXTAUTH_URL: parsedEnv.NEXTAUTH_URL,
+  NEXTAUTH_SECRET: parsedEnv.NEXTAUTH_SECRET,
 } as const;
 
 /**

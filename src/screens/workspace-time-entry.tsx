@@ -1,20 +1,13 @@
 'use client';
 
-import { useWorkspaces } from '@/features/workspace/model/queries';
 import { WorkspaceTimeEntryPage as WorkspaceTimeEntryComponent } from '@/features/workspace/pages';
 
-/**
- * Workspace Time Entry Screen
- * Обертка для client component с загрузкой данных
- */
-export function WorkspaceTimeEntryPage({ params }: { params: { id: string } }) {
-  const { workspaces, isLoading } = useWorkspaces();
+import type { Workspace } from '@/entities/workspace/model/schema';
 
-  if (isLoading) {
-    return <div>Loading workspace...</div>;
-  }
+export interface WorkspaceTimeEntryScreenProps {
+  workspace: Workspace | null;
+}
 
-  const workspace = workspaces.find((w) => w.id === params.id) || null;
-
+export function WorkspaceTimeEntryPage({ workspace }: WorkspaceTimeEntryScreenProps) {
   return <WorkspaceTimeEntryComponent workspace={workspace} />;
 }

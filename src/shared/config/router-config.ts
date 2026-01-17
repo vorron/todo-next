@@ -11,6 +11,7 @@ export const BASE_PATHS = {
   TRACKER: '/tracker',
   TRACKER_SELECT: '/tracker/select',
   TRACKER_MANAGE: '/tracker/manage',
+  TRACKER_ONBOARDING: '/tracker/onboarding',
   PROFILE: '/profile',
   SETTINGS: '/settings',
 } as const;
@@ -98,6 +99,13 @@ export const routeConfigData = {
       label: 'Settings',
       order: 3,
     },
+  }),
+
+  trackerOnboarding: route({
+    path: BASE_PATHS.TRACKER_ONBOARDING,
+    protected: true,
+    title: 'Workspace Onboarding',
+    description: 'Set up your first workspace',
   }),
 } as const;
 
