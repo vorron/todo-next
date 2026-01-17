@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 
 import { getUserWorkspaces, getWorkspaceById } from '@/entities/workspace';
 import { getCurrentUserId } from '@/features/auth/lib/server/auth-server';
-import { TimeEntryPage } from '@/screens/workspace-time-entry/ui/time-entry-page';
+import { TimeEntryPage } from '@/screens/workspace';
 import { getRouteMetadata, ROUTES } from '@/shared/lib/router';
 
 import type { Metadata } from 'next';

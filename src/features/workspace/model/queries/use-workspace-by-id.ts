@@ -1,19 +1,7 @@
-import { workspaceApi } from '@/entities/workspace';
+/**
+ * useWorkspaceById Feature Hook
+ * Реэкспорт базового query из entities для обратной совместимости
+ * @deprecated Используйте import { useWorkspaceById } from '@/entities/workspace/model'
+ */
 
-export function useWorkspaceById(id: string) {
-  // Пропускаем запрос если id='skip'
-  const skip = id === 'skip';
-  const {
-    data: workspace,
-    isLoading,
-    error,
-    refetch,
-  } = workspaceApi.endpoints.getWorkspaceById.useQuery(id, { skip });
-
-  return {
-    workspace,
-    isLoading,
-    error,
-    refetch,
-  };
-}
+export { useWorkspaceById } from '@/entities/workspace/model';

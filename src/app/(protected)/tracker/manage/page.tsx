@@ -1,5 +1,5 @@
-import { WorkspaceManageContent } from '@/features/workspace/content';
+import { WorkspaceManagePage } from '@/screens/workspace';
 
 export default function TrackerManagePage() {
-  return <WorkspaceManageContent />;
+  return <WorkspaceManagePage />;
 }

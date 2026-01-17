@@ -1,4 +1,4 @@
-import { WorkspaceSelectContent } from '@/features/workspace/content/workspace-select-content';
+import { WorkspaceSelectPage } from '@/screens/workspace';
 import { getRouteMetadata } from '@/shared/lib/router';
 
 import type { Metadata } from 'next';
@@ -10,5 +10,5 @@ export const metadata: Metadata = getRouteMetadata('workspaceSelect');
  * URL: /tracker/select
  */
 export default function TrackerSelectPage() {
-  return <WorkspaceSelectContent />;
+  return <WorkspaceSelectPage />;
 }

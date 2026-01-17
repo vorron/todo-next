@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 
 import { getUserWorkspaces, getDefaultWorkspace } from '@/entities/workspace';
-import { requireAuth } from '@/features/auth';
-import { TimeEntryPage } from '@/screens/workspace-time-entry';
+import { getCurrentUserId } from '@/features/auth/lib/server/auth-server';
+import { TimeEntryPage } from '@/screens/workspace';
 import { ROUTES } from '@/shared/lib/router';
 
 /**
@@ -10,7 +10,11 @@ import { ROUTES } from '@/shared/lib/router';
  * Использует Auth.js для получения userId из сессии
  */
 export default async function TrackerPage() {
-  const userId = await requireAuth();
+  const userId = await getCurrentUserId();
+
+  if (!userId) {
+    redirect(ROUTES.LOGIN);
+  }
 
   const workspaces = await getUserWorkspaces(userId);
 

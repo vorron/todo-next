@@ -1,4 +1,4 @@
-import { CreateWorkspaceForm } from '@/features/workspace/components/create-workspace-form';
+import { CreateWorkspaceForm } from '@/features/workspace/ui/create-workspace-form';
 
 /**
  * Tracker onboarding page - server-first

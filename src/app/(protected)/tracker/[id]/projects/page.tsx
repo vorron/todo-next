@@ -1,4 +1,4 @@
-import { WorkspaceProjectsPage } from '@/screens/workspace-projects';
+import { WorkspaceProjectsPage } from '@/screens/workspace';
 import { getRouteMetadata } from '@/shared/lib/router';
 
 import type { Metadata } from 'next';
