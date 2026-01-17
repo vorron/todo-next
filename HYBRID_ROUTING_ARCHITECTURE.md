@@ -37,7 +37,7 @@ export default async function TrackerPage() {
 
 ```typescript
 // src/screens/workspace-time-entry.tsx
-export function WorkspaceTimeEntryPage({ params }: { params: { id: string } }) {
+export function TimeEntryPage({ params }: { params: { id: string } }) {
   const { workspaces, isLoading } = useWorkspaces();
   const workspace = workspaces.find(w => w.id === params.id) || null;
 

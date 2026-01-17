@@ -3,7 +3,7 @@
  * Декларативный роутер по паттерну todos
  */
 
-import { WorkspaceTimeEntryPage, WorkspaceDashboardPage } from '@/features/workspace/pages';
+import { TimeEntryPage, WorkspaceDashboardPage } from '@/features/workspace/pages';
 
 import type { WorkspaceViewState } from '../model/use-workspace-state';
 
@@ -21,9 +21,11 @@ export function WorkspaceRouter({ workspaceState }: WorkspaceRouterProps) {
   // Декларативный рендеринг на основе viewMode
   switch (viewMode) {
     case 'time-entry':
-      return <WorkspaceTimeEntryPage workspace={currentWorkspace} />;
+      if (!currentWorkspace) return <div>No workspace selected</div>;
+      return <TimeEntryPage workspace={currentWorkspace} workspaces={workspaceState.workspaces} />;
 
     case 'dashboard':
+      if (!currentWorkspace) return <div>No workspace selected</div>;
       return <WorkspaceDashboardPage workspace={currentWorkspace} />;
 
     case 'select':

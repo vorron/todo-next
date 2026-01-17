@@ -3,37 +3,19 @@
 import { Clock } from 'lucide-react';
 
 import { WorkspaceActionsBar } from '@/features/workspace/components';
-import { useWorkspaces } from '@/features/workspace/model/queries';
 import { Card, CardContent, CardHeader } from '@/shared/ui';
 
 import type { Workspace } from '@/entities/workspace/model/schema';
 
 export interface WorkspaceTimeEntryPageProps {
-  workspace: Workspace | null;
+  workspace: Workspace;
+  workspaces: Workspace[];
 }
 
-export function WorkspaceTimeEntryPage({ workspace }: WorkspaceTimeEntryPageProps) {
-  const { workspaces } = useWorkspaces();
-
-  // Фильтруем workspaces: исключаем текущий
-  const otherWorkspaces = workspaces?.filter((ws) => ws.id !== workspace?.id) || [];
-
-  if (!workspace) {
-    return (
-      <div className="container mx-auto py-8">
-        <Card>
-          <CardContent className="text-center py-8">
-            <p className="text-muted-foreground">No workspace selected</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
+export function TimeEntryPage({ workspace, workspaces }: WorkspaceTimeEntryPageProps) {
   return (
     <div className="container mx-auto py-8 space-y-6">
-      {/* Enhanced Actions Bar с dropdown switcher */}
-      <WorkspaceActionsBar workspaces={otherWorkspaces} currentWorkspaceId={workspace?.id} />
+      <WorkspaceActionsBar workspaces={workspaces} currentWorkspaceId={workspace?.id} />
 
       {/* Основной блок таймера - фокус на действии */}
       <Card className="max-w-2xl mx-auto">

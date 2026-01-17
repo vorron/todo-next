@@ -1,1 +1,1 @@
-export { WorkspaceTimeEntryPage } from './ui/workspace-time-entry-page';
+export { TimeEntryPage } from './ui/time-entry-page';

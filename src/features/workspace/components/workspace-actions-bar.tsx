@@ -1,5 +1,7 @@
 'use client';
 
+import { useMemo } from 'react';
+
 import { BarChart, Folder, Settings } from 'lucide-react';
 
 import { useNavigation } from '@/shared/lib/router';
@@ -31,6 +33,11 @@ export function WorkspaceActionsBar({
   currentWorkspaceId,
   className,
 }: WorkspaceActionsBarProps) {
+  const otherWorkspaces = useMemo(
+    () => workspaces?.filter((ws) => ws.id !== currentWorkspaceId) || [],
+    [workspaces, currentWorkspaceId],
+  );
+
   const navigation = useNavigation();
 
   const actions: UniversalActionItem[] = [
@@ -38,7 +45,7 @@ export function WorkspaceActionsBar({
       key: 'workspace-switcher',
       type: 'switcher',
       switcherConfig: {
-        items: workspaces,
+        items: otherWorkspaces,
         idField: 'id',
         labelField: 'name',
         onSelect: (selectedWorkspace) => {

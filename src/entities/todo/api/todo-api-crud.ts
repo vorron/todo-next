@@ -89,14 +89,15 @@ export function buildTodoCrudEndpoints(builder: BaseApiEndpointBuilder) {
     // Переключение статуса todo
     toggleTodo: builder.mutation<Todo, string>({
       async queryFn(id, api, extraOptions, baseQuery) {
-        // Сначала получаем текущее todo
+        // Получаем текущее состояние todo
         const currentResult = await baseQuery(`todos/${id}`);
-
-        if (currentResult.error) return { error: currentResult.error };
+        if (currentResult.error) {
+          return { error: currentResult.error };
+        }
 
         const currentTodo = todoSchema.parse(currentResult.data);
 
-        // Обновляем статус
+        // Обновляем только поле completed
         const updateResult = await baseQuery({
           url: `todos/${id}`,
           method: 'PATCH',
@@ -105,7 +106,9 @@ export function buildTodoCrudEndpoints(builder: BaseApiEndpointBuilder) {
           },
         });
 
-        if (updateResult.error) return { error: updateResult.error };
+        if (updateResult.error) {
+          return { error: updateResult.error };
+        }
 
         return { data: todoSchema.parse(updateResult.data) };
       },

@@ -10,11 +10,11 @@ type ExtraOptions = Record<string, unknown>;
 export const baseQuery = retry(
   fetchBaseQuery({
     baseUrl: env.API_URL,
-    timeout: 10000,
+    timeout: 30000,
+    credentials: 'include',
     prepareHeaders: (headers) => {
-      // Устанавливаем Content-Type по умолчанию
-      // Для GET запросов он не вызовет лишних CORS preflight
       headers.set('Content-Type', 'application/json');
+      headers.set('Accept', 'application/json');
       return headers;
     },
   }),
@@ -33,7 +33,6 @@ export const baseQueryWithLogging: BaseQueryFn<
     console.log('🔵 API Request:', {
       endpoint: typeof args === 'string' ? args : args.url,
       method: typeof args === 'string' ? 'GET' : args.method || 'GET',
-      timestamp: new Date().toISOString(),
     });
   }
 
@@ -44,7 +43,7 @@ export const baseQueryWithLogging: BaseQueryFn<
     if (result.error) {
       console.error('🔴 API Error:', {
         endpoint: typeof args === 'string' ? args : args.url,
-        error: result.error,
+        status: result.error.status,
         duration: `${duration}ms`,
       });
     } else {

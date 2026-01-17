@@ -1,11 +1,8 @@
 import { Inter } from 'next/font/google';
 
 import './globals.css';
-import { NetworkProvider } from '@/app/providers/network-provider';
-import { ServerAuthProvider } from '@/app/providers/server-auth-provider';
-import { StoreProvider } from '@/app/providers/store-provider';
+import { AppProviders } from '@/app/providers/app-providers';
 import { Toaster, AppErrorBoundary } from '@/shared/ui';
-import { ConfirmDialogProvider } from '@/shared/ui/dialog/confirm-dialog-provider';
 
 import type { Metadata, Viewport } from 'next';
 
@@ -37,16 +34,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className="h-full">
       <body className={`${inter.className} h-full antialiased`}>
         <AppErrorBoundary>
-          <StoreProvider>
-            <ServerAuthProvider>
-              <NetworkProvider>
-                <ConfirmDialogProvider>
-                  <div className="min-h-full">{children}</div>
-                  <Toaster />
-                </ConfirmDialogProvider>
-              </NetworkProvider>
-            </ServerAuthProvider>
-          </StoreProvider>
+          <AppProviders>
+            <div className="min-h-full">{children}</div>
+            <Toaster />
+          </AppProviders>
         </AppErrorBoundary>
       </body>
     </html>

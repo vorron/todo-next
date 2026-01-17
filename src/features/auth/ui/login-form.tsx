@@ -17,6 +17,8 @@ import type { LoginDto } from '../model/types';
 export function LoginForm() {
   const { login, isLoading } = useAuth();
   const [serverError, setServerError] = useState('');
+  const [resetMessage, setResetMessage] = useState('');
+  const [isResetting, setIsResetting] = useState(false);
 
   const form = useForm<LoginDto>({
     resolver: zodResolver(loginSchema),
@@ -28,11 +30,46 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginDto) => {
     setServerError('');
+    setResetMessage('');
 
     const result = await login(data);
 
     if (!result.success) {
       setServerError(result.message);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    const username = form.getValues('username');
+
+    if (!username) {
+      setServerError('Введите имя пользователя для сброса пароля');
+      return;
+    }
+
+    setIsResetting(true);
+    setServerError('');
+    setResetMessage('');
+
+    try {
+      const response = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setResetMessage(`✅ Пароль сброшен! Новый пароль: ${data.defaultPassword}`);
+      } else {
+        setServerError(data.error || 'Ошибка сброса пароля');
+      }
+    } catch (error) {
+      console.error('Password reset error:', error);
+      setServerError('Ошибка сети. Попробуйте позже.');
+    } finally {
+      setIsResetting(false);
     }
   };
 
@@ -92,9 +129,30 @@ export function LoginForm() {
               </div>
             )}
 
+            {resetMessage && (
+              <div
+                className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-600"
+                role="alert"
+              >
+                {resetMessage}
+              </div>
+            )}
+
             <Button type="submit" className="w-full" isLoading={isLoading} disabled={isLoading}>
               {isLoading ? 'Logging in...' : 'Login'}
             </Button>
+
+            <div className="text-center">
+              <Button
+                type="button"
+                variant="link"
+                onClick={handleResetPassword}
+                disabled={isResetting || isLoading}
+                className="text-sm text-blue-600 hover:text-blue-800"
+              >
+                {isResetting ? 'Сброс...' : 'Сбросить пароль'}
+              </Button>
+            </div>
           </form>
         </Form>
       </CardContent>

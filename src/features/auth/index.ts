@@ -2,10 +2,10 @@
 export { useAuth, useUserId, useSession } from './model/use-auth';
 
 // Server-side utilities
-export { getCurrentUserId, getSession, requireAuth, verifyAuth } from '@/lib/auth-server';
+export { getCurrentUserId, getSession, requireAuth, verifyAuth } from './lib/server/auth-server';
 
 // Auth.js функции
-export { auth, signIn, signOut } from '@/lib/auth';
+export { auth, signIn, signOut } from './lib/auth';
 
 // UI Components (пока оставляем, будут обновлены)
 export { LoginForm } from './ui/login-form';

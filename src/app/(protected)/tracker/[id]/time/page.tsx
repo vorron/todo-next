@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 
 import { getUserWorkspaces, getWorkspaceById } from '@/entities/workspace';
-import { getCurrentUserId } from '@/lib/auth-server';
-import { WorkspaceTimeEntryPage } from '@/screens/workspace-time-entry';
+import { getCurrentUserId } from '@/features/auth/lib/server/auth-server';
+import { TimeEntryPage } from '@/screens/workspace-time-entry';
 import { ROUTES, getRouteMetadata } from '@/shared/lib/router';
 
 import type { Metadata } from 'next';
@@ -30,5 +30,5 @@ export default async function Page({ params }: { params: Promise<WorkspaceTimePa
     redirect(ROUTES.TRACKER_ONBOARDING);
   }
 
-  return <WorkspaceTimeEntryPage workspace={workspace} />;
+  return <TimeEntryPage workspace={workspace} workspaces={workspaces} />;
 }
