@@ -20,11 +20,12 @@ export function AppErrorBoundary({ children }: { children: React.ReactNode }) {
     setResetKey(pathname);
   }, [pathname]);
 
-  const handleError = (error: Error, info: ErrorInfo) => {
-    console.error('Error caught by boundary:', error, info);
+  const handleError = (error: unknown, info: ErrorInfo) => {
+    const errorObj = error instanceof Error ? error : new Error(String(error));
+    console.error('Error caught by boundary:', errorObj, info);
 
     if (process.env.NODE_ENV === 'production') {
-      // sendErrorToMonitoring(error, info);
+      // sendErrorToMonitoring(errorObj, info);
     } else {
       console.group('Error Details');
       console.error('Component Stack:', info.componentStack);
@@ -44,7 +45,12 @@ export function AppErrorBoundary({ children }: { children: React.ReactNode }) {
 
   return (
     <ErrorBoundary
-      FallbackComponent={ErrorFallback}
+      fallbackRender={({ error, resetErrorBoundary }) => (
+        <ErrorFallback
+          error={error instanceof Error ? error : new Error(String(error))}
+          resetErrorBoundary={resetErrorBoundary}
+        />
+      )}
       onError={handleError}
       onReset={handleReset}
       // Передаем resetKey только если он установлен (на клиенте)

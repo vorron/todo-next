@@ -1,8 +1,8 @@
-import { type SerializedError } from '@reduxjs/toolkit';
-import { type FetchBaseQueryError } from '@reduxjs/toolkit/query';
-
 import { useRetryableRefetch } from '@/shared/hooks/use-retryable-refetch';
 import { Card, CardContent, CardHeader, CardTitle, DataErrorState } from '@/shared/ui';
+
+import type { SerializedError } from '@reduxjs/toolkit';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 type TodoListErrorProps = {
   error: FetchBaseQueryError | SerializedError | undefined;
@@ -12,7 +12,6 @@ type TodoListErrorProps = {
 
 export function TodoListError({ error, refetch, title = 'My Todos' }: TodoListErrorProps) {
   const { handleRetry, retryDisabled } = useRetryableRefetch(refetch);
-  const errorMessage = error && 'status' in error ? `Error: ${error.status}` : undefined;
 
   return (
     <Card>
@@ -22,7 +21,7 @@ export function TodoListError({ error, refetch, title = 'My Todos' }: TodoListEr
       <CardContent>
         <DataErrorState
           title="Failed to load todos"
-          description={errorMessage ?? 'Please try again'}
+          error={error}
           retryLabel={retryDisabled ? 'Please refresh page' : 'Try Again'}
           onRetry={retryDisabled ? undefined : handleRetry}
           _className="py-0"

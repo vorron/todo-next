@@ -8,7 +8,7 @@ import { baseQueryWithLogging } from './base-query';
 export const baseApi = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithLogging,
-  tagTypes: ['Todo', 'User', 'Auth', 'Workspace'],
+  tagTypes: ['Todo', 'User', 'Auth', 'Workspace', 'TimeEntry', 'WorkspaceUser'],
   endpoints: () => ({}),
 });
 

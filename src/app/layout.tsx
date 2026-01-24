@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${inter.className} h-full antialiased`}>
         <AppErrorBoundary>
           <AppProviders>
-            <div className="min-h-full">{children}</div>
+            {children}
             <Toaster />
           </AppProviders>
         </AppErrorBoundary>

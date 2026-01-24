@@ -1,12 +1,12 @@
 /**
  * Workspace CRUD Endpoints
- * RTK Query эндпоинты для workspace по аналогии с todo
+ * RTK Query эндпоинты для workspace с улучшенными паттернами
  */
 
 import { createValidatedEndpoint, createEntityTags } from '@/shared/api';
 
 import {
-  workspaceSсhema,
+  workspaceSchema,
   createWorkspaceSchema,
   updateWorkspaceSchema,
   workspaceUserSchema,
@@ -16,6 +16,7 @@ import type { Workspace, WorkspaceUser } from '../model/schema';
 import type { BaseApiEndpointBuilder } from '@/shared/api';
 
 const workspaceTags = createEntityTags('Workspace');
+const workspaceUserTags = createEntityTags('WorkspaceUser');
 
 export function buildWorkspaceCrudEndpoints(builder: BaseApiEndpointBuilder) {
   return {
@@ -23,14 +24,14 @@ export function buildWorkspaceCrudEndpoints(builder: BaseApiEndpointBuilder) {
     getWorkspaces: builder.query<Workspace[], void>({
       query: () => 'workspaces',
       providesTags: workspaceTags.provideListTags,
-      ...createValidatedEndpoint(workspaceSсhema.array()),
+      ...createValidatedEndpoint(workspaceSchema.array()),
     }),
 
     // Получение одного workspace по ID
     getWorkspaceById: builder.query<Workspace, string>({
       query: (id) => `workspaces/${id}`,
       providesTags: (result, error, id) => [{ type: 'Workspace', id }],
-      ...createValidatedEndpoint(workspaceSсhema),
+      ...createValidatedEndpoint(workspaceSchema),
     }),
 
     // Создание workspace
@@ -46,7 +47,7 @@ export function buildWorkspaceCrudEndpoints(builder: BaseApiEndpointBuilder) {
           };
         },
         invalidatesTags: workspaceTags.invalidateListTags,
-        ...createValidatedEndpoint(workspaceSсhema),
+        ...createValidatedEndpoint(workspaceSchema),
       },
     ),
 
@@ -65,7 +66,7 @@ export function buildWorkspaceCrudEndpoints(builder: BaseApiEndpointBuilder) {
         { type: 'Workspace', id },
         { type: 'Workspace', id: 'LIST' },
       ],
-      ...createValidatedEndpoint(workspaceSсhema),
+      ...createValidatedEndpoint(workspaceSchema),
     }),
 
     // Удаление workspace
@@ -80,16 +81,10 @@ export function buildWorkspaceCrudEndpoints(builder: BaseApiEndpointBuilder) {
       ],
     }),
 
-    // Получение пользователей workspace
+    // Получение пользователей workspace с правильными тегами
     getWorkspaceUsers: builder.query<WorkspaceUser[], string>({
       query: (workspaceId) => `workspaceUsers?workspaceId=${workspaceId}`,
-      providesTags: (result, _error, _workspaceId) =>
-        result
-          ? result.map((user: WorkspaceUser) => ({
-              type: 'Workspace' as const,
-              id: user.workspaceId,
-            }))
-          : [],
+      providesTags: workspaceUserTags.provideListTags,
       ...createValidatedEndpoint(workspaceUserSchema.array()),
     }),
   } as const;

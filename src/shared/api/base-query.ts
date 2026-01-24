@@ -41,9 +41,23 @@ export const baseQueryWithLogging: BaseQueryFn<
 
   if (env.IS_DEVELOPMENT) {
     if (result.error) {
+      const errorData = result.error.data;
+      let safeErrorData = 'No error data';
+
+      if (errorData) {
+        try {
+          safeErrorData =
+            typeof errorData === 'string' ? errorData : JSON.stringify(errorData, null, 2);
+        } catch {
+          safeErrorData = 'Unserializable error data';
+        }
+      }
+
       console.error('🔴 API Error:', {
         endpoint: typeof args === 'string' ? args : args.url,
         status: result.error.status,
+        statusText: result.error.status ? 'HTTP Error' : 'Network Error',
+        error: safeErrorData,
         duration: `${duration}ms`,
       });
     } else {

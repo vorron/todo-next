@@ -6,7 +6,7 @@ import { type z } from 'zod';
  */
 export function createValidatedEndpoint<TSchema extends z.ZodTypeAny>(schema: TSchema) {
   return {
-    transformResponse: (response: unknown) => schema.parse(response),
+    transformResponse: (response: unknown): z.infer<TSchema> => schema.parse(response),
   };
 }
 

@@ -11,4 +11,3 @@ export { WorkspaceSelectView } from './workspace-select-view';
 export { CreateWorkspaceDialog } from './create-workspace-dialog';
 export { CreateWorkspaceForm } from './create-workspace-form';
 export { WorkspaceActionsBar } from './workspace-actions-bar';
-export { TimeEntryView } from './time-entry-view';

@@ -1,6 +1,6 @@
 import z from 'zod';
 
-export const workspaceSсhema = z.object({
+export const workspaceSchema = z.object({
   id: z.string().min(1, 'Workspace ID is required'),
   name: z
     .string()
@@ -20,10 +20,10 @@ export const workspaceSсhema = z.object({
     .default(() => new Date().toISOString()),
 });
 
-export type Workspace = z.infer<typeof workspaceSсhema>;
+export type Workspace = z.infer<typeof workspaceSchema>;
 
 // Схема для создания workspace
-export const createWorkspaceSchema = workspaceSсhema
+export const createWorkspaceSchema = workspaceSchema
   .omit({
     id: true,
     createdAt: true,
@@ -34,7 +34,7 @@ export const createWorkspaceSchema = workspaceSсhema
   });
 
 // Схема для обновления workspace
-export const updateWorkspaceSchema = workspaceSсhema.partial().required({ id: true });
+export const updateWorkspaceSchema = workspaceSchema.partial().required({ id: true });
 
 export const workspaceUserSchema = z.object({
   id: z.string().min(1),

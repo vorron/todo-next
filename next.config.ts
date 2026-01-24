@@ -1,3 +1,5 @@
+import path from 'path';
+
 import type { NextConfig } from 'next';
 
 function getImageRemotePatterns() {
@@ -21,6 +23,11 @@ function getImageRemotePatterns() {
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+
+  // Turbopack root directory for monorepo
+  turbopack: {
+    root: path.join(__dirname, '..'),
+  },
 
   // Security headers
   async headers() {

@@ -1,7 +1,8 @@
 'use client';
 
+import { TimeEntryView } from '@/features/time-entry/ui/time-entry-view';
 import { WorkspaceInfoCard } from '@/features/workspace/components';
-import { TimeEntryView, WorkspaceActionsBar } from '@/features/workspace/ui';
+import { WorkspaceActionsBar } from '@/features/workspace/ui';
 
 import type { Workspace } from '@/entities/workspace/model/schema';
 
@@ -16,10 +17,10 @@ export function TimeEntryPage({ workspace, workspaces }: WorkspaceTimeEntryPageP
       <WorkspaceActionsBar workspaces={workspaces} currentWorkspaceId={workspace?.id} />
 
       {/* Основной блок таймера - фокус на действии */}
-      <TimeEntryView className="max-w-2xl mx-auto" />
+      <TimeEntryView workspace={workspace} />
 
       {/* Информация о workspace - минимизированная */}
-      <WorkspaceInfoCard workspace={workspace} className="max-w-2xl mx-auto" />
+      <WorkspaceInfoCard workspace={workspace} />
     </div>
   );
 }

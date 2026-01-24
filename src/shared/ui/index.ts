@@ -23,7 +23,10 @@ export {
   DropdownMenuSeparator,
 } from './dropdown-menu';
 export { Label } from './label';
-export { Select } from './select';
+export { Select, type SelectProps } from './select';
+export { TimePicker, type TimePickerProps } from './time-picker';
+export { DatePicker, type DatePickerProps } from './date-picker';
+export { RoundedTimePicker, type RoundedTimePickerProps } from './rounded-time-picker';
 export { Separator } from './separator';
 export { toast, Toaster } from './toast';
 export { Tooltip } from './tooltip';

@@ -18,8 +18,29 @@ import {
 import { HeaderBreadcrumbs } from './breadcrumbs';
 
 export function Navbar() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, isLoading, logout } = useAuth();
   const pathname = usePathname();
+
+  if (isLoading) {
+    // Return a placeholder with same structure to prevent hydration mismatch
+    return (
+      <nav className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white/80 backdrop-blur-lg supports-backdrop-blur:bg-white/60">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center gap-3">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-blue-500 to-purple-600">
+                <span className="text-sm font-bold text-white">✓</span>
+              </div>
+              <span className="text-xl font-bold text-gray-900">TodoApp</span>
+            </div>
+            <div className="ml-auto flex items-center gap-3">
+              <div className="h-8 w-20 bg-gray-200 animate-pulse rounded"></div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
   if (!isAuthenticated) return null;
 

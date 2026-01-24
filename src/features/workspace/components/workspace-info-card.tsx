@@ -1,17 +1,14 @@
-'use client';
-
 import { Card, CardContent } from '@/shared/ui';
 
 import type { Workspace } from '@/entities/workspace/model/schema';
 
 export interface WorkspaceInfoCardProps {
   workspace: Workspace;
-  className?: string;
 }
 
-export function WorkspaceInfoCard({ workspace, className }: WorkspaceInfoCardProps) {
+export function WorkspaceInfoCard({ workspace }: WorkspaceInfoCardProps) {
   return (
-    <Card className={className}>
+    <Card className="max-w-2xl mx-auto">
       <CardContent className="pt-6">
         <div className="flex items-center justify-between text-sm gap-2">
           <div className="flex items-center gap-2">
