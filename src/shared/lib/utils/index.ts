@@ -6,3 +6,4 @@ export * from './zod-utils';
 export * from './options-utils';
 export { handleRTKQueryValidation } from './rtk-query-validation';
 export { capitalize, camelCase, pascalCase, kebabCase, snakeCase, startCase } from './strings-case';
+export { getToday, getTodayNative, roundToNearest } from './date-utils';

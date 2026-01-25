@@ -16,5 +16,13 @@ export {
   workspaceApiMiddleware,
 } from './api/workspace-api';
 
+// Schema и типы
+export {
+  workspaceSchema,
+  createWorkspaceSchema,
+  updateWorkspaceSchema,
+  workspaceUserSchema,
+} from './model/schema';
+
 // Server-side functions
-export { getUserWorkspaces, getDefaultWorkspace, getWorkspaceById } from './lib/server-workspace';
+export { getUserWorkspaces, getWorkspaceById, findDefaultWorkspace } from './lib/server-workspace';

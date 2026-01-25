@@ -1,4 +1,5 @@
 import { createEntityTags } from '@/shared/api';
+import { buildUrlWithQuery } from '@/shared/lib/query-builder';
 
 import {
   type CreateTimeEntry,
@@ -23,12 +24,8 @@ export function buildTimeEntryCrudEndpoints(builder: BaseApiEndpointBuilder) {
         date?: string;
       }
     >({
-      query: ({ workspaceId, userId, date }) => {
-        const params = new URLSearchParams();
-        params.append('workspaceId', workspaceId);
-        if (userId) params.append('userId', userId);
-        if (date) params.append('date', date);
-        return `time-entries?${params.toString()}`;
+      query: (params) => {
+        return buildUrlWithQuery('time-entries', params);
       },
       providesTags: timeEntryTags.provideListTags,
       transformResponse: (response: unknown): TimeEntry[] => {

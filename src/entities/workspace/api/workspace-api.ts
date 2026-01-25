@@ -5,7 +5,7 @@
 
 import { baseApi } from '@/shared/api';
 
-import { buildWorkspaceCrudEndpoints } from './workspace-crud';
+import { buildWorkspaceCrudEndpoints } from './workspace-api-crud';
 
 export const workspaceApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

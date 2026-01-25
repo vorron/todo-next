@@ -2,7 +2,10 @@
 
 import { useState } from 'react';
 
+import { type CreateProjectFormData } from '@/entities/project/model/project-form-schemas';
+import { type Workspace } from '@/entities/workspace/model/schema';
 import {
+  Button,
   Card,
   CardContent,
   CardHeader,
@@ -12,18 +15,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Input,
-  Label,
+  Form,
+  DataErrorState,
+  DataLoadingState,
 } from '@/shared/ui';
-import { Button } from '@/shared/ui/button';
 
-import {
-  canCreateProject,
-  prepareProjectData,
-  validateProjectData,
-} from '../lib/project-management';
-
-import type { Workspace } from '@/entities/workspace/model/schema';
+import { ProjectFormFields } from './project-form-fields';
+import { useProjects } from '../model/queries/use-projects';
+import { useProjectForm } from '../model/use-project-form';
 
 export interface ProjectsViewProps {
   workspace: Workspace;
@@ -32,123 +31,96 @@ export interface ProjectsViewProps {
 
 export function ProjectsView({ workspace, className }: ProjectsViewProps) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [newProjectName, setNewProjectName] = useState('');
-  const [newProjectDescription, setNewProjectDescription] = useState('');
-  const [errors, setErrors] = useState<string[]>([]);
 
-  const handleCreateProject = () => {
-    const projectData = prepareProjectData({
-      name: newProjectName,
-      description: newProjectDescription,
-    });
+  // Получаем проекты из API
+  const { data: projects = [], isLoading, error } = useProjects();
 
-    const validation = validateProjectData(projectData);
-
-    if (!validation.isValid) {
-      setErrors(validation.errors);
-      return;
-    }
-
-    // TODO: Implement project creation logic
-    console.log('Creating project:', projectData);
-
-    // Reset form
-    setNewProjectName('');
-    setNewProjectDescription('');
-    setErrors([]);
-    setIsCreateDialogOpen(false);
-  };
+  const { form, onSubmit, isSubmitting } = useProjectForm({
+    workspaceId: workspace.id,
+    onSuccess: (data: CreateProjectFormData) => {
+      console.log('Project created:', data);
+      setIsCreateDialogOpen(false);
+      // Проект автоматически обновится через RTK Query cache invalidation
+    },
+  });
 
   return (
     <div className={className}>
       {/* Projects List */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Active Projects</CardTitle>
+          <CardTitle>Активные проекты</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">No projects yet</p>
-            <p className="text-sm text-gray-500 mt-2">Create your first project to get started</p>
-          </div>
+          {isLoading ? (
+            <DataLoadingState message="Загрузка проектов..." />
+          ) : error ? (
+            <DataErrorState
+              title="Ошибка загрузки проектов"
+              error={error}
+              onRetry={() => window.location.reload()}
+            />
+          ) : projects.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">Пока нет проектов</p>
+              <p className="text-sm text-gray-500 mt-2">Создайте первый проект для начала работы</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {projects.map((project) => (
+                <div
+                  key={project.id}
+                  className="flex items-center justify-between p-3 border rounded-lg"
+                >
+                  <div>
+                    <h4 className="font-medium">{project.name}</h4>
+                    {project.description && (
+                      <p className="text-sm text-gray-600 mt-1">{project.description}</p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        project.isActive
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
+                      {project.isActive ? 'Активен' : 'Неактивен'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
       {/* Create New Project */}
       <Card>
         <CardHeader>
-          <CardTitle>Create New Project</CardTitle>
+          <CardTitle>Создать новый проект</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="project-name">Project Name</Label>
-              <Input
-                id="project-name"
-                value={newProjectName}
-                onChange={(e) => setNewProjectName(e.target.value)}
-                placeholder="Enter project name"
-              />
-            </div>
-            <div>
-              <Label htmlFor="project-description">Description</Label>
-              <Input
-                id="project-description"
-                value={newProjectDescription}
-                onChange={(e) => setNewProjectDescription(e.target.value)}
-                placeholder="Enter project description"
-              />
-            </div>
-
-            {errors.length > 0 && (
-              <div className="space-y-1">
-                {errors.map((error, index) => (
-                  <p key={index} className="text-sm text-red-600">
-                    {error}
-                  </p>
-                ))}
-              </div>
-            )}
-
-            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  className="w-full"
-                  disabled={
-                    !canCreateProject({ name: newProjectName, description: newProjectDescription })
-                  }
-                >
-                  Create Project
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Confirm Project Creation</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <p>
-                      <strong>Workspace:</strong> {workspace.name}
-                    </p>
-                    <p>
-                      <strong>Project Name:</strong> {newProjectName || 'Untitled'}
-                    </p>
-                    {newProjectDescription && (
-                      <p>
-                        <strong>Description:</strong> {newProjectDescription}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleCreateProject}>Create Project</Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
+          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="w-full">Создать проект</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Создание проекта</DialogTitle>
+              </DialogHeader>
+              <Form {...form}>
+                <form onSubmit={onSubmit} className="space-y-4">
+                  <ProjectFormFields
+                    control={form.control}
+                    disabled={isSubmitting}
+                    showSubmitButton={true}
+                  />
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
     </div>

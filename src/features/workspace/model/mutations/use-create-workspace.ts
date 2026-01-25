@@ -1,11 +1,6 @@
-/**
- * Create Workspace Mutation Hook
- * RTK Query мутация для создания workspace
- */
-
 import { useCallback } from 'react';
 
-import { workspaceApi } from '@/entities/workspace/api/workspace-api';
+import { workspaceApi } from '@/entities/workspace';
 import { handleApiError, handleApiSuccess } from '@/shared/lib/errors';
 
 import type { Workspace } from '@/entities/workspace/model/schema';

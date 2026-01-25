@@ -24,6 +24,6 @@ export async function getWorkspaceById(id: string): Promise<Workspace | null> {
   }
 }
 
-export function getDefaultWorkspace(workspaces: Workspace[]): Workspace | null {
+export function findDefaultWorkspace(workspaces: Workspace[]): Workspace | null {
   return workspaces.find((w) => w.isDefault) || workspaces[0] || null;
 }

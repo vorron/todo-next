@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 
 import { getUserWorkspaces, getWorkspaceById } from '@/entities/workspace';
-import { getCurrentUserId } from '@/features/auth/lib/server/auth-server';
+import { requireAuth } from '@/features/auth/lib/server/auth-server';
 import { TimeEntryPage } from '@/screens/workspace';
 import { getRouteMetadata, ROUTES } from '@/shared/lib/router';
 
@@ -13,11 +13,7 @@ type TimeEntryParams = { id: string };
 
 export default async function Page({ params }: { params: Promise<TimeEntryParams> }) {
   const { id } = await params;
-  const userId = await getCurrentUserId();
-
-  if (!userId) {
-    redirect(ROUTES.LOGIN);
-  }
+  const userId = await requireAuth();
 
   const [workspace, allWorkspaces] = await Promise.all([
     getWorkspaceById(id),

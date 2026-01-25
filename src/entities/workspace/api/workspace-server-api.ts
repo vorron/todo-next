@@ -1,36 +1,63 @@
-import { api } from '@/shared/api/client';
+import { ApiError } from '@/shared/api/client';
 
 import type { Workspace } from '@/entities/workspace/model/schema';
 
 /**
- * Workspace API endpoints
- * Type-safe API calls with proper caching strategies
+ * Workspace API endpoints for server-side usage
+ * Direct calls to Nest.js backend
  */
 
-export const workspaceApi = {
-  // Get all workspaces for a user (cached)
-  getWorkspaces: (userId: string): Promise<Workspace[]> =>
-    api.cached.get<Workspace[]>(`/workspaces?ownerId=${userId}`, 300),
+class ServerWorkspaceApi {
+  private baseUrl = 'http://localhost:3001/api';
 
-  // Get specific workspace (tagged for cache invalidation)
-  getWorkspaceById: (id: string): Promise<Workspace | null> =>
-    api.cached.tagged<Workspace>(`/workspaces/${id}`, ['workspace', `workspace-${id}`]),
+  private async safeFetch<T>(url: string, options: RequestInit = {}): Promise<T> {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+        ...options,
+      });
 
-  // Create new workspace (no cache)
-  createWorkspace: (data: WorkspaceCreateRequest): Promise<Workspace> =>
-    api.create<Workspace>('/workspaces', data),
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new ApiError(response.status, response.statusText, errorData);
+      }
 
-  // Update workspace (invalidates cache)
-  updateWorkspace: (id: string, data: WorkspaceUpdateRequest): Promise<Workspace> =>
-    api.update<Workspace>(`/workspaces/${id}`, data),
+      return response.json();
+    } catch (error) {
+      if (error instanceof ApiError) throw error;
+      throw new ApiError(500, 'Network error occurred');
+    }
+  }
 
-  // Delete workspace (invalidates cache)
-  deleteWorkspace: (id: string): Promise<void> => api.remove<void>(`/workspaces/${id}`),
+  async getWorkspaces(userId: string): Promise<Workspace[]> {
+    return this.safeFetch<Workspace[]>(`${this.baseUrl}/workspaces?ownerId=${userId}`);
+  }
 
-  // Get fresh data (bypass cache)
-  getFreshWorkspaces: (userId: string): Promise<Workspace[]> =>
-    api.fresh.get<Workspace[]>(`/workspaces?ownerId=${userId}`),
-};
+  async getWorkspaceById(id: string): Promise<Workspace | null> {
+    try {
+      return await this.safeFetch<Workspace>(`${this.baseUrl}/workspaces/${id}`);
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 404) {
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  async createWorkspace(
+    data: Omit<Workspace, 'id' | 'createdAt' | 'updatedAt'>,
+  ): Promise<Workspace> {
+    return this.safeFetch<Workspace>(`${this.baseUrl}/workspaces`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+}
+
+export const workspaceApi = new ServerWorkspaceApi();
 
 // Type exports
 export type WorkspaceCreateRequest = Omit<Workspace, 'id' | 'createdAt' | 'updatedAt'>;

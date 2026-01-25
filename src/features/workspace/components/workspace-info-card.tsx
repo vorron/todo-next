@@ -9,7 +9,7 @@ export interface WorkspaceInfoCardProps {
 export function WorkspaceInfoCard({ workspace }: WorkspaceInfoCardProps) {
   return (
     <Card className="max-w-2xl mx-auto">
-      <CardContent className="pt-6">
+      <CardContent>
         <div className="flex items-center justify-between text-sm gap-2">
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground">Workspace:</span>

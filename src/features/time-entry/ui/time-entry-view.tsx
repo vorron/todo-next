@@ -1,36 +1,32 @@
 'use client';
 
-import { useGetTimeEntriesByUserIdQuery } from '@/entities/time-entry/api';
 import { type Workspace } from '@/entities/workspace';
 import { DataErrorState, DataLoadingState } from '@/shared/ui';
 
 import { TimeEntryCanvas } from './nested/time-entry-canvas';
 import { TimeEntryHeader } from './nested/time-entry-header';
 import { TimeScale } from './nested/time-scale';
+import { useTimeEntriesByUser } from '../model/queries/use-time-entries';
 
 export interface TimeEntryViewProps {
   workspace: Workspace;
 }
 
 export function TimeEntryView({ workspace }: TimeEntryViewProps) {
-  const {
-    data: timeEntries,
-    isLoading,
-    error,
-    refetch,
-  } = useGetTimeEntriesByUserIdQuery({
-    workspaceId: workspace.id,
-    date: new Date().toISOString().split('T')[0],
-  });
+  // Временно - захардкоженный userId, нужно получить из auth context
+  const userId = 'user-123';
+
+  const { data: timeEntries, isLoading, error, refetch } = useTimeEntriesByUser(userId);
 
   if (isLoading) return <DataLoadingState message="Loading time entries..." />;
 
   if (error) {
     return <DataErrorState title="Failed to load time entries" error={error} onRetry={refetch} />;
   }
+
   return (
     <div className="flex flex-col h-full">
-      <TimeEntryHeader />
+      <TimeEntryHeader workspace={workspace} />
       <div className="flex flex-1">
         <TimeScale />
         <TimeEntryCanvas timeEntries={timeEntries || []} />
